@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="css/main.css" rel="stylesheet" />
+	<link href="css/toast.css" rel="stylesheet" />
+	<meta charset="utf-8"/>
+	<title>Rezervacija apartmana</title>
+</head> 
+<body>
+
+<div id="topnav"  class="topnav">
+  <a href="#/" @load ="isActive = 'home'"  @click ="isActive = 'home'" v-bind:class="{ active : isActive === 'home'}">Home</a>
+  <a href="#/search" @click ="isActive = 'search'" v-bind:class="{ active : isActive === 'search'}">Search</a>
+</div>
+
+<div id="general">
+	<router-view></router-view>
+</div>
+
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script src="js/axios.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/toast.js"></script>
+<script src="app/homepage.js"></script>
+<script src="app/search.js"></script>
+<script src="app/app.js"></script>
+</body>
+</html>
