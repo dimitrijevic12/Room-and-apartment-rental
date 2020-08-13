@@ -1,27 +1,56 @@
 /* Add a black background color to the top navigation */
 .topnav {
-  background-color: #333;
+  background-color: #FFFFFF;
   overflow: hidden;
 }
 
 /* Style the links inside the navigation bar */
 .topnav a {
   float: left;
-  color: #f2f2f2;
+  color: #113E60;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
   font-size: 17px;
+  font-family: 'Times New Roman', Georgia, serif;
 }
 
 /* Change the color of links on hover */
 .topnav a:hover {
-  background-color: #ddd;
-  color: black;
+  background-color: #E5F4FF;
+  color: #113E60;
 }
 
 /* Add a color to the active/current link */
 .topnav a.active {
-  background-color: #4CAF50;
+  background-color: #113E60;
   color: white;
+}
+
+.container {
+  width: 100%;
+  height: 400px;
+  background-image: url("https://images.unsplash.com/photo-1467377791767-c929b5dc9a23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1789&q=80");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  margin: 0;
+  padding: 0%;
+  position: relative;
+}
+
+.home-search {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.home-search h2{
+  color: white;
+}
+
+.home-search input{
+  font-size: large;
 }

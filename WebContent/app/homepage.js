@@ -1,7 +1,16 @@
 Vue.component("homepage",{
 	template: `
-<div>
-	<h2>Ovo je pocetna stranica!</h2>
+<div class="container">
+	<div class="home-search">
+		<form>
+			<table>
+				<tr><td><h2>Ovo je pocetna stranica!</h2></td></tr>
+				<tr>
+					<td><input id="location" type = "text" value="Lokacija"><input id="datum" type="date"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
 </div>
 	`
 })
