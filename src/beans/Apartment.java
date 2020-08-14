@@ -2,6 +2,7 @@ package beans;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Apartment {
 	private ApartmentStatus status;
 	private List<Amenity> amenities;
 	private List<Reservation> reservations;
-	//id apartmana?
+	private long id;
 	
 	public Apartment() {
 		super();
