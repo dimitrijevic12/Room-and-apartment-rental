@@ -6,7 +6,7 @@ Vue.component("homepage",{
 			<table>
 				<tr><td><h2>Ovo je pocetna stranica!</h2></td></tr>
 				<tr>
-					<td><input id="location" type = "text" value="Lokacija"><input id="datum" type="date"></td>
+					<td><input id="location" type = "text" placeholder="Lokacija"><input id="datum" type="date"></td>
 				</tr>
 			</table>
 		</form>

@@ -1,7 +1,39 @@
+body {
+  margin: 0%;
+  padding: 0%;
+}
+
 /* Add a black background color to the top navigation */
 .topnav {
   background-color: #FFFFFF;
   overflow: hidden;
+  padding: 0%;
+  margin: 0%;
+  position: relative;
+}
+
+.topnav button {
+  position: absolute;
+  right: 15px;
+  color: #113E60;
+  padding: 20px 26px;
+  text-decoration: none;
+  font-size: 20px;
+  font-family: 'Times New Roman', Georgia, serif;
+  border: #FFFFFF;
+  background-color: #FFFFFF;
+  outline: none;
+}
+
+.topnav img{
+  margin-right: 5px;
+  margin-top: -10px;
+  vertical-align: middle;
+}
+
+.topnav button:hover {
+  background-color: #E5F4FF;
+  color: #113E60;
 }
 
 /* Style the links inside the navigation bar */
@@ -9,9 +41,9 @@
   float: left;
   color: #113E60;
   text-align: center;
-  padding: 14px 16px;
+  padding: 20px 26px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 20px;
   font-family: 'Times New Roman', Georgia, serif;
 }
 
@@ -30,12 +62,10 @@
 .container {
   width: 100%;
   height: 400px;
-  background-image: url("https://images.unsplash.com/photo-1467377791767-c929b5dc9a23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1789&q=80");
+  background-image: url("../images/tropical-beach.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  margin: 0;
-  padding: 0%;
   position: relative;
 }
 
