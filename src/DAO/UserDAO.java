@@ -69,4 +69,8 @@ public class UserDAO {
 	public Collection<User> getAll(){
 		return users.values();
 	}
+	
+	public User getUserByUsername(String username) {
+		return users.get(username);
+	}
 }

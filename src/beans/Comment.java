@@ -25,6 +25,13 @@ public class Comment {
 		this.grade = grade;
 	}
 	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id= id;
+	}
+	
 	public User getGuest() {
 		return guest;
 	}

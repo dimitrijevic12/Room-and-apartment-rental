@@ -1,0 +1,2 @@
+1;nemanja;1;Ovo je tekst komentara;THREE
+2;jovana;2;Ovo je tekst drugog komentara;ONE
