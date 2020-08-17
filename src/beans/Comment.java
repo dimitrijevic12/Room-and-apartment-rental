@@ -1,6 +1,7 @@
 package beans;
 
 public class Comment {
+	private long id;
 	private User guest;
 	private Apartment apartment;
 	private String text;
@@ -8,14 +9,16 @@ public class Comment {
 	
 	public Comment() {
 		super();
+		this.id = 0;
 		this.guest = new User();
 		this.apartment = new Apartment();
 		this.text = "";
 		this.grade = Grade.ONE;
 	}
 	
-	public Comment(User guest, Apartment apartment, String text, Grade grade) {
+	public Comment(long id, User guest, Apartment apartment, String text, Grade grade) {
 		super();
+		this.id = id;
 		this.guest = guest;
 		this.apartment = apartment;
 		this.text = text;
