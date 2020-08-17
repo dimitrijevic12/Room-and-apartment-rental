@@ -1,0 +1,3 @@
+0;stolica
+1;klima
+2;internet
