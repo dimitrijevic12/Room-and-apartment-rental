@@ -3,6 +3,7 @@ package beans;
 import java.util.Date;
 
 public class Reservation {
+	private long id;
 	private Apartment apartment;
 	private Date checkInDate;
 	private int nightCount;
@@ -13,6 +14,7 @@ public class Reservation {
 	
 	public Reservation() {
 		super();
+		this.id = 0;
 		this.apartment = new Apartment();
 		this.checkInDate = new Date();
 		this.nightCount = 0;
@@ -22,9 +24,10 @@ public class Reservation {
 		this.status = ReservationStatus.CREATED;
 	}
 	
-	public Reservation(Apartment apartment, Date checkInDate, int nightCount, double total, String message, User guest,
+	public Reservation(long id, Apartment apartment, Date checkInDate, int nightCount, double total, String message, User guest,
 			ReservationStatus status) {
 		super();
+		this.id = id;
 		this.apartment = apartment;
 		this.checkInDate = checkInDate;
 		this.nightCount = nightCount;
@@ -32,6 +35,14 @@ public class Reservation {
 		this.message = message;
 		this.guest = guest;
 		this.status = status;
+	}
+	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public Apartment getApartment() {
