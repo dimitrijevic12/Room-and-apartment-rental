@@ -72,4 +72,8 @@ public class CommentDAO {
 		return comments.values();
 	}
 	
+	public Comment findComment(long id) {
+		return comments.containsKey(id)? comments.get(id): null;
+	}
+
 }
