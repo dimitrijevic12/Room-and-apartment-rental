@@ -71,6 +71,6 @@ public class UserDAO {
 	}
 	
 	public User getUserByUsername(String username) {
-		return users.get(username);
+		return users.containsKey(username)? users.get(username) : null;
 	}
 }

@@ -11,32 +11,32 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import DAO.CommentDAO;
-import beans.Comment;
+import DAO.ApartmentDAO;
+import beans.Apartment;
 
-@Path("/comments")
-public class CommentService {
+@Path("/apartments")
+public class ApartmentService {
 	
 	@Context
 	ServletContext ctx;
 	
-	public CommentService() {
+	public ApartmentService() {
 		
 	}
 	
 	@PostConstruct
 	public void init() {
-		if(ctx.getAttribute("commentDAO") == null) {
+		if(ctx.getAttribute("apartmentDAO") == null) {
 			String contextPath = ctx.getRealPath("");
-			ctx.setAttribute("commentDAO", new CommentDAO(contextPath));
+			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
 		}
 	}
 	
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Comment> getComments(){
-		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+	public Collection<Apartment> getComments(){
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		return dao.getAll();
 	}
 	
@@ -44,8 +44,8 @@ public class CommentService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	
-	public Comment findOne(@PathParam("id") Long id) {
-		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
-		return dao.findComment(id);
+	public Apartment findOne(@PathParam("id") Long id) {
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		return dao.findApartment(id);
 	}
 }

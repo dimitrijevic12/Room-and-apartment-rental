@@ -82,4 +82,8 @@ public class ReservationDAO {
 	public Collection<Reservation> getAll(){
 		return reservations.values();
 	}
+	
+	public Reservation findReservation(long id) {
+		return reservations.containsKey(id)? reservations.get(id): null;
+	}
 }

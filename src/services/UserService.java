@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -37,5 +38,14 @@ public class UserService {
 	public Collection<User> getUsers(){
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		return dao.getAll();
+	}
+	
+	@GET
+	@Path("/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public User findOne(@PathParam("username") String username) {
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		return dao.getUserByUsername(username);
 	}
 }
