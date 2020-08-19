@@ -1,8 +1,11 @@
 package beans;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 public class Comment {
 	private long id;
 	private User guest;
+	@JsonBackReference
 	private Apartment apartment;
 	private String text;
 	private Grade grade;

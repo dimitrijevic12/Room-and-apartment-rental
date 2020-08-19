@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import beans.Apartment;
@@ -45,24 +47,15 @@ public class ReservationDAO {
 					String message = st.nextToken().trim();
 					String username = st.nextToken().trim();
 					String statusString = st.nextToken().trim();
-/*					StringTokenizer st2 = new StringTokenizer(line, ",");
-					while(st.hasMoreTokens()) {
-						String apartmentsToRentIdString = st.nextToken();
-					}
-					st2 = new StringTokenizer(line, ",");
-					while(st.hasMoreTokens()) {
-						String rentedApartmentsIdString = st.nextToken();
-					}
-*/
 					long reservationId = Long.parseLong(reservationIdString);
 					long apartmentId = Long.parseLong(apartmentIdString);
 					// TODO apartmentDAO da se nadje odgovarajuci apartman
 					Date checkInDate = new Date(Long.parseLong(checkInDateString));
 					int nightCount = Integer.parseInt(nightCountString);
 					Double total = Double.parseDouble(totalString);
-					User user = new UserDAO(contextPath).getUserByUsername(username);
+//					User user = userDAOInterface.getUserByUsername(username);
 					ReservationStatus status = ReservationStatus.valueOf(statusString);
-					reservations.put(reservationId, new Reservation(reservationId, new Apartment(), checkInDate, nightCount, total, message, user, status));
+					reservations.put(reservationId, new Reservation(reservationId, new Apartment(), checkInDate, nightCount, total, message, new User(), status));
 				}
 			}
 		}
@@ -85,5 +78,16 @@ public class ReservationDAO {
 	
 	public Reservation findReservation(long id) {
 		return reservations.containsKey(id)? reservations.get(id): null;
+	}
+	
+	public List<Reservation> getReservationsFromCommaSeparatedString(String commaSeparatedReservationsIds) {
+		String[] reservationsIds = commaSeparatedReservationsIds.split(",");
+		List<Reservation> retVal = new ArrayList<Reservation>();
+		
+		for (String reservationId : reservationsIds) {
+			long id = Long.parseLong(reservationId);
+			retVal.add(this.findReservation(id));
+		}
+		return retVal;
 	}
 }

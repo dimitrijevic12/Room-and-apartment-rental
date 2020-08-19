@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonManagedReference;
+
 public class Apartment {
 	private ApartmentType type;
 	private int roomCount;
@@ -41,9 +43,10 @@ public class Apartment {
 		this.status = ApartmentStatus.INACTIVE;
 		this.amenities = new ArrayList<Amenity>();
 		this.reservations = new ArrayList<Reservation>();
+		this.id = 0;
 	}
 	
-	public Apartment(ApartmentType type, int roomCount, int guestCount, Location location, List<Date> approvedDates,
+	public Apartment(long id, ApartmentType type, int roomCount, int guestCount, Location location, List<Date> approvedDates,
 			List<Date> availableDates, User host, List<Comment> comment, List<Image> images, double price,
 			Date checkInTime, Date checkOutTime, ApartmentStatus status, List<Amenity> amenities,
 			List<Reservation> reservations) {
@@ -63,6 +66,15 @@ public class Apartment {
 		this.status = status;
 		this.amenities = amenities;
 		this.reservations = reservations;
+		this.id = id;
+	}
+	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public ApartmentType getType() {

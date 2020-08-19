@@ -1,14 +1,23 @@
 package DAO;
 
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import beans.Address;
 import beans.Amenity;
@@ -16,29 +25,25 @@ import beans.Apartment;
 import beans.ApartmentStatus;
 import beans.ApartmentType;
 import beans.Comment;
+import beans.Gender;
+import beans.Grade;
 import beans.Location;
 import beans.Reservation;
+import beans.ReservationStatus;
+import beans.Role;
 import beans.User;
 import services.CommentService;
 import services.ReservationService;
 import services.UserService;
 
-public class ApartmentDAO {
+public class ApartmentDAO{
 	private HashMap<Long,Apartment> apartments = new HashMap<Long,Apartment>();
-	private UserDAO userDAO ;
-	private CommentDAO commentDAO;
-	private ReservationDAO reservationDAO;
-	private AmenityDAO amenityDAO;
 	
 	public ApartmentDAO() {
 		
 	}
 	
 	public ApartmentDAO(String contextPath) {
-		userDAO = new UserDAO(contextPath);
-		commentDAO = new CommentDAO(contextPath);
-		reservationDAO = new ReservationDAO(contextPath);
-		amenityDAO = new AmenityDAO(contextPath);
 		loadApartments(contextPath);
 	}
 
@@ -51,49 +56,66 @@ public class ApartmentDAO {
 	}
 	
 	private void loadApartments(String contextPath) {
-		BufferedReader in = null;
 		try {
-			File file = new File(contextPath + "repositories/apartments.txt");
-			in = new BufferedReader(new FileReader(file));
-			String line;
-			StringTokenizer st;
-			while((line = in.readLine())!=null) {
-				line = line.trim();
-				if(line.equals("") || line.indexOf('#') == 0) continue;
-				st = new StringTokenizer(line,";");
-				while(st.hasMoreTokens()) {
-					long apartmentId = Long.parseLong(st.nextToken().trim());
-					User hostUsername = getUserByUsername(st.nextToken().trim());
-					ApartmentType type = ApartmentType.valueOf(st.nextToken().trim());
-					int roomCount = Integer.parseInt(st.nextToken().trim());
-					int guestCount = Integer.parseInt(st.nextToken().trim());
-					double price = Double.parseDouble(st.nextToken().trim());
-					ApartmentStatus status = ApartmentStatus.valueOf(st.nextToken().trim());
-					Date checkInTime = new Date(Long.parseLong(st.nextToken().trim()));
-					Date checkOutTime = new Date(Long.parseLong(st.nextToken().trim()));
-					Location location = getLocationFromCommaSeparatedString(st.nextToken().trim());
-					List<Amenity> amenities = getAmenitiesFromCommaSeparatedString(st.nextToken().trim());
-					List<Comment> comments = getCommentsFromCommaSeparatedString(st.nextToken().trim());
-					//TODO: Treba odraditi i approvedAppointments a available ce sam program traziti
-					List<Reservation> reservations = getReservationFromCommaSeparatedString(st.nextToken().trim());
-					
-					apartments.put(apartmentId,new Apartment(type, roomCount, guestCount, location, null, null, hostUsername, comments, null, price, checkInTime, checkOutTime, status, amenities, reservations));
-				}
+			ObjectMapper mapper = new ObjectMapper();
+			
+			List<Apartment> apartmentsList = Arrays.asList(mapper.readValue(Paths.get(contextPath + "repositories/apartments.json").toFile(), Apartment[].class));
+			
+			for(Apartment apartment: apartmentsList) {
+				apartments.put(apartment.getId(), apartment);
 			}
-		}catch (Exception e) {
+			  
+			
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally {
-			if ( in != null ) {
-				try {
-					in.close();
-				}
-				catch (Exception e) { }
-			}
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
+	
+	public void test(String contextPath) {
+		List<Date> dates = new ArrayList<Date>();
+		Date date = new Date(1597622400328l);
+		dates.add(date);
+		dates.add(date);
+		User user1 = new User("nemanja", "nemanja", "Nemanja", "Dimitrijevic", Gender.MALE, Role.ADMIN);
+		User user2 = new User("jovana", "jovana", "Jovana", "Jovanovic", Gender.FEMALE, Role.HOST);
+		Comment comm = new Comment(0, user2, new Apartment(), "Tekst komentara", Grade.FOUR);
+		List<Comment> comments = new ArrayList<Comment>();
+		comments.add(comm);
+		Amenity amenity1 = new Amenity(0, "Amenity 1");
+		Amenity amenity2 = new Amenity(1, "Amenity 2");
+		List<Amenity> amenities = new ArrayList<Amenity>();
+		amenities.add(amenity1);
+		amenities.add(amenity2);
+		Reservation reservation = new Reservation(0, new Apartment(), date, 10, 10000.0, "Poruka rezervacije", user2, ReservationStatus.ACCEPTED);
+		List<Reservation> reservations = new ArrayList<Reservation>();
+		reservations.add(reservation);
+		reservations.add(reservation);
+		Apartment ap1 = new Apartment(1, ApartmentType.ROOM, 3, 2, new Location(123, 123, new Address("Ulica", "Grad", 2222)), dates, dates, user1, comments, new ArrayList<Image>(), 100.0, date, date, ApartmentStatus.ACTIVE, amenities, reservations);
 		
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {
+			mapper.writeValue(Paths.get(contextPath + "repositories/apartments.json").toFile(), ap1);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	private List<Reservation> getReservationFromCommaSeparatedString(String commaSeparatedReservationsIds) {
+	/*	private List<Reservation> getReservationFromCommaSeparatedString(String commaSeparatedReservationsIds) {
 		String[] reservationsIds = commaSeparatedReservationsIds.split(",");
 		List<Reservation> retVal = new ArrayList<Reservation>();
 		
@@ -140,7 +162,7 @@ public class ApartmentDAO {
 		Address address = new Address(street,city,postalCode);
 		return new Location(latitude,longitude,address);
 	}
-
+*/
 	private List<Date> getDatesFromString(String commaSeparatedTime) {
 		
 		String[] ticks = commaSeparatedTime.split(",");
@@ -148,6 +170,17 @@ public class ApartmentDAO {
 		for (String tick : ticks) {
 			Date date = new Date(Long.parseLong(tick));
 			retVal.add(date);
+		}
+		return retVal;
+	}
+	
+	public List<Apartment> getApartmentsFromCommaSeparatedString(String commaSeparatedApartmentsIds) {
+		String[] apartmentsIds = commaSeparatedApartmentsIds.split(",");
+		List<Apartment> retVal = new ArrayList<Apartment>();
+		
+		for (String apartmentId : apartmentsIds) {
+			long id = Long.parseLong(apartmentId);
+			retVal.add(this.findApartment(id));
 		}
 		return retVal;
 	}

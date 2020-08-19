@@ -3,6 +3,10 @@ package beans;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonManagedReference;
+
 public class User {
 	private String username;
 	private String password;
@@ -10,8 +14,11 @@ public class User {
 	private String surname;
 	private Gender gender;
 	private Role role;
+	@JsonIgnore
 	private List<Apartment> apartmentsToRent;
+	@JsonIgnore
 	private List<Apartment> rentedApartments;
+	@JsonIgnore
 	private List<Reservation> reservations;
 	//Odvojiti klase za admina, gosta, domacina umesto atributa role?
 	

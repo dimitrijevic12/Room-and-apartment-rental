@@ -1,10 +1,16 @@
 package DAO;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.util.List;
+
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import beans.Amenity;
 
@@ -43,7 +49,7 @@ public class AmenityDAO {
 	
 	
 	
-	private void loadAmenities(String contextPath) {
+/*	private void loadAmenities(String contextPath) {
 		BufferedReader in = null;
 		try {
 			File file = new File(contextPath + "repositories/amenities.txt");
@@ -77,6 +83,48 @@ public class AmenityDAO {
 		}
 		
 	}
-
+*/
+	
+	private void loadAmenities(String contextPath) {
+		
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			
+			List<Amenity> amenitiesList = Arrays.asList(mapper.readValue(Paths.get(contextPath + "repositories/amenities.json").toFile(), Amenity[].class));
+			
+			for(Amenity amenity : amenitiesList) {
+				amenities.put(amenity.getId(), amenity);
+			}
+			  
+			
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void test(String contextPath) {
+		Amenity amenity1 = new Amenity(0, "Amenity1");
+		Amenity amenity2 = new Amenity(1, "Amenity2");
+		
+		List<Amenity> amenities = new ArrayList<Amenity>();
+		amenities.add(amenity1);
+		amenities.add(amenity2);
+		
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			File path = Paths.get(contextPath + "repositories/amenities.json").toFile();
+			mapper.writeValue(path, amenities);
+		}
+		catch (Exception ex) {
+		    ex.printStackTrace();
+		}
+	}
 	
 }

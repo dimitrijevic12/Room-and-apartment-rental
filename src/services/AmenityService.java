@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -38,6 +39,15 @@ public class AmenityService {
 	public Collection<Amenity> getAmenities(){
 		AmenityDAO dao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
 		return dao.findAll();
+	}
+	
+	@POST
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void writeAmenities(){
+		AmenityDAO dao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
+		String contextPath = ctx.getRealPath("");
+		dao.test(contextPath);
 	}
 	
 }
