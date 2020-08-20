@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -47,5 +48,14 @@ public class CommentService {
 	public Comment findOne(@PathParam("id") Long id) {
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		return dao.findComment(id);
+	}
+	
+	@POST
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void test() {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		String contextPath = ctx.getRealPath("");
+		dao.firstInsert(contextPath);
 	}
 }
