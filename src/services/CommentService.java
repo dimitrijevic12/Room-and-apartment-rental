@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -55,7 +56,14 @@ public class CommentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public void test() {
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
-		String contextPath = ctx.getRealPath("");
-		dao.write(contextPath);
+		dao.write();
+	}
+	
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Comment delete(@PathParam("id") long id) {
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		return dao.delete(id);
 	}
 }

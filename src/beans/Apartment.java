@@ -2,11 +2,10 @@ package beans;
 
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonManagedReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Apartment {
 	private ApartmentType type;
@@ -23,6 +22,7 @@ public class Apartment {
 	private Date checkOutTime;
 	private ApartmentStatus status;
 	private List<Amenity> amenities;
+	@JsonIgnore
 	private List<Reservation> reservations;
 	private long id;
 	

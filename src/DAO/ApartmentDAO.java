@@ -14,19 +14,20 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-
 import beans.Apartment;
 
 
 public class ApartmentDAO{
 	private HashMap<Long,Apartment> apartments = new HashMap<Long,Apartment>();
+	private String path;
 	
 	public ApartmentDAO() {
 		
 	}
 	
 	public ApartmentDAO(String contextPath) {
-		loadApartments(contextPath);
+		path = contextPath + "repositories/apartments.json";
+		loadApartments();
 	}
 
 	public Collection<Apartment> getAll(){
@@ -34,12 +35,12 @@ public class ApartmentDAO{
 	}
 	
 	public Apartment findApartment(long id) {
-		return apartments.get(id);
+		return (apartments.containsKey(id) && apartments.get(id).getId()!=-1)? apartments.get(id): null;
 	}
 	
-	private void loadApartments(String contextPath) {
+	private void loadApartments() {
 		try {
-			apartments = new ObjectMapper().readValue(Paths.get(contextPath + "repositories/apartments.json").toFile(), new TypeReference<Map<Long, Apartment>>() { });
+			apartments = new ObjectMapper().readValue(Paths.get(path).toFile(), new TypeReference<Map<Long, Apartment>>() { });
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -49,11 +50,11 @@ public class ApartmentDAO{
 		}
 	}
 	
-	public void write(String contextPath) {
+	public void write() {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {
-			mapper.writeValue(Paths.get(contextPath + "repositories/apartments.json").toFile(), apartments);
+			mapper.writeValue(Paths.get(path).toFile(), apartments);
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -76,5 +77,15 @@ public class ApartmentDAO{
 		return retVal;
 	}
 	
+	
+	public Apartment delete(long id) {
+		if(apartments.containsKey(id)) {
+			Apartment deletedApartmant = apartments.get(id);
+			deletedApartmant.setId(-1);
+			write();
+			return deletedApartmant;
+		}
+		return null;
+	}
 	
 }

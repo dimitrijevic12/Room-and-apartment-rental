@@ -20,20 +20,22 @@ import beans.User;
 
 public class UserDAO {
 	private HashMap<String, User> users = new HashMap<String, User>(); 
+	private String path;
 	
 	public UserDAO() {
 
 	}
 
 	public UserDAO(String contextPath) {
-		loadUsers(contextPath);
+		path = contextPath + "repositories/users.json";
+		loadUsers();
 	}
 	
 
 	
-	private void loadUsers(String contextPath) {
+	private void loadUsers() {
 		try {	
-			users = new ObjectMapper().readValue(Paths.get(contextPath + "repositories/users.json").toFile(), new TypeReference<Map<String, User>>() { });
+			users = new ObjectMapper().readValue(Paths.get(path).toFile(), new TypeReference<Map<String, User>>() { });
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -48,15 +50,15 @@ public class UserDAO {
 	}
 	
 	public User getUserByUsername(String username) {
-		return users.containsKey(username)? users.get(username) : null;
+		return (users.containsKey(username) && !users.get(username).getUsername().equals(""))? users.get(username): null;
 	}
 	
-	public void write(String contextPath) {
+	public void write() {
 		
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {
-			mapper.writeValue(Paths.get(contextPath + "repositories/users.json").toFile(), users);
+			mapper.writeValue(Paths.get(path).toFile(), users);
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -101,4 +103,16 @@ public class UserDAO {
 		
 		return reservations;
 	}
+	
+	public User delete(String username) {
+		if(users.containsKey(username)) {
+			User deletedUser = users.get(username);
+			deletedUser.setUsername("");
+			write();
+			return deletedUser;
+		}
+		return null;
+	}
+	
+	
 }

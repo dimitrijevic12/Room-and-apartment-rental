@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -55,7 +56,15 @@ public class ApartmentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public void test() {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
-		String contextPath = ctx.getRealPath("");
-		dao.write(contextPath);
+		dao.write();
 	}
+	
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Apartment delete(@PathParam("id") Long id) {
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		return dao.delete(id);
+	}
+	
 }
