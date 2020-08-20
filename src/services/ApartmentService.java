@@ -56,6 +56,6 @@ public class ApartmentService {
 	public void test() {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		String contextPath = ctx.getRealPath("");
-		dao.test(contextPath);
+		dao.write(contextPath);
 	}
 }

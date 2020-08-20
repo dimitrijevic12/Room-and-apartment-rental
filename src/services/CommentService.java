@@ -56,6 +56,6 @@ public class CommentService {
 	public void test() {
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		String contextPath = ctx.getRealPath("");
-		dao.firstInsert(contextPath);
+		dao.write(contextPath);
 	}
 }
