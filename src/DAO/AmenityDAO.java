@@ -14,6 +14,7 @@ import beans.Amenity;
 
 public class AmenityDAO {
 	private HashMap<Long, Amenity> amenities = new HashMap<Long,Amenity>();
+	private String path;
 
 	
 	public AmenityDAO() {
@@ -21,7 +22,8 @@ public class AmenityDAO {
 	}
 	
 	public AmenityDAO(String contextPath) {
-		loadAmenities(contextPath);
+		path = contextPath + "repositories/amenities.json";
+		loadAmenities();
 	}
 
 	
@@ -30,7 +32,7 @@ public class AmenityDAO {
 	}
 	
 	public Amenity findAmenity(long id) {
-		return amenities.containsKey(id)? amenities.get(id) : null;
+		return (amenities.containsKey(id) && amenities.get(id).getId()!=-1)? amenities.get(id): null;
 	}
 	
 	public Amenity save(Amenity amenity) {
@@ -46,10 +48,10 @@ public class AmenityDAO {
 	
 
 	
-	private void loadAmenities(String contextPath) {
+	private void loadAmenities() {
 		
 		try {
-			amenities = new ObjectMapper().readValue(Paths.get(contextPath + "repositories/amenities.json").toFile(), new TypeReference<Map<Long, Amenity>>() { });			
+			amenities = new ObjectMapper().readValue(Paths.get(path).toFile(), new TypeReference<Map<Long, Amenity>>() { });			
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -59,22 +61,23 @@ public class AmenityDAO {
 		}
 	}
 	
-	public void write (String contextPath) {
-		/*Amenity a1 = new Amenity(0, "WIFI");
-		Amenity a2 = new Amenity(1, "Klima");
-		Amenity a3 = new Amenity(2, "Krevet");
-		
-		HashMap<Long, Amenity> firstAmenities = new HashMap<Long,Amenity>();
-		firstAmenities.put(a1.getId(), a1);
-		firstAmenities.put(a2.getId(), a2);
-		firstAmenities.put(a3.getId(), a3);
-		*/
+	public void write() {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			mapper.writeValue(Paths.get(contextPath+"repositories/amenities.json").toFile(), amenities);
+			mapper.writeValue(Paths.get(path).toFile(), amenities);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public Amenity delete(long id) {
+		if(amenities.containsKey(id)) {
+			Amenity deletedAmenity = amenities.get(id);
+			deletedAmenity.setId(-1);
+			write();
+			return deletedAmenity;
+		}
+		return null;
 	}
 	
 }

@@ -13,15 +13,17 @@ import beans.Comment;
 public class CommentDAO {
 	
 	private HashMap<Long, Comment> comments = new HashMap<Long, Comment>();
+	private String path;
 
 	public CommentDAO(String contextPath) {
-		loadComments(contextPath);
+		path = contextPath + "repositories/comments.json";
+		loadComments();
 	}
 	
 	
-	private void loadComments(String contextPath) {
+	private void loadComments() {
 		try {
-			comments = new ObjectMapper().readValue(Paths.get(contextPath + "repositories/comments.json").toFile(), new TypeReference<Map<Long, Comment>>() { });
+			comments = new ObjectMapper().readValue(Paths.get(path).toFile(), new TypeReference<Map<Long, Comment>>() { });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -32,17 +34,27 @@ public class CommentDAO {
 	}
 	
 	public Comment findComment(long id) {
-		return comments.containsKey(id)? comments.get(id): null;
+		return (comments.containsKey(id) && comments.get(id).getId()!=-1)? comments.get(id): null;
 	}
 	
 	
-	public void write(String contextPath) {
+	public void write() {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			mapper.writeValue(Paths.get(contextPath + "repositories/comments.json").toFile(), comments);
+			mapper.writeValue(Paths.get(path).toFile(), comments);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public Comment delete(long id) {
+		if(comments.containsKey(id)) {
+			Comment deletedComment = comments.get(id);
+			deletedComment.setId(-1);
+			write();
+			return deletedComment;
+		}
+		return null;
 	}
 }

@@ -2,11 +2,9 @@ package beans;
 
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
 
 public class Reservation {
 	private long id;
-	@JsonBackReference
 	private Apartment apartment;
 	private Date checkInDate;
 	private int nightCount;
