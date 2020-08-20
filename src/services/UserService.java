@@ -88,6 +88,6 @@ public class UserService {
 	public void test(String contextpath){
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		String contextPath = ctx.getRealPath("");
-		dao.test(contextPath);
+		dao.write(contextPath);
 	}
 }

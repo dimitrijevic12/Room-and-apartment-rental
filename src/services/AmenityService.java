@@ -47,7 +47,7 @@ public class AmenityService {
 	public void writeAmenities(){
 		AmenityDAO dao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
 		String contextPath = ctx.getRealPath("");
-		dao.test(contextPath);
+		dao.write(contextPath);
 	}
 	
 }
