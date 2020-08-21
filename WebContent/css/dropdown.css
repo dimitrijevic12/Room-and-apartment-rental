@@ -1,0 +1,94 @@
+/* Dropdown button */
+.dropdown .dropbtn {
+  position: relative;
+  color: #113E60;
+  padding: 20px 26px;
+  text-decoration: none;
+  font-size: 20px;
+  font-family: 'Times New Roman', Georgia, serif;
+  border: #FFFFFF;
+  background-color: #FFFFFF;
+  outline: none;
+  display: block;
+}
+
+.dropdown img{
+  margin-right: 5px;
+  margin-top: -10px;
+  vertical-align: middle;
+}
+
+.dropdown button:hover {
+  background-color: #E5F4FF;
+  color: #113E60;
+}
+
+.dropdown {
+  position: absolute;
+  right: 10px;
+  display: block;
+  float: right;
+}
+
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #FFFFFF;
+  width: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  right: 15px;
+  top: 62px;
+}
+
+.dropdown-content-show {
+  display: block;
+  position: absolute;
+  background-color: #FFFFFF;
+  width: 100%;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  right: 15px;
+  top: 62px;
+}
+
+.dropdown-content-show button{
+	display: block;
+	position: relative;
+	color: #113E60;
+	text-decoration: none;
+	font-size: 20px;
+	font-family: 'Times New Roman', Georgia, serif;
+	color: #113E60;;
+	background-color: #FFFFFF;
+	right: 0;
+	width: 100%;
+}
+
+.dropdown-content-show button:not(:last-child) {
+  border-bottom: none; /* Prevent double borders */
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+
+.dropdown .outside {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}

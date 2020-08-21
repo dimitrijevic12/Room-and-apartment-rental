@@ -13,13 +13,3 @@ var app = new Vue({
 	router,
 	el: '#general'
 });
-
-new Vue({
-	el: '#topnav',
-	data : {
-		isActive : ''
-	},
-	mounted : function(){
-		this.isActive = 'home'
-	}
-});
