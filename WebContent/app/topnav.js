@@ -25,7 +25,6 @@ var App = new Vue({
 	},
 	methods : {
 		openDropdown : function() {
-//			this.$refs.myDropdown.classList.toggle("show");
 			if(this.$refs.myDropdown.classList.contains("dropdown-content-show")){
 				this.$refs.myDropdown.classList.remove("dropdown-content-show");
 			}
@@ -34,11 +33,13 @@ var App = new Vue({
 			}		
 		},
 		closeDropdown : function(){
-//			if(this.$refs.myDropdown.classList.contains("dropdown-content.show")){
-//				alert("postoji");
-//			}
-//			this.$refs.myDropdown.classList.replace("dropdown-content.show", "dropdown-content");
 			this.$refs.myDropdown.classList.remove("dropdown-content-show");
+		},
+		openSignUpPopup : function(){
+			this.$refs.myModal.classList.add("modal-show");
+		},
+		closeSignUpPopup : function(){
+			this.$refs.myModal.classList.remove("modal-show");
 		}
 	}
 });

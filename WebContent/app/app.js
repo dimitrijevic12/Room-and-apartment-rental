@@ -9,7 +9,25 @@ const router = new VueRouter({
 	  ]
 });
 
+//const openSignUpPopup = function(){
+//	this.$refs.modal.add("modal-show");
+//};
+
 var app = new Vue({
 	router,
-	el: '#general'
+	el: '#general',
+	mounted(){
+/*		this.$root.$on('popup', (text) => {
+//			this.$refs.myModal.classList.add("modal-show");
+			alert(text);
+		});*/
+		bus.$on('send', (text) => {
+    	this.text = text;
+    })
+	},
+	methods : {
+		closeSignUpPopup : function(){
+			this.$refs.myModal.classList.remove("modal-show");
+		}
+	}
 });
