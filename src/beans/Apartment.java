@@ -15,7 +15,7 @@ public class Apartment {
 	private List<Date> approvedDates;
 	private List<Date> availableDates;
 	private User host;
-	private List<Comment> comment;
+	private List<Comment> comments;
 	private List<Image> images;
 	private double price;
 	private Date checkInTime;
@@ -35,7 +35,7 @@ public class Apartment {
 		this.approvedDates = new ArrayList<Date>();
 		this.availableDates = new ArrayList<Date>();
 		this.host = new User();
-		this.comment = new ArrayList<Comment>();
+		this.comments = new ArrayList<Comment>();
 		this.images = new ArrayList<Image>();
 		this.price = 0;
 		this.checkInTime = new Date();
@@ -58,7 +58,7 @@ public class Apartment {
 		this.approvedDates = approvedDates;
 		this.availableDates = availableDates;
 		this.host = host;
-		this.comment = comment;
+		this.comments = comment;
 		this.images = images;
 		this.price = price;
 		this.checkInTime = checkInTime;
@@ -134,11 +134,11 @@ public class Apartment {
 	}
 
 	public List<Comment> getComment() {
-		return comment;
+		return comments;
 	}
 
 	public void setComment(List<Comment> comment) {
-		this.comment = comment;
+		this.comments = comment;
 	}
 
 	public List<Image> getImages() {
@@ -195,6 +195,27 @@ public class Apartment {
 
 	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
+	}
+		
+	public Amenity removeAmenity(long amenityId) {
+		for(Amenity amenity : amenities) {
+			if(amenity.getId() == amenityId) {
+				amenities.remove(amenity);
+				return amenity;
+			}
+		}
+		return null;
+	}
+
+	public Comment removeComment(long commentId) {
+		for(Comment comment : comments) {
+			if(comment.getId() == commentId) {
+				comments.remove(comment);
+				return comment;
+			}
+		}
+		return null;
+		
 	}
 	
 	

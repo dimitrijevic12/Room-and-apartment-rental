@@ -1,8 +1,10 @@
 package DAO;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonParseException;
@@ -31,6 +33,14 @@ public class AmenityDAO {
 		return amenities.values();
 	}
 	
+	public Collection<Amenity> findAllUndeleted(){
+		List<Amenity> result = new ArrayList<Amenity>();
+		for(long id: amenities.keySet()) {
+			if(amenities.get(id).getId()!=-1) result.add(amenities.get(id));
+		}
+		return result;
+	}
+	
 	public Amenity findAmenity(long id) {
 		return (amenities.containsKey(id) && amenities.get(id).getId()!=-1)? amenities.get(id): null;
 	}
@@ -38,11 +48,13 @@ public class AmenityDAO {
 	public Amenity save(Amenity amenity) {
 		long maxId = -1;
 		for(long id : amenities.keySet()) {
+			if(amenities.get(id).getId()==-1) break;
 			if(maxId<id) maxId=id;
 		}
 		maxId++;
 		amenity.setId(maxId);
 		amenities.put(amenity.getId(),amenity);
+		write();
 		return amenity;
 	}
 	

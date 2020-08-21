@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -84,7 +85,7 @@ public class UserService {
 	}
 	
 	@POST
-	@Path("/")
+	@Path("/write")
 	@Produces(MediaType.APPLICATION_JSON)
 	public void test(String contextpath){
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
@@ -98,5 +99,14 @@ public class UserService {
 	public User delete(@PathParam("username") String username) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		return dao.delete(username);
+	}
+	
+	@POST
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User addUser(User user) {
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		return dao.save(user);
 	}
 }

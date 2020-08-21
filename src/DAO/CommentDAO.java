@@ -1,8 +1,10 @@
 package DAO;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -29,8 +31,16 @@ public class CommentDAO {
 		}
 	}
 
-	public Collection<Comment> getAll(){
+	public Collection<Comment> findAll(){
 		return comments.values();
+	}
+	
+	public Collection<Comment> findAllUndeleted(){
+		List<Comment> result = new ArrayList<Comment>();
+		for(long id: comments.keySet()) {
+			if(comments.get(id).getId()!=-1) result.add(comments.get(id));
+		}
+		return result;
 	}
 	
 	public Comment findComment(long id) {

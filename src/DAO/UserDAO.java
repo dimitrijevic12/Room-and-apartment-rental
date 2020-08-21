@@ -114,5 +114,11 @@ public class UserDAO {
 		return null;
 	}
 	
-	
+	public User save(User user) {
+		if(users.containsKey(user.getUsername())) return users.get(user.getUsername()); //TODO odrediti sta ce se desiti ako postoji vec korisnik sa unetim username
+		
+		users.put(user.getUsername(),user);
+		write();
+		return user;
+	}
 }

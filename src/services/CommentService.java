@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import DAO.ApartmentDAO;
 import DAO.CommentDAO;
 import beans.Comment;
 
@@ -32,6 +33,18 @@ public class CommentService {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("commentDAO", new CommentDAO(contextPath));
 		}
+		if(ctx.getAttribute("apartmentDAO") == null) { //TODO da li ovo treba ovde?
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
+		}
+	}
+	
+	@GET
+	@Path("/all")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Comment> getAllComments(){
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		return dao.findAll();
 	}
 	
 	@GET
@@ -39,7 +52,7 @@ public class CommentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Comment> getComments(){
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
-		return dao.getAll();
+		return dao.findAllUndeleted();
 	}
 	
 	@GET
@@ -63,7 +76,13 @@ public class CommentService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Comment delete(@PathParam("id") long id) {
+		ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		
+		if(dao.findComment(id)== null) return null;
+		
+		apartmentDAO.deleteComment(id);
+		apartmentDAO.write();
 		return dao.delete(id);
 	}
 }

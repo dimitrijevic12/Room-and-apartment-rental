@@ -1,0 +1,1 @@
+{"1":{"id":1,"guest":{"username":"nemanja","password":"nemanja","name":"Nemanja","surname":"Dimitrijevic","gender":"MALE","role":"ADMIN"},"text":"Ovo je tekst komentara","grade":"THREE"},"2":{"id":2,"guest":{"username":"jovana","password":"jovana","name":"Jovana","surname":"Jovanovic","gender":"FEMALE","role":"HOST"},"text":"Ovo je tekst drugog komentara","grade":"ONE"}}
