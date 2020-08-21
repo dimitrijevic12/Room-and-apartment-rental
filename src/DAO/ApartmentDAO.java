@@ -88,4 +88,16 @@ public class ApartmentDAO{
 		return null;
 	}
 	
+	public void deleteAmenity(long amenityId) {
+		for(Long id : apartments.keySet()) {
+			apartments.get(id).removeAmenity(amenityId);
+		}
+	}
+	
+	public void deleteComment(long commentId) {
+		for(Long id : apartments.keySet()) {
+			apartments.get(id).removeComment(commentId);
+		}
+	}
+	
 }
