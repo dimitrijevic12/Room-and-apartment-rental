@@ -19,6 +19,7 @@ import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Apartment;
 import beans.User;
+import beans.UsernameAndPassword;
 
 @Path("/users")
 public class UserService {
@@ -108,5 +109,14 @@ public class UserService {
 	public User addUser(User user) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		return dao.save(user);
+	}
+	
+	@POST
+	@Path("/login")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User loginUser(UsernameAndPassword usernameAndPassword) {
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		return dao.loginUser(usernameAndPassword);
 	}
 }

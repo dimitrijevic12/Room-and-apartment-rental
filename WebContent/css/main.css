@@ -120,12 +120,61 @@ body {
 }
 
 /* Modal Content/Box */
-.modal-content {
+.signUpModal-content {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 5% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 35%; /* Could be more or less, depending on screen size */
+  text-decoration: none;
+  font-size: 20px;
+  font-family: 'Times New Roman', Georgia, serif;
+}
+
+.signUpModal-content label{
+  width:100px;
+  margin-bottom: 20px;
+  margin-left: 20%;
+  text-align: left;
+  display:inline-block;
+}
+
+.signUpModal-content .radioLabel{
+  width:50px;
+  margin-bottom: 20px;
+  margin-left: 0%;
+  text-align: left;
+  display:inline-block;
+}
+
+.signUpModal-content input{
+  margin-bottom: 20px;
+  margin-left: 5px;
+  text-align: left;
+  font-size: 20px;
+  font-family: 'Times New Roman', Georgia, serif;
+  border-radius: 5%;
+}
+
+.signUpModal-content button{
+  position: relative;
+  margin-left: 20%;
+  margin-bottom: 5%;
+  margin-top: 15px;
+  background-color: #113E60;
+  color: white;
+  padding: 15px 140px;
+  text-decoration: none;
+  font-size: 20px;
+  font-family: 'Times New Roman', Georgia, serif;
+  border: #FFFFFF;
+  outline: none;
+  text-align: center;
+}
+
+.topnav button:hover {
+  background-color: #113E60;
+  color: white;
 }
 
 /* The Close Button */
