@@ -125,11 +125,21 @@ public class UserDAO {
 	
 	public User loginUser(UsernameAndPassword usernameAndPassword) {
 		User user = getUserByUsername(usernameAndPassword.getUsername());
+		if(user == null) return null;
 		if(!user.getPassword().equals(usernameAndPassword.getPassword())) {
-			user = null;
+			return null;
 		}
 		
 		
 		return user;
+	}
+	
+	public User editUser(User user) {
+		User userToEdit = getUserByUsername(user.getUsername());
+		userToEdit = user;
+		users.put(userToEdit.getUsername(), userToEdit);
+		write();
+		
+		return userToEdit;
 	}
 }

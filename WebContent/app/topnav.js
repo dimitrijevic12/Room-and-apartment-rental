@@ -16,7 +16,70 @@ Vue.directive('click-outside', {
   },
 });
 
-Vue.component('signup-popup',{
+
+
+var editProfileComponent = Vue.component('edit-profile-popup',{
+	template: `
+		<div id="edit-profile-modal" class="modal" ref="editProfileModal">
+
+			<!-- Modal content -->
+			<div id="edit-profile-modal-content" class="signUpModal-content">
+				<span @click="closeEditProfilePopup" class="close">&times;</span><br/><br/>
+				<label>Username:</label>
+				<label>{{ user.username }}</label>
+				<label>Password:</label>
+				<input type="text" v-model="user.password"/><br/>
+				<label>Name:</label>
+				<input type="text" v-model="user.name"/><br/>
+				<label>Surname:</label>
+				<input type="text" v-model="user.surname"/><br/>
+				<label>Gender:</label>
+				<input type="radio" id="genderMale" value="MALE" v-model="user.gender">
+				<label for="genderMale" class="radioLabel">Male</label>
+				<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
+				<label for="genderFemale" class="radioLabel">Female</label><br/>
+				<button @click="editUser(user)">Submit</button>
+			</div>
+
+		</div>
+	`,
+	data : function(){
+		return {
+			user: {
+				username : '',
+				password : '',
+				name : '',
+				surname : '',
+				gender : '',
+				role : 'GUEST'
+			}
+		}
+	},
+	mounted: function(){
+		this.$root.$on('open-edit-profile-modal', (user) => {this.$refs.editProfileModal.classList.add("modal-show");
+															 console.log(user);
+															 this.user = user});
+	},
+	methods : {
+		closeEditProfilePopup : function(){
+			this.$refs.editProfileModal.classList.remove("modal-show");
+		},
+		editUser : function(user){
+			let self = this;
+			axios
+				.put("rest/users", user)
+				.then(function(response) 	{	if(response.data !== ''){
+													this.$cookies.set('user', response.data, 30);
+													this.App.$root.$emit('cookie-attached');
+												}
+											});
+			self.user = {};
+			this.$refs.editProfileModal.classList.remove("modal-show");
+		}
+	}
+});
+
+var signupComponent = Vue.component('signup-popup',{
 	template: `
 		<div id="signup-modal" class="modal" ref="signupModal">
 
@@ -36,11 +99,6 @@ Vue.component('signup-popup',{
 				<label for="genderMale" class="radioLabel">Male</label>
 				<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
 				<label for="genderFemale" class="radioLabel">Female</label><br/>
-				<label>Role:</label>
-				<input type="radio" id="roleGuest" value="GUEST" v-model="user.role">
-				<label for="roleGuest" class="radioLabel">Guest</label>
-				<input type="radio" id="roleHost" value="HOST" v-model="user.role">
-				<label for="roleHost" class="radioLabel">Host</label><br/>
 				<button @click="createUser(user)">Submit</button>
 			</div>
 
@@ -54,7 +112,7 @@ Vue.component('signup-popup',{
 				name : '',
 				surname : '',
 				gender : '',
-				role : ''
+				role : 'GUEST'
 			}
 		}
 	},
@@ -66,18 +124,21 @@ Vue.component('signup-popup',{
 			this.$refs.signupModal.classList.remove("modal-show");
 		},
 		createUser : function(user){
+			let self = this;
 			axios
 				.post("rest/users", user)
-				.then(function(response) 	{	this.$cookies.set('user', response.data, 30);
-												this.App.$root.$emit('cookie-attached');
+				.then(function(response) 	{	if(response.data !== ''){
+													this.$cookies.set('user', response.data, 30);
+													this.App.$root.$emit('cookie-attached');
+												}	
 											});
-
+			self.user = {};
 			this.$refs.signupModal.classList.remove("modal-show");
 		}
 	}
 });
 
-Vue.component('signin-popup',{
+var signinComponent = Vue.component('signin-popup',{
 	template: `
 		<div id="signin-modal" class="modal" ref="signinModal">
 
@@ -107,14 +168,20 @@ Vue.component('signin-popup',{
 	methods : {
 		closeSignInPopup : function(){
 			this.$refs.signinModal.classList.remove("modal-show");
+			this._data.userLogin = {}
 		},
 		loginUser : function(userLogin){
-//			console.log(userLogin);
+			let self = this;
 			axios
 				.post("rest/users/login", userLogin)
-				.then(function(response)	{ 	this.$cookies.set('user', response.data, 30);
-												this.App.$root.$emit('cookie-attached');
+				.then(function(response)	{ 	if(response.data !== ''){
+													this.$cookies.set('user', response.data, 30);
+													console.log(this.$cookies.get('user'));
+													this.App.$root.$emit('cookie-attached');
+	//												if(response.data !== '') this.App.$root.$emit('mode-changed', response.data.role);
+												}
 											});
+			self.userLogin = {};						
 			this.$refs.signinModal.classList.remove("modal-show");
 		}
 	}
@@ -124,8 +191,14 @@ var App = new Vue({
 	el: '#topnav',
 	data : {
 		isActive : '',
+		mode : 'ANON',
 		dropdownActive : false,
-		profile : ''
+		profile : '',
+		history : window.history.length
+	},
+	components : {
+		'signinComponent' : signinComponent,
+		'signupComponent' : signupComponent
 	},
 	mounted : function(){
 		this.isActive = 'home';
@@ -141,7 +214,10 @@ var App = new Vue({
 			this.profile = 'Profile';
 		}else{
 			this.profile = temp.username;
+			this.mode = temp.role;
 		}
+
+		this.$root.$on('mode-changed', (role) => this.mode = role);
 		});
 	},
 	methods : {
@@ -163,9 +239,15 @@ var App = new Vue({
 		openSignInPopup : function(){
 			this.$root.$emit('open-signin-modal');
 		},
+		openEditProfile : function () {
+			let user = this.$cookies.get('user')
+			this.$root.$emit('open-edit-profile-modal', user)
+		},
 		logout : function(){
 			this.$cookies.remove('user');
 			this.$root.$emit('cookie-attached');
+			this.$root.$emit('mode-changed', 'ANON');
+//			this.$router.go(-(window.history. - 2));
 		}
 	}
 });

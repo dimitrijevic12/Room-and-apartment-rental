@@ -12,11 +12,5 @@ Vue.component("homepage",{
 		</form>
 	</div>
 </div>
-	`,
-	mounted(){
-		this.$root.$on('popup', (text) => {
-//			this.$refs.myModal.classList.add("modal-show");
-			console.log(text);
-		});
-	},
+	`
 })

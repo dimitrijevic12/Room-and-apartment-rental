@@ -2,7 +2,7 @@
 .dropdown .dropbtn {
   position: relative;
   color: #113E60;
-  padding: 20px 26px;
+  padding: 20px 40px;
   text-decoration: none;
   font-size: 20px;
   font-family: 'Times New Roman', Georgia, serif;
@@ -64,7 +64,7 @@
 	color: #113E60;;
 	background-color: #FFFFFF;
 	right: 0;
-	width: 100%;
+  width: 100%;
 }
 
 .dropdown-content-show button:not(:last-child) {
