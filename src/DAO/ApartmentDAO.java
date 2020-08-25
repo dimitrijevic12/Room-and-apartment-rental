@@ -38,6 +38,18 @@ public class ApartmentDAO{
 		return (apartments.containsKey(id) && apartments.get(id).getId()!=-1)? apartments.get(id): null;
 	}
 	
+	public Collection<Long> getApartmentsIdsFromHost(String username){
+		List<Long> result = new ArrayList<Long>();
+		for (Long apartmentId : apartments.keySet()) {
+			Apartment apartment = apartments.get(apartmentId);
+			if(apartment.isDeleted()) continue;
+			
+			if(apartment.getHost().getUsername().equals(username)) 
+				result.add(apartment.getId()) ;
+		}
+		return result;
+	}
+	
 	private void loadApartments() {
 		try {
 			apartments = new ObjectMapper().readValue(Paths.get(path).toFile(), new TypeReference<Map<Long, Apartment>>() { });

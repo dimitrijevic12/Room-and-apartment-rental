@@ -218,5 +218,9 @@ public class Apartment {
 		
 	}
 	
+	public boolean isDeleted() {
+		return id==-1;
+	}
+	
 	
 }
