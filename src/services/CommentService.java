@@ -17,7 +17,7 @@ import DAO.ApartmentDAO;
 import DAO.CommentDAO;
 import beans.Comment;
 
-@Path("/comments")
+@Path("/comments") 
 public class CommentService {
 	
 	@Context

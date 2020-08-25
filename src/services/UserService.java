@@ -1,6 +1,7 @@
 package services;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -38,6 +39,14 @@ public class UserService {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("userDAO", new UserDAO(contextPath));
 			//moguce resenje: u konstruktoru userDAO izbaciti load i pozvati je kao posebnu metodu
+		}
+		if(ctx.getAttribute("apartmentDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
+		}
+		if(ctx.getAttribute("reservationDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("reservationDAO", new ReservationDAO(contextPath));
 		}
 	}
 	
@@ -84,6 +93,16 @@ public class UserService {
 	public User findOne(@PathParam("username") String username) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		return dao.getUserByUsername(username);
+	}
+	
+	@GET
+	@Path("/guests/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<User> getAllGuestsForHost(@PathParam("username") String hostUsername){
+		ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		ReservationDAO reservationDAO = (ReservationDAO) ctx.getAttribute("reservationDAO");		
+		Collection<Long> apartmentsIds = apartmentDAO.getApartmentsIdsFromHost(hostUsername);
+		return reservationDAO.getGuestsFromApartments(apartmentsIds);
 	}
 	
 	@POST

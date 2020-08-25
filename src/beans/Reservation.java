@@ -101,4 +101,8 @@ public class Reservation {
 	public void setStatus(ReservationStatus status) {
 		this.status = status;
 	}
+	
+	public boolean isDeleted() {
+		return id==-1;
+	}
 }

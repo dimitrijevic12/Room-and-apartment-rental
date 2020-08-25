@@ -3,13 +3,15 @@ package DAO;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import beans.Reservation;
+import beans.User;
 
 
 
@@ -55,5 +57,25 @@ public class ReservationDAO {
 			return deletedReservation;
 		}
 		return null;
+	}
+	
+	public Set<User> getGuestsFromApartments(Collection<Long> apartmentsIds){
+		Set<User> result = new HashSet<User>();
+		for (Long reservationId : reservations.keySet()) {
+			Reservation reservation = reservations.get(reservationId);
+			if(reservation.isDeleted()) continue;
+			
+			if(isApartmansContainsReservation(reservation, apartmentsIds))
+				result.add(reservation.getGuest());
+		}
+		return result;
+		
+	}
+	
+	private boolean isApartmansContainsReservation(Reservation reservation,Collection<Long> apartmentsIds) {
+		for (Long id : apartmentsIds) {
+			if(reservation.getApartment().getId()==id) return true;
+		}
+		return false;
 	}
 }

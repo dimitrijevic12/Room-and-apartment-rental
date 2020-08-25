@@ -40,7 +40,6 @@ public class AmenityService {
 			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
 		}
 	}
-	
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
