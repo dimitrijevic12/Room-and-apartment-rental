@@ -178,6 +178,9 @@ var signinComponent = Vue.component('signin-popup',{
 													this.$cookies.set('user', response.data, 30);
 													console.log(this.$cookies.get('user'));
 													this.App.$root.$emit('cookie-attached');
+													if(response.data.role === 'ADMIN'){
+														location.href="#/users";	
+													}
 	//												if(response.data !== '') this.App.$root.$emit('mode-changed', response.data.role);
 												}
 											});
@@ -202,19 +205,19 @@ var App = new Vue({
 	},
 	mounted : function(){
 		this.isActive = 'home';
-		var temp = this.$cookies.get('user');
-		if(temp === null){
+
+		if(this.$cookies.get('user') === null){
 			this.profile = 'Profile';
 		}else{
-			this.profile = temp.username;
+			this.profile = this.$cookies.get('user').username;
+			this.mode = this.$cookies.get('user').role;
 		}
 		this.$root.$on('cookie-attached', function(){
-			var temp = this.$cookies.get('user');
-		if(temp === null){
+		if(this.$cookies.get('user') === null){
 			this.profile = 'Profile';
 		}else{
-			this.profile = temp.username;
-			this.mode = temp.role;
+			this.profile = this.$cookies.get('user').username;
+			this.mode = this.$cookies.get('user').role;
 		}
 
 		this.$root.$on('mode-changed', (role) => this.mode = role);
