@@ -13,7 +13,7 @@ const router = new VueRouter({
 		{ name: 'reservations', path: '/reservations', component: Reservations, meta: { requiresGuest: true } },
     { name: 'apartments', path: '/apartments', component: Apartments, meta: { requiresHost:true } },
     { name: 'guests', path: '/guests', component: Guests, meta: { requiresHost:true} },
-    { name: 'users', path: '/users', component: Users, meta: { requiresAdmin:true } }
+    { name: 'users', path: '/users', component: Users, meta: { requiresAdminOrHost:true } }
 	  ]
 });
 
@@ -47,6 +47,17 @@ router.beforeEach((to, from, next) => {
           next()
         }
     } else{
+      next({ name: 'home' })
+    }
+  }else if(to.meta.requiresAdminOrHost === true){
+      if(cookie !== null) {
+        if((cookie.role !== 'ADMIN') && (cookie.role !== 'HOST')) {
+          next({ name: 'home' })
+
+        }else{
+          next()
+        }
+      } else{
       next({ name: 'home' })
     }
   }else{

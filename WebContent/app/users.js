@@ -6,7 +6,7 @@ Vue.component('users',{
 				<td>{{u.name}}</td>
 				<td>{{u.surname}}</td>
 				<td>{{u.gender}}</td>
-				<td v-if="mode === 'admin'">{{u.role}}</td>
+				<td v-if="mode === 'ADMIN'">{{u.role}}</td>
 			</tr>
 		</table>
 	`,
@@ -19,6 +19,9 @@ Vue.component('users',{
 	mounted : function(){
 		if(this.$cookies.get('user').role === 'HOST'){
 			this.mode = 'HOST';
+			axios
+				.get('rest/users')
+				.then((response) => this.users = response.data)
 		}else{
 			this.mode = 'ADMIN';
 			axios
