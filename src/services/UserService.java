@@ -8,6 +8,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,6 +20,7 @@ import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Apartment;
 import beans.User;
+import beans.UsernameAndPassword;
 
 @Path("/users")
 public class UserService {
@@ -108,5 +110,23 @@ public class UserService {
 	public User addUser(User user) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		return dao.save(user);
+	}
+	
+	@POST
+	@Path("/login")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User loginUser(UsernameAndPassword usernameAndPassword) {
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		return dao.loginUser(usernameAndPassword);
+	}
+	
+	@PUT
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User editUser(User user) {
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		return dao.editUser(user);
 	}
 }

@@ -1,7 +1,7 @@
 body {
-  margin: 0%;
-  padding: 0%;
-  z-index: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 /* Add a black background color to the top navigation */
@@ -17,7 +17,7 @@ body {
   position: absolute;
   right: 15px;
   color: #113E60;
-  padding: 20px 26px;
+  padding: 20px 30px;
   text-decoration: none;
   font-size: 20px;
   font-family: 'Times New Roman', Georgia, serif;
@@ -69,7 +69,7 @@ body {
 
 .container {
   width: 100%;
-  height: 400px;
+  height: 100%;
   background-image: url("../images/tropical-beach.jpg");
   background-size: cover;
   background-repeat: no-repeat;
@@ -80,7 +80,7 @@ body {
 .home-search {
   text-align: center;
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -120,12 +120,61 @@ body {
 }
 
 /* Modal Content/Box */
-.modal-content {
+.signUpModal-content {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 5% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 35%; /* Could be more or less, depending on screen size */
+  text-decoration: none;
+  font-size: 20px;
+  font-family: 'Times New Roman', Georgia, serif;
+}
+
+.signUpModal-content label{
+  width:100px;
+  margin-bottom: 20px;
+  margin-left: 20%;
+  text-align: left;
+  display:inline-block;
+}
+
+.signUpModal-content .radioLabel{
+  width:50px;
+  margin-bottom: 20px;
+  margin-left: 0%;
+  text-align: left;
+  display:inline-block;
+}
+
+.signUpModal-content input{
+  margin-bottom: 20px;
+  margin-left: 5px;
+  text-align: left;
+  font-size: 20px;
+  font-family: 'Times New Roman', Georgia, serif;
+  border-radius: 5%;
+}
+
+.signUpModal-content button{
+  position: relative;
+  margin-left: 20%;
+  margin-bottom: 5%;
+  margin-top: 15px;
+  background-color: #113E60;
+  color: white;
+  padding: 15px 140px;
+  text-decoration: none;
+  font-size: 20px;
+  font-family: 'Times New Roman', Georgia, serif;
+  border: #FFFFFF;
+  outline: none;
+  text-align: center;
+}
+
+.topnav button:hover {
+  background-color: #113E60;
+  color: white;
 }
 
 /* The Close Button */

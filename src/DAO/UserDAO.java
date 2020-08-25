@@ -17,6 +17,7 @@ import org.codehaus.jackson.type.TypeReference;
 import beans.Apartment;
 import beans.Reservation;
 import beans.User;
+import beans.UsernameAndPassword;
 
 public class UserDAO {
 	private HashMap<String, User> users = new HashMap<String, User>(); 
@@ -120,5 +121,25 @@ public class UserDAO {
 		users.put(user.getUsername(),user);
 		write();
 		return user;
+	}
+	
+	public User loginUser(UsernameAndPassword usernameAndPassword) {
+		User user = getUserByUsername(usernameAndPassword.getUsername());
+		if(user == null) return null;
+		if(!user.getPassword().equals(usernameAndPassword.getPassword())) {
+			return null;
+		}
+		
+		
+		return user;
+	}
+	
+	public User editUser(User user) {
+		User userToEdit = getUserByUsername(user.getUsername());
+		userToEdit = user;
+		users.put(userToEdit.getUsername(), userToEdit);
+		write();
+		
+		return userToEdit;
 	}
 }
