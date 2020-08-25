@@ -247,6 +247,8 @@ var App = new Vue({
 			this.$cookies.remove('user');
 			this.$root.$emit('cookie-attached');
 			this.$root.$emit('mode-changed', 'ANON');
+			this.isActive = 'home';
+			location.href="#/";	
 //			this.$router.go(-(window.history. - 2));
 		}
 	}

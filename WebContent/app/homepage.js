@@ -12,5 +12,8 @@ Vue.component("homepage",{
 		</form>
 	</div>
 </div>
-	`
+	`,
+	mounted : function(){
+		console.log('Homepage mounted');
+	}
 })
