@@ -1,5 +1,6 @@
 package services;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
@@ -15,7 +16,11 @@ import javax.ws.rs.core.MediaType;
 
 import DAO.ApartmentDAO;
 import DAO.CommentDAO;
+import DAO.ReservationDAO;
+import DAO.UserDAO;
+import beans.Apartment;
 import beans.Comment;
+import beans.User;
 
 @Path("/comments") 
 public class CommentService {
@@ -36,6 +41,10 @@ public class CommentService {
 		if(ctx.getAttribute("apartmentDAO") == null) { //TODO da li ovo treba ovde?
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
+		}
+		if(ctx.getAttribute("userDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("userDAO", new UserDAO(contextPath));
 		}
 	}
 	
@@ -70,6 +79,16 @@ public class CommentService {
 	public void test() {
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		dao.write();
+	}
+	
+	@POST
+	@Path("/initialize")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void initialize(String contextpath){
+		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+		ApartmentDAO apartmentdao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
+		dao.initilazeFile(new ArrayList<User>(userDAO.getAll()), new ArrayList<Apartment>(apartmentdao.getAll()));
 	}
 	
 	@DELETE

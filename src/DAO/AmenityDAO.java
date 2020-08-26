@@ -92,4 +92,24 @@ public class AmenityDAO {
 		return null;
 	}
 	
+	public void initilazeFile() {
+		Amenity a1= new Amenity(0,"WIFI");
+		Amenity a2= new Amenity(1,"Klima");
+		Amenity a3= new Amenity(2,"Radio");
+		Amenity a4= new Amenity(3,"TV");
+		
+		
+		HashMap<Long, Amenity> amenitiesFake = new HashMap<Long,Amenity>();
+		amenitiesFake.put(a1.getId(),a1);
+		amenitiesFake.put(a2.getId(),a2);
+		amenitiesFake.put(a3.getId(),a3);
+		amenitiesFake.put(a4.getId(),a4);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mapper.writeValue(Paths.get(path).toFile(), amenitiesFake);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

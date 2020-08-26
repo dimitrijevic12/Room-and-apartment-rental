@@ -17,9 +17,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import DAO.ApartmentDAO;
+import DAO.CommentDAO;
 import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Apartment;
+import beans.Role;
 import beans.User;
 import beans.UsernameAndPassword;
 
@@ -47,6 +49,10 @@ public class UserService {
 		if(ctx.getAttribute("reservationDAO") == null) {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("reservationDAO", new ReservationDAO(contextPath));
+		}
+		if(ctx.getAttribute("commentDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("commentDAO", new CommentDAO(contextPath));
 		}
 	}
 	
@@ -119,6 +125,17 @@ public class UserService {
 	
 	public User delete(@PathParam("username") String username) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		User user = findOne(username);
+		if(user.getRole().equals(Role.HOST)) {
+			ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+			apartmentDAO.deleteHost(username);
+		}
+		else if(user.getRole().equals(Role.GUEST)) {
+			ReservationDAO reservationDAO = (ReservationDAO) ctx.getAttribute("reservationDAO");
+			CommentDAO commentDAO = (CommentDAO) ctx.getAttribute("commentDAO");
+			reservationDAO.deleteGuest(username);
+			commentDAO.deleteUser(username);
+		}
 		return dao.delete(username);
 	}
 	
@@ -138,6 +155,14 @@ public class UserService {
 	public User loginUser(UsernameAndPassword usernameAndPassword) {
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		return dao.loginUser(usernameAndPassword);
+	}
+	
+	@POST
+	@Path("/initialize")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void initialize() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		dao.initilazeFile();
 	}
 	
 	@PUT
