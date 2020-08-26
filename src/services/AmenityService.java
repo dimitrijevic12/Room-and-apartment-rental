@@ -86,4 +86,13 @@ public class AmenityService {
 		AmenityDAO dao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
 		return dao.save(amenity);
 	}
+	
+	
+	@POST
+	@Path("/initialize")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void initialize() {
+		AmenityDAO dao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
+		dao.initilazeFile();
+	}
 }

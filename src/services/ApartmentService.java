@@ -1,5 +1,6 @@
 package services;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
@@ -13,8 +14,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import DAO.AmenityDAO;
 import DAO.ApartmentDAO;
+import DAO.UserDAO;
+import beans.Amenity;
 import beans.Apartment;
+import beans.User;
 
 @Path("/apartments")
 public class ApartmentService {
@@ -31,6 +36,15 @@ public class ApartmentService {
 		if(ctx.getAttribute("apartmentDAO") == null) {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
+		}
+		if(ctx.getAttribute("userDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("userDAO", new UserDAO(contextPath));
+			//moguce resenje: u konstruktoru userDAO izbaciti load i pozvati je kao posebnu metodu
+		}
+		if(ctx.getAttribute("amenitiesDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("amenitiesDAO", new AmenityDAO(contextPath));
 		}
 	}
 	
@@ -52,12 +66,24 @@ public class ApartmentService {
 	}
 	
 	@POST
+	@Path("/initialize")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void initialize() {
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		AmenityDAO amenityDAO = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
+		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
+		dao.initilazeFile(new ArrayList<User>(userDAO.getAll()), new ArrayList<Amenity>(amenityDAO.findAll()));
+	}
+	
+	
+	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public void test() {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		dao.write();
 	}
+	
 	
 	@DELETE
 	@Path("/{id}")

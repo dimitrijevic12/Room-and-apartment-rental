@@ -14,8 +14,11 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import beans.Amenity;
 import beans.Apartment;
+import beans.Gender;
 import beans.Reservation;
+import beans.Role;
 import beans.User;
 import beans.UsernameAndPassword;
 
@@ -141,5 +144,31 @@ public class UserDAO {
 		write();
 		
 		return userToEdit;
+	}
+	
+	public void initilazeFile() {
+		User u1= new User("nemanja","admin","Nemanja","Dimitrijevic",Gender.MALE,Role.ADMIN);
+		User u2= new User("bozidar","test","Bozidar","Arsic",Gender.MALE,Role.ADMIN);
+		User u3= new User("marko","markicNarkic","Marko","Lazovic",Gender.MALE,Role.HOST);
+		User u4= new User("jelena","seka","Jelena","Stojanovic",Gender.FEMALE,Role.GUEST);
+		User u5= new User("marija","sekinaSeka","Marija","Stojanovic",Gender.FEMALE,Role.HOST);
+		User u6= new User("dzuca","taki","Tamara","Zuleva",Gender.FEMALE,Role.GUEST);
+		User u7= new User("nikola","nisi moj tip","Nikola","Brasno",Gender.MALE,Role.GUEST);
+		
+		HashMap<String, User> usersFake = new HashMap<String, User>(); 
+		
+		usersFake.put(u1.getUsername(), u1);
+		usersFake.put(u2.getUsername(), u2);
+		usersFake.put(u3.getUsername(), u3);
+		usersFake.put(u4.getUsername(), u4);
+		usersFake.put(u5.getUsername(), u5);
+		usersFake.put(u6.getUsername(), u6);
+		usersFake.put(u7.getUsername(), u7);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mapper.writeValue(Paths.get(path).toFile(), usersFake);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

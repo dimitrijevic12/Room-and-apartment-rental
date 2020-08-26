@@ -59,4 +59,8 @@ public class Comment {
 	public void setGrade(Grade grade) {
 		this.grade = grade;
 	}
+
+	public boolean isDeleted() {
+		return id==-1;
+	}
 }

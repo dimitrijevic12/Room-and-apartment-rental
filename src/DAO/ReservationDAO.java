@@ -1,16 +1,20 @@
 package DAO;
 
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import beans.Apartment;
 import beans.Reservation;
+import beans.ReservationStatus;
 import beans.User;
 
 
@@ -22,7 +26,7 @@ public class ReservationDAO {
 	
 	public ReservationDAO(String contextPath) {
 		path = contextPath + "repositories/reservations.json";
-		loadReservations();
+		//loadReservations();
 	}
 	
 	private void loadReservations() {
@@ -48,6 +52,7 @@ public class ReservationDAO {
 			e.printStackTrace();
 		}
 	}
+	
 	
 	public Reservation delete(long id) {
 		if(reservations.containsKey(id)) {
@@ -78,4 +83,39 @@ public class ReservationDAO {
 		}
 		return false;
 	}
+	
+	public void deleteGuest(String username) {
+		for(Long reservationId : reservations.keySet()) {
+			Reservation reservation = reservations.get(reservationId);
+			if(reservation.isDeleted()) continue;
+			
+			if(reservation.getGuest().getUsername().equals(username)) {
+				delete(reservation.getId());
+			}
+				
+		}
+	}
+	
+	public void initilazeFile(List<Apartment> ap,List<User> useri) {
+		ObjectMapper mapper = new ObjectMapper();
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.YEAR, 2020);
+		c.set(Calendar.MONTH,Calendar.NOVEMBER);
+		c.set(Calendar.DAY_OF_MONTH,22);
+		Reservation r1= new Reservation(0,ap.get(0),c.getTime(),7,3000,"Bilo je ludo i nezaboravno",useri.get(3),ReservationStatus.ACCEPTED);
+		Reservation r2= new Reservation(1,ap.get(0),c.getTime(),4,2400,"Kada jedem gumene medvedice prvo im odkinem glavu :(",useri.get(5),ReservationStatus.ACCEPTED);
+		Reservation r3= new Reservation(2,ap.get(1),c.getTime(),7,3000,"Dosao sam da veceram i prcim nesto, a vec sam veceraso",useri.get(6),ReservationStatus.DENIED);
+		Reservation r4= new Reservation(3,ap.get(0),c.getTime(),7,3000,"Kad vec ne mogu da spavam po tudjim sobama, moram i sam da uzmem jednu",useri.get(6),ReservationStatus.CREATED);
+		HashMap<Long, Reservation> reservationsFake = new HashMap<Long, Reservation>();
+		reservationsFake.put(r1.getId(), r1);
+		reservationsFake.put(r2.getId(), r2);
+		reservationsFake.put(r3.getId(), r3);
+		reservationsFake.put(r4.getId(), r4);
+		try {
+			mapper.writeValue(Paths.get(path).toFile(), reservations);
+		} catch (Exception e) {
+			System.out.println("Opet nesto zajebava");
+		}
+	}
+
 }
