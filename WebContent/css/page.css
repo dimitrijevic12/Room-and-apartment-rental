@@ -1,0 +1,137 @@
+.page-background {
+	background-image: url("../images/tropical-beach.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+	height: 100%;
+	margin: 0 auto
+}
+
+.page {
+	background-color: white;
+	background-size: cover;
+	width: 80%;
+	height: 100%;
+	margin: 0 auto;
+	overflow: auto;
+}
+
+.page-content {
+	background-color: white;
+	background-size: cover;
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-top: 5%;
+	position: relative;
+}
+
+.search-bar {
+	position: absolute;
+	width: 100%;
+	background-color: #f5f4f3;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	border-radius: 8px;
+}
+
+.filter-btn{
+	color: white;
+	background-color: #113E60;
+	border: #40647f;
+	border-radius: 5px;
+	height :45px;
+	width: 45px;
+	padding: 1px;
+	margin-right: 15px;
+	float: right;
+	outline: none;
+}
+
+.create-btn{
+	color: white;
+	background-color: #113E60;
+	border: #40647f;
+	border-radius: 5px;
+	height :45px;
+	width: 150px;
+	padding: 1px;
+	margin-right: 15px;
+	float: right;
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	font-size: 20px;
+	outline: none;
+}
+
+.search-bar img{
+	background-color: #113E60;
+	width: 40px;
+	height: 40px;
+}
+
+.label-input {
+	float: left;
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+.label-input label{
+	display: block;
+	background-color: white;
+	color: grey;
+	font-size: 16px;
+	padding-left: 8px;
+	border-radius: 5px 5px 0 0;
+	width: 150px;
+}
+
+.label-input input{
+	display: block;
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	font-size: 20px;
+	border: none;
+	outline: none;
+	padding-left: 8px;
+	border-radius: 0 0 5px 5px;
+	width: 149px;
+}
+
+.label-input select{
+	display: block;
+	text-decoration: none;
+	font-size: 20px;
+	font-family: 'Times New Roman', Georgia, serif;
+	outline: none;
+	border: none;
+	width: 158px;
+	padding-left: 5px;
+	border-radius: 0 0 5px 5px;
+}
+
+.users-table {
+	margin-top: 90px;
+	position: absolute;
+	background-color: #f5f4f3;
+	height: 100%;
+	width: 100%;
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	font-size: 20px;
+}
+
+tr:nth-child(even) {background-color: white;}
+
+tr:hover {background-color: #E5F4FF;}
+
+th, td{
+	padding: 5px 10px 10px 10px;
+}
+
+th{
+	background-color: #113E60;
+	color: white;
+	height: 60px;
+}
