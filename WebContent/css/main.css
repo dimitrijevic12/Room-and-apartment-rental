@@ -1,15 +1,16 @@
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* Add a black background color to the top navigation */
 .topnav {
-  background-color: #FFFFFF;
+  background-color: #fbfafa;
   overflow: visible;
   padding: 0%;
   margin: 0%;
+  height: 63px;
   position: relative;
 }
 
@@ -22,7 +23,7 @@ body {
   font-size: 20px;
   font-family: 'Times New Roman', Georgia, serif;
   border: #FFFFFF;
-  background-color: #FFFFFF;
+  background-color: #f5f4f3;
   outline: none;
 }
 
@@ -73,6 +74,7 @@ body {
   background-image: url("../images/tropical-beach.jpg");
   background-size: cover;
   background-repeat: no-repeat;
+  background-color: black;
   background-position: 50% 50%;
   position: relative;
 }

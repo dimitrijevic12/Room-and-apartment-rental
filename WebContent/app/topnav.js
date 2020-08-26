@@ -38,7 +38,8 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 				<label for="genderMale" class="radioLabel">Male</label>
 				<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
 				<label for="genderFemale" class="radioLabel">Female</label><br/>
-				<button @click="editUser(user)">Submit</button>
+				<button v-if="editMode==='user'" @click="editUser(user)">Submit</button>
+				<button v-if="editMode==='admin'" @click="editAdmin(user)">Submit</button>
 			</div>
 
 		</div>
@@ -52,13 +53,21 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 				surname : '',
 				gender : '',
 				role : 'GUEST'
-			}
+			},
+			editMode: ''
 		}
 	},
 	mounted: function(){
 		this.$root.$on('open-edit-profile-modal', (user) => {this.$refs.editProfileModal.classList.add("modal-show");
 															 console.log(user);
-															 this.user = user});
+															 this.user = user;
+															 this.editMode = "user"});
+		
+		this.$root.$on('open-edit-profile-table', (user) => {this.$refs.editProfileModal.classList.add("modal-show");
+															 console.log(this.$refs);
+															 this.user = user;
+															 this.editMode = "admin"});
+		// TODO: Proveri zasto pravi gresku iako radi, greska je this.$refs.editProfileModal is undefined
 	},
 	methods : {
 		closeEditProfilePopup : function(){
@@ -73,6 +82,13 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 													this.App.$root.$emit('cookie-attached');
 												}
 											});
+			self.user = {};
+			this.$refs.editProfileModal.classList.remove("modal-show");
+		},
+		editAdmin : function(user){
+			let self = this;
+			axios
+				.put("rest/users", user)
 			self.user = {};
 			this.$refs.editProfileModal.classList.remove("modal-show");
 		}
@@ -99,7 +115,13 @@ var signupComponent = Vue.component('signup-popup',{
 				<label for="genderMale" class="radioLabel">Male</label>
 				<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
 				<label for="genderFemale" class="radioLabel">Female</label><br/>
-				<button @click="createUser(user)">Submit</button>
+				<label>Role:</label>
+				<input type="radio" id="roleGuest" value="GUEST" v-model="user.role">
+				<label for="roleGuest" class="radioLabel">Guest</label>
+				<input type="radio" id="roleHost" value="HOST" v-model="user.role">
+				<label for="roleHost" class="radioLabel">Host</label><br/>
+				<button v-if="createMode==='user'" @click="signUpUser(user)">Submit</button>
+				<button v-if="createMode==='admin'" @click="createUser(user)">Submit</button>
 			</div>
 
 		</div>
@@ -113,17 +135,22 @@ var signupComponent = Vue.component('signup-popup',{
 				surname : '',
 				gender : '',
 				role : 'GUEST'
-			}
+			},
+			createMode: ''
 		}
 	},
 	mounted: function(){
-		this.$root.$on('open-signup-modal', () => this.$refs.signupModal.classList.add("modal-show"));
+		this.$root.$on('open-signup-modal', () => {this.$refs.signupModal.classList.add("modal-show");
+													this.createMode = 'user'});
+		this.$root.$on('open-create-user', () => {this.$refs.signupModal.classList.add("modal-show");
+													console.log(this.$refs);
+													this.createMode = 'admin'});
 	},
 	methods : {
 		closeSignUpPopup : function(){
 			this.$refs.signupModal.classList.remove("modal-show");
 		},
-		createUser : function(user){
+		signUpUser : function(user){
 			let self = this;
 			axios
 				.post("rest/users", user)
@@ -133,6 +160,12 @@ var signupComponent = Vue.component('signup-popup',{
 												}	
 											});
 			self.user = {};
+			this.$refs.signupModal.classList.remove("modal-show");
+		},
+		createUser : function(user){
+			let self = this;
+			axios
+				.post("rest/users", user);	
 			this.$refs.signupModal.classList.remove("modal-show");
 		}
 	}
@@ -175,7 +208,7 @@ var signinComponent = Vue.component('signin-popup',{
 			axios
 				.post("rest/users/login", userLogin)
 				.then(function(response)	{ 	if(response.data !== ''){
-													this.$cookies.set('user', response.data, 30);
+													this.$cookies.set('user', response.data, "1h");
 													console.log(this.$cookies.get('user'));
 													this.App.$root.$emit('cookie-attached');
 													if(response.data.role === 'ADMIN'){
@@ -198,10 +231,6 @@ var App = new Vue({
 		dropdownActive : false,
 		profile : '',
 		history : window.history.length
-	},
-	components : {
-		'signinComponent' : signinComponent,
-		'signupComponent' : signupComponent
 	},
 	mounted : function(){
 		this.isActive = 'home';
