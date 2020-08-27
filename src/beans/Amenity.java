@@ -26,4 +26,8 @@ public class Amenity {
 	public void setName(String name) {
 		this.name = name;
 	}	
+	
+	public boolean IsDeleted() {
+		return id==-1;
+	}
 }

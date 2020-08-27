@@ -146,6 +146,15 @@ public class UserDAO {
 		return userToEdit;
 	}
 	
+	public Collection<User> getAllUndeletedRoles(Role role){
+		List<User> result = new ArrayList<User>();
+		for(String un : users.keySet()) {
+			if(users.get(un).getRole().equals(role))
+				result.add(users.get(un));
+		}
+		return result;
+	}
+	
 	public void initilazeFile() {
 		User u1= new User("nemanja","admin","Nemanja","Dimitrijevic",Gender.MALE,Role.ADMIN);
 		User u2= new User("bozidar","test","Bozidar","Arsic",Gender.MALE,Role.ADMIN);

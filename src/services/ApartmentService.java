@@ -19,6 +19,7 @@ import DAO.ApartmentDAO;
 import DAO.UserDAO;
 import beans.Amenity;
 import beans.Apartment;
+import beans.Role;
 import beans.User;
 
 @Path("/apartments")
@@ -72,7 +73,7 @@ public class ApartmentService {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		AmenityDAO amenityDAO = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
-		dao.initilazeFile(new ArrayList<User>(userDAO.getAll()), new ArrayList<Amenity>(amenityDAO.findAll()));
+		dao.initilazeFile(new ArrayList<User>(userDAO.getAllUndeletedRoles(Role.HOST)), new ArrayList<Amenity>(amenityDAO.findAll()));
 	}
 	
 	

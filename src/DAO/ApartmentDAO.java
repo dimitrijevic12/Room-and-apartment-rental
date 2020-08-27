@@ -38,7 +38,7 @@ public class ApartmentDAO{
 	
 	public ApartmentDAO(String contextPath) {
 		path = contextPath + "repositories/apartments.json";
-		//loadApartments();
+		loadApartments();
 	}
 
 	public Collection<Apartment> getAll(){
@@ -53,7 +53,7 @@ public class ApartmentDAO{
 		List<Long> result = new ArrayList<Long>();
 		for (Long apartmentId : apartments.keySet()) {
 			Apartment apartment = apartments.get(apartmentId);
-			if(apartment.isDeleted()) continue;
+			if(apartment.IsDeleted()) continue;
 			
 			if(apartment.getHost().getUsername().equals(username)) 
 				result.add(apartment.getId()) ;
@@ -110,7 +110,7 @@ public class ApartmentDAO{
 	public void deleteHost(String username) {
 		for(Long apartmentId : apartments.keySet()) {
 			Apartment apartment = apartments.get(apartmentId);
-			if(apartment.isDeleted()) continue;
+			if(apartment.IsDeleted()) continue;
 			
 			if(apartment.getHost().getUsername().equals(username)) {
 				apartment.getHost().setUsername("");
@@ -125,15 +125,14 @@ public class ApartmentDAO{
 		ApartmentType type2 = ApartmentType.APARTMENT;
 		Location location = new Location(212,214,new Address("Topolska 18", "New Now", 21000));
 		List<Date> dates = new ArrayList<Date>();
-		User u2 = users.get(2);
 		List<Comment> comm = new ArrayList<Comment>();
 		Date d = new Date(2323223232L);
 		ApartmentStatus active = ApartmentStatus.ACTIVE;
 		ApartmentStatus inactive = ApartmentStatus.INACTIVE;
 		List<Reservation> res = new ArrayList<Reservation>();
 		List<Image> images = new ArrayList<Image>();
-		Apartment at1 = new Apartment(0,type1,10,4,location,dates,dates,u2,comm,images,222,d,d,active,amenities,res);
-		Apartment at2 = new Apartment(1,type2,13,0,location,dates,dates,users.get(5),comm,images,500,d,d,inactive,amenities,res);		
+		Apartment at1 = new Apartment(0,type1,10,4,location,dates,dates,users.get(0),comm,images,222,d,d,active,amenities,res);
+		Apartment at2 = new Apartment(1,type2,13,0,location,dates,dates,users.get(1),comm,images,500,d,d,inactive,amenities,res);		
 		
 		HashMap<Long,Apartment> apartmentsFake = new HashMap<Long,Apartment>();
 		apartmentsFake.put(at1.getId(),at1);

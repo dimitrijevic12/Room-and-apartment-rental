@@ -60,7 +60,7 @@ public class Comment {
 		this.grade = grade;
 	}
 
-	public boolean isDeleted() {
+	public boolean IsDeleted() {
 		return id==-1;
 	}
 }

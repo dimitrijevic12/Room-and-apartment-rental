@@ -16,10 +16,10 @@ import javax.ws.rs.core.MediaType;
 
 import DAO.ApartmentDAO;
 import DAO.CommentDAO;
-import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Apartment;
 import beans.Comment;
+import beans.Role;
 import beans.User;
 
 @Path("/comments") 
@@ -88,7 +88,7 @@ public class CommentService {
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		ApartmentDAO apartmentdao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
-		dao.initilazeFile(new ArrayList<User>(userDAO.getAll()), new ArrayList<Apartment>(apartmentdao.getAll()));
+		dao.initilazeFile(new ArrayList<User>(userDAO.getAllUndeletedRoles(Role.GUEST)), new ArrayList<Apartment>(apartmentdao.getAll()));
 	}
 	
 	@DELETE

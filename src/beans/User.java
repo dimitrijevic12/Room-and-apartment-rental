@@ -111,4 +111,7 @@ public class User {
 	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
 	}
+	public boolean IsDeleted() {
+		return username.equals("");
+	}
 }
