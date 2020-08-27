@@ -19,6 +19,7 @@ import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Apartment;
 import beans.Reservation;
+import beans.Role;
 import beans.User;
 
 @Path("/reservations")
@@ -82,7 +83,7 @@ public class ReservationService {
 		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
 		ApartmentDAO apartmentdao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
-		dao.initilazeFile(new ArrayList<Apartment>(apartmentdao.getAll()), new ArrayList<User>(userDAO.getAll()));
+		dao.initilazeFile(new ArrayList<Apartment>(apartmentdao.getAll()), new ArrayList<User>(userDAO.getAllUndeletedRoles(Role.GUEST)));
 	}
 	
 	@DELETE

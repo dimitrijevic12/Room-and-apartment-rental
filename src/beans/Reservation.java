@@ -102,7 +102,7 @@ public class Reservation {
 		this.status = status;
 	}
 	
-	public boolean isDeleted() {
+	public boolean IsDeleted() {
 		return id==-1;
 	}
 }

@@ -22,7 +22,7 @@ public class CommentDAO {
 
 	public CommentDAO(String contextPath) {
 		path = contextPath + "repositories/comments.json";
-		//loadComments();
+		loadComments();
 	}
 	
 	
@@ -74,7 +74,7 @@ public class CommentDAO {
 	public void deleteUser(String username) {
 		for(Long commentId : comments.keySet()) {
 			Comment comment = comments.get(commentId);
-			if(comment.isDeleted()) continue;
+			if(comment.IsDeleted()) continue;
 			
 			if(comment.getGuest().getUsername().equals(username)) {
 				delete(comment.getId());
@@ -84,10 +84,10 @@ public class CommentDAO {
 	}
 	
 	public void initilazeFile(List<User> users,List<Apartment> aps) {
-		Comment c1 = new Comment(0,users.get(3),aps.get(0),"Htela bih da pohvalim prijatan ambijent sa puno biljaka",Grade.FIVE);
-		Comment c2 = new Comment(1,users.get(5),aps.get(0),"Nisu mi dozvolili da uvedem kuce",Grade.TWO);
-		Comment c3 = new Comment(2,users.get(6),aps.get(1),"nisu me pustili",Grade.ONE);
-		Comment c4 = new Comment(3,users.get(6),aps.get(0),"Primimli su me i oni i komsinka ;)",Grade.FIVE);
+		Comment c1 = new Comment(0,users.get(0),aps.get(0),"Htela bih da pohvalim prijatan ambijent sa puno biljaka",Grade.FIVE);
+		Comment c2 = new Comment(1,users.get(1),aps.get(0),"Nisu mi dozvolili da uvedem kuce",Grade.TWO);
+		Comment c3 = new Comment(2,users.get(2),aps.get(1),"nisu me pustili",Grade.ONE);
+		Comment c4 = new Comment(3,users.get(2),aps.get(0),"Primimli su me i oni i komsinka ;)",Grade.FIVE);
 		
 		HashMap<Long, Comment> commentsFake = new HashMap<Long, Comment>();
 		commentsFake.put(c1.getId(),c1);
