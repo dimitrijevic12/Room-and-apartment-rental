@@ -76,7 +76,7 @@ public class CommentDAO {
 			Comment comment = comments.get(commentId);
 			if(comment.IsDeleted()) continue;
 			
-			if(comment.getGuest().getUsername().equals(username)) {
+			if(comment.getGuestUsername().equals(username)) {
 				delete(comment.getId());
 			}
 				
