@@ -38,10 +38,16 @@ public class CommentService {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("commentDAO", new CommentDAO(contextPath));
 		}
+	}
+	
+	private void initApartmentDAO() {
 		if(ctx.getAttribute("apartmentDAO") == null) { //TODO da li ovo treba ovde?
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
 		}
+	}
+	
+	private void initUserDAO() {
 		if(ctx.getAttribute("userDAO") == null) {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("userDAO", new UserDAO(contextPath));
@@ -85,6 +91,9 @@ public class CommentService {
 	@Path("/initialize")
 	@Produces(MediaType.APPLICATION_JSON)
 	public void initialize(String contextpath){
+		initApartmentDAO();
+		initUserDAO();
+		
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		ApartmentDAO apartmentdao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
@@ -95,6 +104,8 @@ public class CommentService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Comment delete(@PathParam("id") long id) {
+		initApartmentDAO();
+		
 		ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		

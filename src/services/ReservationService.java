@@ -38,14 +38,19 @@ public class ReservationService {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("reservationDAO", new ReservationDAO(contextPath));
 		}
-		if(ctx.getAttribute("apartmentDAO") == null) {
+	}
+	
+	private void initApartmentDAO() {
+		if(ctx.getAttribute("apartmentDAO") == null) { //TODO da li ovo treba ovde?
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
 		}
+	}
+	
+	private void initUserDAO() {
 		if(ctx.getAttribute("userDAO") == null) {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("userDAO", new UserDAO(contextPath));
-			//moguce resenje: u konstruktoru userDAO izbaciti load i pozvati je kao posebnu metodu
 		}
 	}
 	
@@ -80,6 +85,8 @@ public class ReservationService {
 	@Path("/initialize")
 	@Produces(MediaType.APPLICATION_JSON)
 	public void initialize(String contextpath){
+		initApartmentDAO();
+		initUserDAO();
 		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
 		ApartmentDAO apartmentdao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");

@@ -35,11 +35,15 @@ public class AmenityService {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("amenitiesDAO", new AmenityDAO(contextPath));
 		}
+	}
+	
+	private void initApartmentDAO() {
 		if(ctx.getAttribute("apartmentDAO") == null) { //TODO da li ovo treba ovde?
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
 		}
 	}
+	
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -68,6 +72,7 @@ public class AmenityService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Amenity delete(@PathParam("id") long id) {
+		initApartmentDAO();
 		ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		AmenityDAO dao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
 		

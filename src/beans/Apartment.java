@@ -14,17 +14,24 @@ public class Apartment {
 	private Location location;
 	private List<Date> approvedDates;
 	private List<Date> availableDates;
+	@JsonIgnore
 	private User host;
+	private String hostUsername;
+	@JsonIgnore
 	private List<Comment> comments;
+	private List<Long> commentsIds;
 	private List<Image> images;
 	private double price;
 	private Date checkInTime;
 	private Date checkOutTime;
 	private ApartmentStatus status;
+	@JsonIgnore
 	private List<Amenity> amenities;
+	private List<Long> amenitiesIds;
 	@JsonIgnore
 	private List<Reservation> reservations;
 	private long id;
+	
 	
 	public Apartment() {
 		super();
@@ -47,8 +54,8 @@ public class Apartment {
 	}
 	
 	public Apartment(long id, ApartmentType type, int roomCount, int guestCount, Location location, List<Date> approvedDates,
-			List<Date> availableDates, User host, List<Comment> comment, List<Image> images, double price,
-			Date checkInTime, Date checkOutTime, ApartmentStatus status, List<Amenity> amenities,
+			List<Date> availableDates, User host, List<Long> commentsIds, List<Image> images, double price,
+			Date checkInTime, Date checkOutTime, ApartmentStatus status, List<Long> amenitiesIds,
 			List<Reservation> reservations) {
 		super();
 		this.type = type;
@@ -58,17 +65,50 @@ public class Apartment {
 		this.approvedDates = approvedDates;
 		this.availableDates = availableDates;
 		this.host = host;
-		this.comments = comment;
 		this.images = images;
 		this.price = price;
 		this.checkInTime = checkInTime;
 		this.checkOutTime = checkOutTime;
 		this.status = status;
-		this.amenities = amenities;
+		this.amenitiesIds = amenitiesIds;
 		this.reservations = reservations;
 		this.id = id;
+		this.commentsIds = commentsIds;
+		this.hostUsername = host.getUsername();
 	}
 	
+	public String getHostUsername() {
+		return hostUsername;
+	}
+
+	public void setHostUsername(String hostUsername) {
+		this.hostUsername = hostUsername;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public List<Long> getCommentsIds() {
+		return commentsIds;
+	}
+
+	public void setCommentsIds(List<Long> commentsIds) {
+		this.commentsIds = commentsIds;
+	}
+
+	public List<Long> getAmenitiesIds() {
+		return amenitiesIds;
+	}
+
+	public void setAmenitiesIds(List<Long> amenitiesIds) {
+		this.amenitiesIds = amenitiesIds;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -133,13 +173,6 @@ public class Apartment {
 		this.host = host;
 	}
 
-	public List<Comment> getComment() {
-		return comments;
-	}
-
-	public void setComment(List<Comment> comment) {
-		this.comments = comment;
-	}
 
 	public List<Image> getImages() {
 		return images;
@@ -197,25 +230,12 @@ public class Apartment {
 		this.reservations = reservations;
 	}
 		
-	public Amenity removeAmenity(long amenityId) {
-		for(Amenity amenity : amenities) {
-			if(amenity.getId() == amenityId) {
-				amenities.remove(amenity);
-				return amenity;
-			}
-		}
-		return null;
+	public boolean removeAmenity(long amenityId) {
+		return amenitiesIds.remove(amenityId);
 	}
 
-	public Comment removeComment(long commentId) {
-		for(Comment comment : comments) {
-			if(comment.getId() == commentId) {
-				comments.remove(comment);
-				return comment;
-			}
-		}
-		return null;
-		
+	public boolean removeComment(long commentId) {
+		return commentsIds.remove(commentId);	
 	}
 	
 	public boolean IsDeleted() {
