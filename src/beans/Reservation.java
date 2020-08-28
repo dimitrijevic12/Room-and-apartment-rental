@@ -2,14 +2,37 @@ package beans;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 
 public class Reservation {
 	private long id;
-	private Apartment apartment;
+	private long apartmentId;
 	private Date checkInDate;
 	private int nightCount;
 	private double total;
 	private String message;
+	private String guestUsername;
+	@JsonIgnore
+	private Apartment apartment;
+
+	public long getApartmentId() {
+		return apartmentId;
+	}
+
+	public void setApartmentId(long apartmentId) {
+		this.apartmentId = apartmentId;
+	}
+
+	public String getGuestUsername() {
+		return guestUsername;
+	}
+
+	public void setGuestUsername(String guestUsername) {
+		this.guestUsername = guestUsername;
+	}
+
+	@JsonIgnore
 	private User guest;
 	private ReservationStatus status;
 	
@@ -36,6 +59,8 @@ public class Reservation {
 		this.message = message;
 		this.guest = guest;
 		this.status = status;
+		this.guestUsername = guest.getUsername();
+		this.apartmentId = apartment.getId();
 	}
 	
 	public long getId() {

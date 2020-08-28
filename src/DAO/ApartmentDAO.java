@@ -113,7 +113,8 @@ public class ApartmentDAO{
 			if(apartment.IsDeleted()) continue;
 			
 			if(apartment.getHost().getUsername().equals(username)) {
-				apartment.getHost().setUsername("");
+				//apartment.getHost().setUsername("");
+				apartment.setHostUsername("");
 			}
 				
 		}
@@ -131,8 +132,21 @@ public class ApartmentDAO{
 		ApartmentStatus inactive = ApartmentStatus.INACTIVE;
 		List<Reservation> res = new ArrayList<Reservation>();
 		List<Image> images = new ArrayList<Image>();
-		Apartment at1 = new Apartment(0,type1,10,4,location,dates,dates,users.get(0),comm,images,222,d,d,active,amenities,res);
-		Apartment at2 = new Apartment(1,type2,13,0,location,dates,dates,users.get(1),comm,images,500,d,d,inactive,amenities,res);		
+		List<Long> amenitiesIds1= new ArrayList<Long>();
+		amenitiesIds1.add(amenities.get(0).getId());
+		amenitiesIds1.add(amenities.get(1).getId());
+		List<Long> amenitiesIds2= new ArrayList<Long>();
+		amenitiesIds2.add(amenities.get(0).getId());
+		amenitiesIds2.add(amenities.get(3).getId());
+		List<Long> commentsIds = new ArrayList<Long>();
+		commentsIds.add(0L);
+		commentsIds.add(1L);
+		commentsIds.add(3L);
+		List<Long> commentsIds2 = new ArrayList<Long>();
+		commentsIds2.add(2L);
+		//Apartment at1 = new Apartment(0, type1, 10, 4, location, dates, dates, users.get(0).getUsername(), commentsIds, images, price, checkInTime, checkOutTime, status, amenitiesIds, reservations)
+		Apartment at1 = new Apartment(0,type1,10,4,location,dates,dates,users.get(0),commentsIds,images,222,d,d,active,amenitiesIds1,res);
+		Apartment at2 = new Apartment(1,type2,13,0,location,dates,dates,users.get(1),commentsIds2,images,500,d,d,inactive,amenitiesIds2,res);		
 		
 		HashMap<Long,Apartment> apartmentsFake = new HashMap<Long,Apartment>();
 		apartmentsFake.put(at1.getId(),at1);

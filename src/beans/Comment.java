@@ -4,11 +4,13 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Comment {
 	private long id;
+	private String guestUsername;
+	private String text;
+	private Grade grade;
+	@JsonIgnore
 	private User guest;
 	@JsonIgnore
 	private Apartment apartment;
-	private String text;
-	private Grade grade;
 	
 	public Comment() {
 		super();
@@ -26,8 +28,17 @@ public class Comment {
 		this.apartment = apartment;
 		this.text = text;
 		this.grade = grade;
+		this.guestUsername = guest.getUsername();
 	}
 	
+	public String getGuestUsername() {
+		return guestUsername;
+	}
+
+	public void setGuestUsername(String guestUsername) {
+		this.guestUsername = guestUsername;
+	}
+
 	public long getId() {
 		return id;
 	}

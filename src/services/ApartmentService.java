@@ -38,16 +38,24 @@ public class ApartmentService {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("apartmentDAO", new ApartmentDAO(contextPath));
 		}
+		
+	}
+	
+	private void initUserDAO() {
 		if(ctx.getAttribute("userDAO") == null) {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("userDAO", new UserDAO(contextPath));
-			//moguce resenje: u konstruktoru userDAO izbaciti load i pozvati je kao posebnu metodu
 		}
+	}
+	
+	
+	private void initAmenityDAO() {
 		if(ctx.getAttribute("amenitiesDAO") == null) {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("amenitiesDAO", new AmenityDAO(contextPath));
 		}
 	}
+	
 	
 	@GET
 	@Path("/")
@@ -70,6 +78,8 @@ public class ApartmentService {
 	@Path("/initialize")
 	@Produces(MediaType.APPLICATION_JSON)
 	public void initialize() {
+		initAmenityDAO();
+		initUserDAO();
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		AmenityDAO amenityDAO = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
@@ -90,6 +100,7 @@ public class ApartmentService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Apartment delete(@PathParam("id") Long id) {
+		
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		return dao.delete(id);
 	}
