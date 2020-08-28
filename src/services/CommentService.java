@@ -112,7 +112,6 @@ public class CommentService {
 		if(dao.findComment(id)== null) return null;
 		
 		apartmentDAO.deleteComment(id);
-		apartmentDAO.write();
 		return dao.delete(id);
 	}
 }

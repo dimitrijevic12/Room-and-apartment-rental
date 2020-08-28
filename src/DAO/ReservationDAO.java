@@ -64,6 +64,17 @@ public class ReservationDAO {
 		return null;
 	}
 	
+	public void deleteReservationsForApartment(long aparmtentId) {
+		for(Long reservationId : reservations.keySet()) {
+			Reservation reservation = reservations.get(reservationId);
+			if(reservation.IsDeleted()) continue;
+			
+			if(reservation.getApartmentId()==aparmtentId)
+				delete(reservationId);
+		}
+		write();
+	}
+	
 	public Set<User> getGuestsFromApartments(Collection<Long> apartmentsIds){
 		Set<User> result = new HashSet<User>();
 		for (Long reservationId : reservations.keySet()) {
@@ -89,7 +100,7 @@ public class ReservationDAO {
 			Reservation reservation = reservations.get(reservationId);
 			if(reservation.IsDeleted()) continue;
 			
-			if(reservation.getGuest().getUsername().equals(username)) {
+			if(reservation.getGuestUsername().equals(username)) {
 				delete(reservation.getId());
 			}
 				

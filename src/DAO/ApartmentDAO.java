@@ -112,7 +112,7 @@ public class ApartmentDAO{
 			Apartment apartment = apartments.get(apartmentId);
 			if(apartment.IsDeleted()) continue;
 			
-			if(apartment.getHost().getUsername().equals(username)) {
+			if(apartment.getHostUsername().equals(username)) {
 				//apartment.getHost().setUsername("");
 				apartment.setHostUsername("");
 			}
@@ -121,12 +121,15 @@ public class ApartmentDAO{
 		write();
 	}
 	
+	public List<Long> getCommentsIdsForApartment(long apartmentId){
+		return apartments.get(apartmentId).getCommentsIds();
+	}
+	
 	public void initilazeFile(List<User> users,List<Amenity> amenities) {
 		ApartmentType type1 = ApartmentType.ROOM;
 		ApartmentType type2 = ApartmentType.APARTMENT;
 		Location location = new Location(212,214,new Address("Topolska 18", "New Now", 21000));
 		List<Date> dates = new ArrayList<Date>();
-		List<Comment> comm = new ArrayList<Comment>();
 		Date d = new Date(2323223232L);
 		ApartmentStatus active = ApartmentStatus.ACTIVE;
 		ApartmentStatus inactive = ApartmentStatus.INACTIVE;

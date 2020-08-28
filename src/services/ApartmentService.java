@@ -16,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 
 import DAO.AmenityDAO;
 import DAO.ApartmentDAO;
+import DAO.CommentDAO;
+import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Amenity;
 import beans.Apartment;
@@ -53,6 +55,20 @@ public class ApartmentService {
 		if(ctx.getAttribute("amenitiesDAO") == null) {
 			String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("amenitiesDAO", new AmenityDAO(contextPath));
+		}
+	}
+	
+	private void initReservationDAO() {
+		if(ctx.getAttribute("reservationDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("reservationDAO", new ReservationDAO(contextPath));
+		}
+	}
+	
+	private void initCommentDAO() {
+		if(ctx.getAttribute("commentDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("commentDAO", new CommentDAO(contextPath));
 		}
 	}
 	
@@ -100,8 +116,19 @@ public class ApartmentService {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Apartment delete(@PathParam("id") Long id) {
+		initCommentDAO();
+		initReservationDAO();
 		
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		CommentDAO commentDAO = (CommentDAO) ctx.getAttribute("commentDAO");
+		ReservationDAO reservationDAO = (ReservationDAO) ctx.getAttribute("reservationDAO");
+		
+		for(Long commentId : dao.getCommentsIdsForApartment(id)) {
+			commentDAO.delete(commentId);
+		}
+		
+		reservationDAO.deleteReservationsForApartment(id);
+		
 		return dao.delete(id);
 	}
 	

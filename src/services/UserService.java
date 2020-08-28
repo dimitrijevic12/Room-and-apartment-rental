@@ -126,16 +126,16 @@ public class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	
 	public User delete(@PathParam("username") String username) {
-		initApartmentDAO();
-		initCommentDAO();
-		initReservationDAO();
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		User user = findOne(username);
 		if(user.getRole().equals(Role.HOST)) {
+			initApartmentDAO();
 			ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 			apartmentDAO.deleteHost(username);
 		}
 		else if(user.getRole().equals(Role.GUEST)) {
+			initCommentDAO();
+			initReservationDAO();
 			ReservationDAO reservationDAO = (ReservationDAO) ctx.getAttribute("reservationDAO");
 			CommentDAO commentDAO = (CommentDAO) ctx.getAttribute("commentDAO");
 			reservationDAO.deleteGuest(username);
