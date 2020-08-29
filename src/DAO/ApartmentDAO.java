@@ -1,5 +1,6 @@
 package DAO;
 
+import java.awt.Image;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,14 +16,11 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import java.awt.Image;
-
 import beans.Address;
 import beans.Amenity;
 import beans.Apartment;
 import beans.ApartmentStatus;
 import beans.ApartmentType;
-import beans.Comment;
 import beans.Location;
 import beans.Reservation;
 import beans.User;
@@ -123,6 +121,28 @@ public class ApartmentDAO{
 	
 	public List<Long> getCommentsIdsForApartment(long apartmentId){
 		return apartments.get(apartmentId).getCommentsIds();
+	}
+	
+	public List<Apartment> getActiveApartments(){
+		List<Apartment> activeApartments = new ArrayList<Apartment>();
+		for(Apartment ap : getAll()) {
+			if(ap.getStatus() == ApartmentStatus.ACTIVE) {
+				activeApartments.add(ap);
+			}
+		}
+		
+		return activeApartments;
+	}
+	
+	public List<Apartment> getHostApartments(String username){
+		List<Apartment> hostApartments = new ArrayList<Apartment>();
+		for(Apartment ap : getAll()) {
+			if(ap.getHostUsername().equals(username)) {
+				hostApartments.add(ap);
+			}
+		}
+		
+		return hostApartments;
 	}
 	
 	public void initilazeFile(List<User> users,List<Amenity> amenities) {
