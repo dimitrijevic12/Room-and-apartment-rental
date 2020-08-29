@@ -29,6 +29,8 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 				<label>{{ user.username }}</label>
 				<label>Password:</label>
 				<input type="text" v-model="user.password"/><br/>
+				<label>Confirm Password:</label>
+				<input type="text" v-model="user.confirmPassword"/><br/>
 				<label>Name:</label>
 				<input type="text" v-model="user.name"/><br/>
 				<label>Surname:</label>
@@ -49,6 +51,7 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 			user: {
 				username : '',
 				password : '',
+				confirmPassword : '',
 				name : '',
 				surname : '',
 				gender : '',
@@ -102,26 +105,53 @@ var signupComponent = Vue.component('signup-popup',{
 			<!-- Modal content -->
 			<div id="signUpModal-content" class="signUpModal-content">
 				<span @click="closeSignUpPopup" class="close">&times;</span><br/><br/>
-				<label>Username:</label>
-				<input type="text" v-model="user.username"/><br/>
-				<label>Password:</label>
-				<input type="text" v-model="user.password"/><br/>
-				<label>Name:</label>
-				<input type="text" v-model="user.name"/><br/>
-				<label>Surname:</label>
-				<input type="text" v-model="user.surname"/><br/>
-				<label>Gender:</label>
-				<input type="radio" id="genderMale" value="MALE" v-model="user.gender">
-				<label for="genderMale" class="radioLabel">Male</label>
-				<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
-				<label for="genderFemale" class="radioLabel">Female</label><br/>
-				<label>Role:</label>
-				<input type="radio" id="roleGuest" value="GUEST" v-model="user.role">
-				<label for="roleGuest" class="radioLabel">Guest</label>
-				<input type="radio" id="roleHost" value="HOST" v-model="user.role">
-				<label for="roleHost" class="radioLabel">Host</label><br/>
-				<button v-if="createMode==='user'" @click="signUpUser(user)">Submit</button>
-				<button v-if="createMode==='admin'" @click="createUser(user)">Submit</button>
+				<div class="label-input-signup first" ref="username">
+					<div class='label-error'>
+						<label>Username:</label>
+						<label v-if="usernameError === 'true'"class="error-message" ref="usernameError">Please make sure you've entered username that is correct size.</label>
+						<label v-if="usernameExists === 'true'"class="error-message" ref="usernameExists">Username already exists. Please enter different username.</label>
+					</div>
+					<input type="text" v-model="user.username"/><br/>
+				</div>
+				<div class="label-input-signup" ref="password">
+					<div class='label-error'>
+						<label>Password:</label>
+						<label v-if="passwordError === 'true'"class="error-message" ref="passwordError">Please make sure you've entered password that is correct size.</label>
+					</div>
+					<input type="password" v-model="user.password"/><br/>
+				</div>
+				<div class="label-input-signup" ref="confirmPassword">
+					<div class='label-error'>
+						<label>Confirm Password:</label>
+						<label v-if="confirmPasswordError === 'true'"class="error-message" ref="confirmPasswordError">Please make sure your passwords match.</label>
+					</div>
+					<input type="password" v-model="confirmPassword"/><br/>
+				</div>
+				<div class="label-input-signup" ref="name">
+					<div class='label-error'>
+						<label>Name:</label>
+						<label v-if="nameError === 'true'" class="error-message" ref="nameError">Please make sure you've entered your name.</label>
+					</div>
+					<input type="text" v-model="user.name"/><br/>
+				</div>
+				<div class="label-input-signup last" ref="surname">
+					<div class='label-error'>
+						<label>Surname:</label>
+						<label v-if="surnameError === 'true'" class="error-message" ref="surnameError">Please make sure you've entered your surname.</label>
+					</div>
+					<input type="text" v-model="user.surname"/><br/>
+				</div>
+				<div class="radio-input-signup">
+					<label class="radioLabel">Gender:</label>
+					<input type="radio" id="genderMale" value="MALE" v-model="user.gender">
+					<label for="genderMale">Male</label>
+					<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
+					<label for="genderFemale">Female</label><br/>
+				</div>
+				<div class="signup-button-containter">
+					<button v-if="createMode==='user'" @click="signUpUser(user)">Submit</button>
+					<button v-if="createMode==='admin'" @click="createUser(user)">Submit</button>
+				</div>
 			</div>
 
 		</div>
@@ -133,10 +163,17 @@ var signupComponent = Vue.component('signup-popup',{
 				password : '',
 				name : '',
 				surname : '',
-				gender : '',
+				gender : 'MALE',
 				role : 'GUEST'
 			},
-			createMode: ''
+			confirmPassword : '',
+			createMode: '',
+			usernameError: '',
+			usernameExists: '',
+			passwordError: '',
+			confirmPasswordError: '',
+			nameError: '',
+			surnameError: ''
 		}
 	},
 	mounted: function(){
@@ -148,19 +185,142 @@ var signupComponent = Vue.component('signup-popup',{
 	},
 	methods : {
 		closeSignUpPopup : function(){
+			this.user.username = '';
+			this.usernameError = '';
+			this.$refs.username.style.border = "solid grey";
+			this.$refs.username.style.borderWidth = "0.5px";
+			this.$refs.username.style.borderBottom = "0";
+
+			this.user.password = '';
+			this.passwordError = '';
+			this.$refs.password.style.border = "solid grey";
+			this.$refs.password.style.marginTop = "0";
+			this.$refs.password.style.borderWidth = "0.5px";
+			this.$refs.password.style.borderBottom = "0";
+
+			this.confirmPassword = '';
+			this.confirmPasswordError = '';
+			this.$refs.confirmPassword.style.border = "solid grey";
+			this.$refs.confirmPassword.style.marginTop = "0";
+			this.$refs.confirmPassword.style.borderWidth = "0.5px";
+			this.$refs.confirmPassword.style.borderBottom = "0";
+
+			this.nameError = '';
+			this.user.name = '';
+			this.$refs.name.style.border = "solid grey";
+			this.$refs.name.style.borderWidth = "0.5px";
+			this.$refs.name.style.borderBottom = "0";
+
+			this.surnameError = '';
+			this.user.surname = '';
+			this.$refs.surname.style.border = "solid grey";
+			this.$refs.surname.style.marginTop = "0";
+			this.$refs.surname.style.borderWidth = "0.5px";
+
+			this.usernameExists= '';
 			this.$refs.signupModal.classList.remove("modal-show");
 		},
 		signUpUser : function(user){
+			let validation = true;
+			this.usernameExists = '';
+			if(this.user.username === ''){
+				this.$refs.username.style.border = "solid #e50000";
+				this.$refs.username.style.borderWidth = "2px";
+				this.usernameError = 'true';
+				validation = false;
+			}else{
+				this.usernameError = '';
+				this.$refs.username.style.border = "solid grey";
+				this.$refs.username.style.borderWidth = "0.5px";
+				this.$refs.username.style.borderBottom = "0";
+			}
+
+			if(this.user.password === ''){
+				this.$refs.password.style.border = "solid #e50000";
+				this.$refs.password.style.marginTop = "-2px";
+				this.$refs.password.style.borderWidth = "2px";
+				this.passwordError = 'true';
+				validation = false;
+			}else{
+				this.$refs.password.style.border = "solid grey";
+				this.$refs.password.style.marginTop = "0";
+				this.$refs.password.style.borderWidth = "0.5px";
+				this.$refs.password.style.borderBottom = "0";
+				this.passwordError = '';
+			}
+
+			if(this.confirmPassword !== this.user.password){
+				this.$refs.confirmPassword.style.border = "solid #e50000";
+				this.$refs.confirmPassword.style.marginTop = "-2px";
+				this.$refs.confirmPassword.style.borderWidth = "2px";
+				this.confirmPasswordError = 'true';
+				validation = false;
+			}else{
+				this.$refs.confirmPassword.style.border = "solid grey";
+				this.$refs.confirmPassword.style.marginTop = "0";
+				this.$refs.confirmPassword.style.borderWidth = "0.5px";
+				this.$refs.confirmPassword.style.borderBottom = "0";
+				this.confirmPasswordError = '';
+			}
+
+			if(this.user.name === ''){
+				this.$refs.name.style.border = "solid #e50000";
+				this.$refs.name.style.marginTop = "-2px";
+				this.$refs.name.style.borderWidth = "2px";
+				this.nameError = 'true';
+				validation = false;
+			}else{
+				this.$refs.name.style.border = "solid grey";
+				this.$refs.name.style.marginTop = "0";
+				this.$refs.name.style.borderWidth = "0.5px";
+				this.$refs.name.style.borderBottom = "0";
+				this.nameError = '';
+			}
+
+			if(this.user.surname === ''){
+				this.$refs.surname.style.border = "solid #e50000";
+				this.$refs.surname.style.marginTop = "-2px";
+				this.$refs.surname.style.borderWidth = "2px";
+				this.$refs.surname.style.borderRadius = "0 0 8px 8px";
+				this.$refs.surname.classList.remove('last');
+				this.surnameError = 'true';
+				validation = false;
+			}else{
+				this.$refs.surname.style.border = "solid grey";
+				this.$refs.surname.style.marginTop = "0";
+				this.$refs.surname.style.borderWidth = "0.5px";
+				this.$refs.surname.classList.add('last');
+				this.surnameError = '';
+			}
+			
+
+			if(validation === false){
+				return;
+			}
 			let self = this;
 			axios
 				.post("rest/users", user)
 				.then(function(response) 	{	if(response.data !== ''){
 													this.$cookies.set('user', response.data, 30);
 													this.App.$root.$emit('cookie-attached');
-												}	
+													self.$refs.signupModal.classList.remove("modal-show");
+/*													self.user.username = '';
+													self.user.password = '';
+													self.user.confirmPassword = '';
+													self.user.name = '';
+													self.user.surname = '';
+													
+*/													self.$refs.signupModal.classList.remove("modal-show");
+													self.closeSignUpPopup();
+												}else{
+													self.usernameExists = 'true'
+													self.$refs.username.style.border = "solid #e50000";
+													self.$refs.username.style.borderWidth = "2px";
+												}
 											});
-			self.user = {};
-			this.$refs.signupModal.classList.remove("modal-show");
+			
+//			self.user = {};
+//			this.$refs.signupModal.classList.remove("modal-show");
 		},
 		createUser : function(user){
 			let self = this;
