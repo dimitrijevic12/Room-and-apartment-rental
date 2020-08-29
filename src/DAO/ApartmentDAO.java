@@ -100,13 +100,6 @@ public class ApartmentDAO{
 		write();
 	}
 	
-	public void deleteComment(long commentId) {
-		for(Long id : apartments.keySet()) {
-			apartments.get(id).removeComment(commentId);
-		}
-		write();
-	}
-	
 	public void deleteHost(String username) {
 		for(Long apartmentId : apartments.keySet()) {
 			Apartment apartment = apartments.get(apartmentId);
@@ -121,9 +114,6 @@ public class ApartmentDAO{
 		write();
 	}
 	
-	public List<Long> getCommentsIdsForApartment(long apartmentId){
-		return apartments.get(apartmentId).getCommentsIds();
-	}
 	
 	public void initilazeFile(List<User> users,List<Amenity> amenities) {
 		ApartmentType type1 = ApartmentType.ROOM;
@@ -141,15 +131,9 @@ public class ApartmentDAO{
 		List<Long> amenitiesIds2= new ArrayList<Long>();
 		amenitiesIds2.add(amenities.get(0).getId());
 		amenitiesIds2.add(amenities.get(3).getId());
-		List<Long> commentsIds = new ArrayList<Long>();
-		commentsIds.add(0L);
-		commentsIds.add(1L);
-		commentsIds.add(3L);
-		List<Long> commentsIds2 = new ArrayList<Long>();
-		commentsIds2.add(2L);
 		//Apartment at1 = new Apartment(0, type1, 10, 4, location, dates, dates, users.get(0).getUsername(), commentsIds, images, price, checkInTime, checkOutTime, status, amenitiesIds, reservations)
-		Apartment at1 = new Apartment(0,type1,10,4,location,dates,dates,users.get(0),commentsIds,images,222,d,d,active,amenitiesIds1,res);
-		Apartment at2 = new Apartment(1,type2,13,0,location,dates,dates,users.get(1),commentsIds2,images,500,d,d,inactive,amenitiesIds2,res);		
+		Apartment at1 = new Apartment(0,type1,10,4,location,dates,dates,users.get(0),images,222,d,d,active,amenitiesIds1,res);
+		Apartment at2 = new Apartment(1,type2,13,0,location,dates,dates,users.get(1),images,500,d,d,inactive,amenitiesIds2,res);		
 		
 		HashMap<Long,Apartment> apartmentsFake = new HashMap<Long,Apartment>();
 		apartmentsFake.put(at1.getId(),at1);

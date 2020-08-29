@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 
 import DAO.ApartmentDAO;
 import DAO.CommentDAO;
+import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Apartment;
 import beans.Comment;
@@ -54,6 +56,13 @@ public class CommentService {
 		}
 	}
 	
+	private void initReservationDAO() {
+		if(ctx.getAttribute("reservationDAO") == null) {
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("reservationDAO", new ReservationDAO(contextPath));
+		}
+	}
+	
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -80,11 +89,33 @@ public class CommentService {
 	}
 	
 	@POST
-	@Path("/")
+	@Path("/write")
 	@Produces(MediaType.APPLICATION_JSON)
 	public void test() {
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		dao.write();
+	}
+	
+	@POST
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Comment addComment(Comment comment) {
+		String username = comment.getGuestUsername();
+		long apartmentId = comment.getApartmentId();
+		
+		initUserDAO();
+		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
+		User user=userDAO.getUserByUsername(username);
+		if(!user.getRole().equals(Role.GUEST)) return null;
+		
+		initReservationDAO();
+		ReservationDAO reservationDAO = (ReservationDAO) ctx.getAttribute("reservationDAO");
+		if(reservationDAO.IsReservationExpired(username, apartmentId)) {
+			CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
+			return dao.save(comment);
+		}
+		return null;
 	}
 	
 	@POST
@@ -105,13 +136,9 @@ public class CommentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Comment delete(@PathParam("id") long id) {
 		initApartmentDAO();
-		
-		ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		CommentDAO dao = (CommentDAO) ctx.getAttribute("commentDAO");
 		
 		if(dao.findComment(id)== null) return null;
-		
-		apartmentDAO.deleteComment(id);
 		return dao.delete(id);
 	}
 }

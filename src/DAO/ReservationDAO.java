@@ -88,6 +88,19 @@ public class ReservationDAO {
 		
 	}
 	
+	public boolean IsReservationExpired(String username,long apartmentId) {
+		for(long reservationId : reservations.keySet()) {
+			Reservation reservation = reservations.get(reservationId);
+			if(reservation.IsDeleted()) continue;
+			
+			if(reservation.getGuestUsername().equals(username) && reservation.getApartmentId()==apartmentId) {
+				ReservationStatus reservationStatus = reservation.getStatus();
+				if(reservationStatus.equals(ReservationStatus.DENIED)|| reservationStatus.equals(ReservationStatus.COMPLETED)) return true;
+			}
+		}
+		return false;
+	}
+	
 	private boolean isApartmansContainsReservation(Reservation reservation,Collection<Long> apartmentsIds) {
 		for (Long id : apartmentsIds) {
 			if(reservation.getApartment().getId()==id) return true;

@@ -50,6 +50,19 @@ public class CommentDAO {
 		return (comments.containsKey(id) && comments.get(id).getId()!=-1)? comments.get(id): null;
 	}
 	
+	public Comment save(Comment comment) {
+		long maxId = -1;
+		for(long id : comments.keySet()) {
+			if(comments.get(id).getId()==-1) break;
+			if(maxId<id) maxId=id;
+		}
+		maxId++;
+		comment.setId(maxId);
+		comments.put(comment.getId(),comment);
+		write();
+		return comment;
+	}
+	
 	
 	public void write() {
 		ObjectMapper mapper = new ObjectMapper();
@@ -81,6 +94,17 @@ public class CommentDAO {
 			}
 				
 		}
+	}
+	
+	public void deleteCommentForApartment(long apartmentId) {
+		for(long commentId : comments.keySet()) {
+			Comment comment = comments.get(commentId);
+			if(comment.IsDeleted()) continue;
+			
+			if(comment.getApartmentId()==apartmentId)
+				comment.delete();
+		}
+		write();
 	}
 	
 	public void initilazeFile(List<User> users,List<Apartment> aps) {
