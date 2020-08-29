@@ -19,7 +19,6 @@ public class Apartment {
 	private String hostUsername;
 	@JsonIgnore
 	private List<Comment> comments;
-	private List<Long> commentsIds;
 	private List<Image> images;
 	private double price;
 	private Date checkInTime;
@@ -54,7 +53,7 @@ public class Apartment {
 	}
 	
 	public Apartment(long id, ApartmentType type, int roomCount, int guestCount, Location location, List<Date> approvedDates,
-			List<Date> availableDates, User host, List<Long> commentsIds, List<Image> images, double price,
+			List<Date> availableDates, User host, List<Image> images, double price,
 			Date checkInTime, Date checkOutTime, ApartmentStatus status, List<Long> amenitiesIds,
 			List<Reservation> reservations) {
 		super();
@@ -73,7 +72,6 @@ public class Apartment {
 		this.amenitiesIds = amenitiesIds;
 		this.reservations = reservations;
 		this.id = id;
-		this.commentsIds = commentsIds;
 		this.hostUsername = host.getUsername();
 	}
 	
@@ -91,14 +89,6 @@ public class Apartment {
 
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
-	}
-
-	public List<Long> getCommentsIds() {
-		return commentsIds;
-	}
-
-	public void setCommentsIds(List<Long> commentsIds) {
-		this.commentsIds = commentsIds;
 	}
 
 	public List<Long> getAmenitiesIds() {
@@ -232,10 +222,6 @@ public class Apartment {
 		
 	public boolean removeAmenity(long amenityId) {
 		return amenitiesIds.remove(amenityId);
-	}
-
-	public boolean removeComment(long commentId) {
-		return commentsIds.remove(commentId);	
 	}
 	
 	public boolean IsDeleted() {
