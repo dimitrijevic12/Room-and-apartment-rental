@@ -45,6 +45,29 @@ public class ApartmentDAO{
 		return apartments.values();
 	}
 	
+	public List<Apartment> getActiveApartments(){
+		List<Apartment> activeApartments = new ArrayList<Apartment>();
+		for(Apartment ap : getAll()) {
+			if(ap.getStatus() == ApartmentStatus.ACTIVE) {
+				activeApartments.add(ap);
+			}
+		}
+		
+		return activeApartments;
+	}
+	
+	public List<Apartment> getHostApartments(String username){
+		List<Apartment> hostApartments = new ArrayList<Apartment>();
+		for(Apartment ap : getAll()) {
+			if(ap.getHostUsername().equals(username)) {
+				hostApartments.add(ap);
+			}
+		}
+		
+		return hostApartments;
+	}
+	
+	
 	public Apartment findApartment(long id) {
 		return (apartments.containsKey(id) && apartments.get(id).getId()!=-1)? apartments.get(id): null;
 	}

@@ -90,6 +90,22 @@ public class ApartmentService {
 		return dao.findApartment(id);
 	}
 	
+	@GET
+	@Path("/guest")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Apartment> getActiveApartments(){
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		return dao.getActiveApartments();
+	}
+	
+	@GET
+	@Path("/host/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Apartment> getHostApartments(@PathParam("username") String username){
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		return dao.getHostApartments(username);
+	}
+	
 	@POST
 	@Path("/initialize")
 	@Produces(MediaType.APPLICATION_JSON)

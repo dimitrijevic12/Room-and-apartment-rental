@@ -1,0 +1,9 @@
+.search-page-container{
+	display: flex;
+	height: 100%;
+}
+
+.column {
+	flex: 50%;
+	position: relative;
+}
