@@ -5,12 +5,15 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 public class Comment {
 	private long id;
 	private String guestUsername;
+	private long apartmentId;
 	private String text;
 	private Grade grade;
 	@JsonIgnore
 	private User guest;
 	@JsonIgnore
 	private Apartment apartment;
+
+	
 	
 	public Comment() {
 		super();
@@ -19,6 +22,8 @@ public class Comment {
 		this.apartment = new Apartment();
 		this.text = "";
 		this.grade = Grade.ONE;
+		this.apartmentId=-1;
+		this.guestUsername="";
 	}
 	
 	public Comment(long id, User guest, Apartment apartment, String text, Grade grade) {
@@ -29,6 +34,7 @@ public class Comment {
 		this.text = text;
 		this.grade = grade;
 		this.guestUsername = guest.getUsername();
+		this.apartmentId = apartment.getId();
 	}
 	
 	public String getGuestUsername() {
@@ -37,6 +43,14 @@ public class Comment {
 
 	public void setGuestUsername(String guestUsername) {
 		this.guestUsername = guestUsername;
+	}
+
+	public long getApartmentId() {
+		return apartmentId;
+	}
+
+	public void setApartmentId(long apartmentId) {
+		this.apartmentId = apartmentId;
 	}
 
 	public long getId() {
@@ -73,5 +87,8 @@ public class Comment {
 
 	public boolean IsDeleted() {
 		return id==-1;
+	}
+	public void delete() {
+		id=-1;
 	}
 }

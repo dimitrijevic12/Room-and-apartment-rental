@@ -139,9 +139,7 @@ public class ApartmentService {
 		CommentDAO commentDAO = (CommentDAO) ctx.getAttribute("commentDAO");
 		ReservationDAO reservationDAO = (ReservationDAO) ctx.getAttribute("reservationDAO");
 		
-		for(Long commentId : dao.getCommentsIdsForApartment(id)) {
-			commentDAO.delete(commentId);
-		}
+		commentDAO.deleteCommentForApartment(id);
 		
 		reservationDAO.deleteReservationsForApartment(id);
 		
