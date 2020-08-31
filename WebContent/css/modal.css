@@ -147,3 +147,21 @@
   color: darkred !important;
   float: right;
 }
+
+.bottom{
+  float: none;
+  text-align: center;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.bottom-error{
+  margin-top: 15px;
+  margin-bottom: -20px;
+}
+
+.username-placeholder{
+  display: block !important;
+	color: black !important;
+	font-size: 22px !important;
+}

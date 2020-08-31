@@ -17,7 +17,7 @@ Vue.directive('click-outside', {
 });
 
 
-
+// TODO: Koristi signup popup za edit i koristi v-if za username input
 var editProfileComponent = Vue.component('edit-profile-popup',{
 	template: `
 		<div id="edit-profile-modal" class="modal" ref="editProfileModal">
@@ -25,21 +25,52 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 			<!-- Modal content -->
 			<div id="edit-profile-modal-content" class="signUpModal-content">
 				<span @click="closeEditProfilePopup" class="close">&times;</span><br/><br/>
-				<label>Username:</label>
-				<label>{{ user.username }}</label>
-				<label>Password:</label>
-				<input type="text" v-model="user.password"/><br/>
-				<label>Confirm Password:</label>
-				<input type="text" v-model="user.confirmPassword"/><br/>
-				<label>Name:</label>
-				<input type="text" v-model="user.name"/><br/>
-				<label>Surname:</label>
-				<input type="text" v-model="user.surname"/><br/>
-				<label>Gender:</label>
-				<input type="radio" id="genderMale" value="MALE" v-model="user.gender">
-				<label for="genderMale" class="radioLabel">Male</label>
-				<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
-				<label for="genderFemale" class="radioLabel">Female</label><br/>
+				<div class="label-input-signup first" ref="username">
+					<label>Username (permanent) :</label>
+					<label class="username-placeholder">{{ user.username }}</label>
+				</div>
+				<div class="label-input-signup" ref="password">
+					<div class='label-error'>
+						<label>Password:</label>
+						<label v-if="passwordError === 'true'"class="error-message" ref="passwordError">Please make sure you've entered password that is correct size.</label>
+					</div>
+					<input type="password" v-model="user.password"/><br/>
+				</div>
+				<div class="label-input-signup" ref="newPassword">
+					<div class='label-error'>
+						<label>New password:</label>
+						<label v-if="newPasswordError === 'true'"class="error-message" ref="newPasswordError">Please make sure you've entered password that is correct size.</label>
+					</div>
+					<input type="password" v-model="newPassword"/><br/>
+				</div>
+				<div class="label-input-signup" ref="confirmPassword">
+					<div class='label-error'>
+						<label>Confirm Password:</label>
+						<label v-if="confirmPasswordError === 'true'"class="error-message" ref="confirmPasswordError">Please make sure your passwords match.</label>
+					</div>
+					<input type="password" v-model="confirmPassword"/><br/>
+				</div>
+				<div class="label-input-signup" ref="name">
+					<div class='label-error'>
+						<label>Name:</label>
+						<label v-if="nameError === 'true'" class="error-message" ref="nameError">Please make sure you've entered your name.</label>
+					</div>
+					<input type="text" v-model="user.name"/><br/>
+				</div>
+				<div class="label-input-signup last" ref="surname">
+					<div class='label-error'>
+						<label>Surname:</label>
+						<label v-if="surnameError === 'true'" class="error-message" ref="surnameError">Please make sure you've entered your surname.</label>
+					</div>
+					<input type="text" v-model="user.surname"/><br/>
+				</div>
+				<div class="radio-input-signup">
+					<label class="radioLabel">Gender:</label>
+					<input type="radio" id="genderMale" value="MALE" v-model="user.gender">
+					<label for="genderMale">Male</label>
+					<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
+					<label for="genderFemale">Female</label><br/>
+				</div>
 				<button v-if="editMode==='user'" @click="editUser(user)">Submit</button>
 				<button v-if="editMode==='admin'" @click="editAdmin(user)">Submit</button>
 			</div>
@@ -57,7 +88,14 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 				gender : '',
 				role : 'GUEST'
 			},
-			editMode: ''
+			confirmPassword: '',
+			newPassword: '',
+			editMode: '',
+			passwordError: '',
+			confirmPasswordError: '',
+			nameError: '',
+			surnameError: '',
+			newPasswordError: ''
 		}
 	},
 	mounted: function(){
@@ -304,13 +342,7 @@ var signupComponent = Vue.component('signup-popup',{
 													this.$cookies.set('user', response.data, 30);
 													this.App.$root.$emit('cookie-attached');
 													self.$refs.signupModal.classList.remove("modal-show");
-/*													self.user.username = '';
-													self.user.password = '';
-													self.user.confirmPassword = '';
-													self.user.name = '';
-													self.user.surname = '';
-													
-*/													self.$refs.signupModal.classList.remove("modal-show");
+													self.$refs.signupModal.classList.remove("modal-show");
 													self.closeSignUpPopup();
 												}else{
 													self.usernameExists = 'true'
@@ -319,8 +351,6 @@ var signupComponent = Vue.component('signup-popup',{
 												}
 											});
 			
-//			self.user = {};
-//			this.$refs.signupModal.classList.remove("modal-show");
 		},
 		createUser : function(user){
 			let self = this;
@@ -338,11 +368,26 @@ var signinComponent = Vue.component('signin-popup',{
 			<!-- Modal content -->
 			<div id="signinModal-content" class="signUpModal-content">
 				<span @click="closeSignInPopup" class="close">&times;</span><br/><br/>
-				<label>Username:</label>
-				<input type="text" v-model="userLogin.username"/><br/>
-				<label>Password:</label>
-				<input type="text" v-model="userLogin.password"/><br/>
-				<button @click="loginUser(userLogin)">Login</button>
+				<div class="label-input-signup first" ref="usernameLogin">
+					<div class='label-error'>
+						<label>Username:</label>
+						<label v-if="usernameError === 'true'"class="error-message" ref="usernameError">Please make sure you've entered username.</label>
+					</div>
+					<input type="text" v-model="userLogin.username"/><br/>
+				</div>
+				<div class="label-input-signup last" ref="passwordLogin">
+					<div class='label-error'>
+						<label>Password:</label>
+						<label v-if="passwordError === 'true'"class="error-message" ref="passwordError">Please make sure you've entered password.</label>
+					</div>
+					<input type="password" v-model="userLogin.password"/><br/>
+				</div>
+				<div class="bottom-error">
+					<label v-if="loginError === 'true'"class="error-message bottom" ref="usernameError">Invalid username and/or password.</label>
+				</div>
+				<div class="signup-button-containter">
+					<button @click="loginUser(userLogin)">Login</button>
+				</div>
 			</div>
 
 		</div>
@@ -352,7 +397,10 @@ var signinComponent = Vue.component('signin-popup',{
 			userLogin : {
 				username : '',
 				password : ''
-			}
+			},
+			usernameError: '',
+			passwordError: '',
+			loginError: ''
 		}
 	},
 	mounted: function(){
@@ -360,10 +408,56 @@ var signinComponent = Vue.component('signin-popup',{
 	},
 	methods : {
 		closeSignInPopup : function(){
+			this.usernameError = '';
+			this.userLogin.username = ''
+			this.$refs.usernameLogin.style.border = "solid grey";
+			this.$refs.usernameLogin.style.borderWidth = "0.5px";
+			this.$refs.usernameLogin.style.borderBottom = "0";
+
+			this.passwordError = '';
+			this.userLogin.password = '';
+			this.$refs.passwordLogin.style.border = "solid grey";
+			this.$refs.passwordLogin.style.marginTop = "0";
+			this.$refs.passwordLogin.style.borderWidth = "0.5px";
+			this.$refs.passwordLogin.classList.add('last');
+
+			this.loginError = '';
 			this.$refs.signinModal.classList.remove("modal-show");
 			this._data.userLogin = {}
 		},
 		loginUser : function(userLogin){
+			let validation = true;
+			if(this.userLogin.username === ''){
+				this.$refs.usernameLogin.style.border = "solid #e50000";
+				this.$refs.usernameLogin.style.borderWidth = "2px";
+				this.usernameError = 'true';
+				validation = false;
+			}else{
+				this.usernameError = '';
+				this.$refs.usernameLogin.style.border = "solid grey";
+				this.$refs.usernameLogin.style.borderWidth = "0.5px";
+				this.$refs.usernameLogin.style.borderBottom = "0";
+			}
+
+			if(this.userLogin.password === ''){
+				this.$refs.passwordLogin.style.border = "solid #e50000";
+				this.$refs.passwordLogin.style.marginTop = "-2px";
+				this.$refs.passwordLogin.style.borderWidth = "2px";
+				this.$refs.passwordLogin.style.borderRadius = "0 0 8px 8px";
+				this.$refs.passwordLogin.classList.remove('last');
+				this.passwordError = 'true';
+				validation = false;
+			}else{
+				this.$refs.passwordLogin.style.border = "solid grey";
+				this.$refs.passwordLogin.style.marginTop = "0";
+				this.$refs.passwordLogin.style.borderWidth = "0.5px";
+				this.$refs.passwordLogin.classList.add('last');
+				this.passwordError = '';
+			}
+			
+			if(validation === false){
+				return;
+			}
 			let self = this;
 			axios
 				.post("rest/users/login", userLogin)
@@ -374,11 +468,13 @@ var signinComponent = Vue.component('signin-popup',{
 													if(response.data.role === 'ADMIN'){
 														location.href="#/users";	
 													}
+													self.closeSignInPopup();
 	//												if(response.data !== '') this.App.$root.$emit('mode-changed', response.data.role);
+													}
+												else{
+													self.loginError = 'true';
 												}
 											});
-			self.userLogin = {};						
-			this.$refs.signinModal.classList.remove("modal-show");
 		}
 	}
 });
