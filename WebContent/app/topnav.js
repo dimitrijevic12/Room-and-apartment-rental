@@ -29,17 +29,11 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 					<label>Username (permanent) :</label>
 					<label class="username-placeholder">{{ user.username }}</label>
 				</div>
-				<div class="label-input-signup" ref="password">
-					<div class='label-error'>
-						<label>Password:</label>
-						<label v-if="passwordError === 'true'"class="error-message" ref="passwordError">Please make sure you've entered password that is correct size.</label>
-					</div>
-					<input type="password" v-model="user.password"/><br/>
-				</div>
 				<div class="label-input-signup" ref="newPassword">
 					<div class='label-error'>
 						<label>New password:</label>
 						<label v-if="newPasswordError === 'true'"class="error-message" ref="newPasswordError">Please make sure you've entered password that is correct size.</label>
+						<label v-if="newPasswordExists === 'true'"class="error-message" ref="newPasswordExists">New password cannot be same as old password.</label>
 					</div>
 					<input type="password" v-model="newPassword"/><br/>
 				</div>
@@ -71,8 +65,10 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 					<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
 					<label for="genderFemale">Female</label><br/>
 				</div>
-				<button v-if="editMode==='user'" @click="editUser(user)">Submit</button>
-				<button v-if="editMode==='admin'" @click="editAdmin(user)">Submit</button>
+				<div class="signup-button-containter">
+					<button v-if="editMode==='user'" @click="editUser(user)">Submit</button>
+					<button v-if="editMode==='admin'" @click="editAdmin(user)">Submit</button>
+				</div>
 			</div>
 
 		</div>
@@ -95,7 +91,8 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 			confirmPasswordError: '',
 			nameError: '',
 			surnameError: '',
-			newPasswordError: ''
+			newPasswordError: '',
+			newPasswordExists: ''
 		}
 	},
 	mounted: function(){
@@ -112,21 +109,218 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 	},
 	methods : {
 		closeEditProfilePopup : function(){
+			this.user.username = '';
+			this.usernameError = '';
+			this.$refs.username.style.border = "solid grey";
+			this.$refs.username.style.borderWidth = "0.5px";
+			this.$refs.username.style.borderBottom = "0";
+
+			this.newPassword = '';
+			this.newPasswordError = '';
+			this.newPasswordExists = '';
+			this.$refs.newPassword.style.border = "solid grey";
+			this.$refs.newPassword.style.marginTop = "0";
+			this.$refs.newPassword.style.borderWidth = "0.5px";
+			this.$refs.newPassword.style.borderBottom = "0";
+
+			this.confirmPassword = '';
+			this.confirmPasswordError = '';
+			this.$refs.confirmPassword.style.border = "solid grey";
+			this.$refs.confirmPassword.style.marginTop = "0";
+			this.$refs.confirmPassword.style.borderWidth = "0.5px";
+			this.$refs.confirmPassword.style.borderBottom = "0";
+
+			this.nameError = '';
+			this.user.name = '';
+			this.$refs.name.style.border = "solid grey";
+			this.$refs.name.style.borderWidth = "0.5px";
+			this.$refs.name.style.borderBottom = "0";
+
+			this.surnameError = '';
+			this.user.surname = '';
+			this.$refs.surname.style.border = "solid grey";
+			this.$refs.surname.style.marginTop = "0";
+			this.$refs.surname.style.borderWidth = "0.5px";
+
 			this.$refs.editProfileModal.classList.remove("modal-show");
 		},
 		editUser : function(user){
+			let validation = true;
+			if(this.user.username === ''){
+				this.$refs.username.style.border = "solid #e50000";
+				this.$refs.username.style.borderWidth = "2px";
+				this.usernameError = 'true';
+				validation = false;
+			}else{
+				this.usernameError = '';
+				this.$refs.username.style.border = "solid grey";
+				this.$refs.username.style.borderWidth = "0.5px";
+				this.$refs.username.style.borderBottom = "0";
+			}
+
+			if(this.newPassword === this.user.password){
+				this.$refs.newPassword.style.border = "solid #e50000";
+				this.$refs.newPassword.style.marginTop = "-2px";
+				this.$refs.newPassword.style.borderWidth = "2px";
+				this.newPasswordExists = 'true';
+				this.newPasswordError = '';
+				validation = false;
+			}else{
+				this.$refs.newPassword.style.border = "solid grey";
+				this.$refs.newPassword.style.marginTop = "0";
+				this.$refs.newPassword.style.borderWidth = "0.5px";
+				this.$refs.newPassword.style.borderBottom = "0";
+				this.newPasswordError = '';
+				this.newPasswordExists = '';
+			}
+
+			if(this.confirmPassword !== this.newPassword){
+				this.$refs.confirmPassword.style.border = "solid #e50000";
+				this.$refs.confirmPassword.style.marginTop = "-2px";
+				this.$refs.confirmPassword.style.borderWidth = "2px";
+				this.confirmPasswordError = 'true';
+				validation = false;
+			}else{
+				this.$refs.confirmPassword.style.border = "solid grey";
+				this.$refs.confirmPassword.style.marginTop = "0";
+				this.$refs.confirmPassword.style.borderWidth = "0.5px";
+				this.$refs.confirmPassword.style.borderBottom = "0";
+				this.confirmPasswordError = '';
+			}
+
+			if(this.user.name === ''){
+				this.$refs.name.style.border = "solid #e50000";
+				this.$refs.name.style.marginTop = "-2px";
+				this.$refs.name.style.borderWidth = "2px";
+				this.nameError = 'true';
+				validation = false;
+			}else{
+				this.$refs.name.style.border = "solid grey";
+				this.$refs.name.style.marginTop = "0";
+				this.$refs.name.style.borderWidth = "0.5px";
+				this.$refs.name.style.borderBottom = "0";
+				this.nameError = '';
+			}
+
+			if(this.user.surname === ''){
+				this.$refs.surname.style.border = "solid #e50000";
+				this.$refs.surname.style.marginTop = "-2px";
+				this.$refs.surname.style.borderWidth = "2px";
+				this.$refs.surname.style.borderRadius = "0 0 8px 8px";
+				this.$refs.surname.classList.remove('last');
+				this.surnameError = 'true';
+				validation = false;
+			}else{
+				this.$refs.surname.style.border = "solid grey";
+				this.$refs.surname.style.marginTop = "0";
+				this.$refs.surname.style.borderWidth = "0.5px";
+				this.$refs.surname.classList.add('last');
+				this.surnameError = '';
+			}
+			
+
+			if(validation === false){
+				return;
+			}
+			
+			if(this.newPassword !== ''){
+				this.user.password = this.newPassword;
+			}
+			
 			let self = this;
 			axios
 				.put("rest/users", user)
 				.then(function(response) 	{	if(response.data !== ''){
 													this.$cookies.set('user', response.data, 30);
 													this.App.$root.$emit('cookie-attached');
+													self.closeEditProfilePopup();
 												}
 											});
-			self.user = {};
-			this.$refs.editProfileModal.classList.remove("modal-show");
+
 		},
 		editAdmin : function(user){
+			let validation = true;
+			if(this.user.username === ''){
+				this.$refs.username.style.border = "solid #e50000";
+				this.$refs.username.style.borderWidth = "2px";
+				this.usernameError = 'true';
+				validation = false;
+			}else{
+				this.usernameError = '';
+				this.$refs.username.style.border = "solid grey";
+				this.$refs.username.style.borderWidth = "0.5px";
+				this.$refs.username.style.borderBottom = "0";
+			}
+
+			if(this.newPassword === this.user.password){
+				this.$refs.newPassword.style.border = "solid #e50000";
+				this.$refs.newPassword.style.marginTop = "-2px";
+				this.$refs.newPassword.style.borderWidth = "2px";
+				this.newPasswordExists = 'true';
+				this.newPasswordError = '';
+				validation = false;
+			}else{
+				this.$refs.newPassword.style.border = "solid grey";
+				this.$refs.newPassword.style.marginTop = "0";
+				this.$refs.newPassword.style.borderWidth = "0.5px";
+				this.$refs.newPassword.style.borderBottom = "0";
+				this.newPasswordError = '';
+				this.newPasswordExists = '';
+			}
+
+			if(this.confirmPassword !== this.newPassword){
+				this.$refs.confirmPassword.style.border = "solid #e50000";
+				this.$refs.confirmPassword.style.marginTop = "-2px";
+				this.$refs.confirmPassword.style.borderWidth = "2px";
+				this.confirmPasswordError = 'true';
+				validation = false;
+			}else{
+				this.$refs.confirmPassword.style.border = "solid grey";
+				this.$refs.confirmPassword.style.marginTop = "0";
+				this.$refs.confirmPassword.style.borderWidth = "0.5px";
+				this.$refs.confirmPassword.style.borderBottom = "0";
+				this.confirmPasswordError = '';
+			}
+
+			if(this.user.name === ''){
+				this.$refs.name.style.border = "solid #e50000";
+				this.$refs.name.style.marginTop = "-2px";
+				this.$refs.name.style.borderWidth = "2px";
+				this.nameError = 'true';
+				validation = false;
+			}else{
+				this.$refs.name.style.border = "solid grey";
+				this.$refs.name.style.marginTop = "0";
+				this.$refs.name.style.borderWidth = "0.5px";
+				this.$refs.name.style.borderBottom = "0";
+				this.nameError = '';
+			}
+
+			if(this.user.surname === ''){
+				this.$refs.surname.style.border = "solid #e50000";
+				this.$refs.surname.style.marginTop = "-2px";
+				this.$refs.surname.style.borderWidth = "2px";
+				this.$refs.surname.style.borderRadius = "0 0 8px 8px";
+				this.$refs.surname.classList.remove('last');
+				this.surnameError = 'true';
+				validation = false;
+			}else{
+				this.$refs.surname.style.border = "solid grey";
+				this.$refs.surname.style.marginTop = "0";
+				this.$refs.surname.style.borderWidth = "0.5px";
+				this.$refs.surname.classList.add('last');
+				this.surnameError = '';
+			}
+			
+
+			if(validation === false){
+				return;
+			}
+			
+			if(this.newPassword !== ''){
+				this.user.password = this.newPassword;
+			}
+			
 			let self = this;
 			axios
 				.put("rest/users", user)
@@ -423,10 +617,10 @@ var signinComponent = Vue.component('signin-popup',{
 
 			this.loginError = '';
 			this.$refs.signinModal.classList.remove("modal-show");
-			this._data.userLogin = {}
 		},
 		loginUser : function(userLogin){
 			let validation = true;
+			this.loginError = '';
 			if(this.userLogin.username === ''){
 				this.$refs.usernameLogin.style.border = "solid #e50000";
 				this.$refs.usernameLogin.style.borderWidth = "2px";
