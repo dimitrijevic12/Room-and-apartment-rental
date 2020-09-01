@@ -146,12 +146,13 @@
 .error-message{
   color: darkred !important;
   float: right;
+  font-size: 14px !important;
 }
 
 .bottom{
   float: none;
   text-align: center;
-  font-size: 18px;
+  font-size: 18px !important;
   margin-top: 10px;
 }
 
