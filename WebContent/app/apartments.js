@@ -64,16 +64,5 @@ Vue.component('apartments',{
 				this.apartments = response.data;
 			})
 	},
-	
-	methods: {
-		loadGrade : function(rateBox,grade){
-			console.log("usao sam");
-		    let stars = rateBox.getElementsByClassName("star");
-		    for(let i=0;i<grade;i++){
-		        console.log(i);
-		        stars[i].innerHTML="&#127775";
-		        stars[i].classList.add("selectedStar");
-		    }
-		}
-	}
+
 })
