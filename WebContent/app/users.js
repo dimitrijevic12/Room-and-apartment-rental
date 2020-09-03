@@ -47,7 +47,7 @@ Vue.component('users',{
 						<th>Gender</th>
 						<th v-if="mode === 'ADMIN'">Role</th>
 					</tr>
-					<tr v-for="u in filteredUsers" v-on:dblclick="editProfile(u)">
+					<tr v-for="u in filteredUsers" v-on:dblclick="editProfile(u)" v-bind:key="u.username">
 						<td>{{u.username}}</td>
 						<td>{{u.name}}</td>
 						<td>{{u.surname}}</td>
@@ -72,7 +72,8 @@ Vue.component('users',{
 				role: '',
 			},
 			users: null,
-			filteredUsers: {}
+			filteredUsers: {},
+//			tableKey: 0
 		}
 	},
 	mounted : function(){
@@ -118,6 +119,11 @@ Vue.component('users',{
 
 		createUser(){
 			this.$root.$emit('open-create-user');
+		},
+
+		forceRerender(){
+//			this.tableKey += 1;
+			this.$forceUpdate();
 		}
 	}
 })

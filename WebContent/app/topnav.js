@@ -24,7 +24,12 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 
 			<!-- Modal content -->
 			<div id="edit-profile-modal-content" class="signUpModal-content">
-				<span @click="closeEditProfilePopup" class="close">&times;</span><br/><br/>
+				<div v-if="editMode ==='user'">
+					<span @click="closeEditProfilePopup" class="close">&times;</span><br/><br/>
+				</div>
+				<div v-if="editMode ==='admin'">
+					<span @click="closeEditProfilePopupAdmin" class="close">&times;</span><br/><br/>			
+				</div>
 				<div class="label-input-signup first" ref="username">
 					<label>Username (permanent) :</label>
 					<label class="username-placeholder">{{ user.username }}</label>
@@ -108,6 +113,39 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 		// TODO: Proveri zasto pravi gresku iako radi, greska je this.$refs.editProfileModal is undefined
 	},
 	methods : {
+		closeEditProfilePopupAdmin: function(){
+			this.usernameError = '';
+			this.$refs.username.style.border = "solid grey";
+			this.$refs.username.style.borderWidth = "0.5px";
+			this.$refs.username.style.borderBottom = "0";
+
+			this.newPassword = '';
+			this.newPasswordError = '';
+			this.newPasswordExists = '';
+			this.$refs.newPassword.style.border = "solid grey";
+			this.$refs.newPassword.style.marginTop = "0";
+			this.$refs.newPassword.style.borderWidth = "0.5px";
+			this.$refs.newPassword.style.borderBottom = "0";
+
+			this.confirmPassword = '';
+			this.confirmPasswordError = '';
+			this.$refs.confirmPassword.style.border = "solid grey";
+			this.$refs.confirmPassword.style.marginTop = "0";
+			this.$refs.confirmPassword.style.borderWidth = "0.5px";
+			this.$refs.confirmPassword.style.borderBottom = "0";
+
+			this.nameError = '';
+			this.$refs.name.style.border = "solid grey";
+			this.$refs.name.style.borderWidth = "0.5px";
+			this.$refs.name.style.borderBottom = "0";
+
+			this.surnameError = '';
+			this.$refs.surname.style.border = "solid grey";
+			this.$refs.surname.style.marginTop = "0";
+			this.$refs.surname.style.borderWidth = "0.5px";
+
+			this.$refs.editProfileModal.classList.remove("modal-show");
+		},
 		closeEditProfilePopup : function(){
 			this.user.username = '';
 			this.usernameError = '';
@@ -324,8 +362,11 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 			let self = this;
 			axios
 				.put("rest/users", user)
-			self.user = {};
-			this.$refs.editProfileModal.classList.remove("modal-show");
+				.then(function(response) 	{	if(response.data !== ''){
+													self.$refs.editProfileModal.classList.remove("modal-show");
+													self.$parent.tableKey += 1;
+												}
+											});
 		}
 	}
 });
@@ -379,6 +420,13 @@ var signupComponent = Vue.component('signup-popup',{
 					<label for="genderMale">Male</label>
 					<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
 					<label for="genderFemale">Female</label><br/>
+				</div>
+				<div v-if="createMode==='admin'" class="radio-input-signup">
+					<label class="radioLabel">Role:</label>
+					<input type="radio" id="roleGuest" value="GUEST" v-model="user.role">
+					<label for="roleGuest">Guest</label>
+					<input type="radio" id="roleHost" value="HOST" v-model="user.role">
+					<label for="roleHost">Host</label><br/>
 				</div>
 				<div class="signup-button-containter">
 					<button v-if="createMode==='user'" @click="signUpUser(user)">Submit</button>
@@ -536,7 +584,6 @@ var signupComponent = Vue.component('signup-popup',{
 													this.$cookies.set('user', response.data, 30);
 													this.App.$root.$emit('cookie-attached');
 													self.$refs.signupModal.classList.remove("modal-show");
-													self.$refs.signupModal.classList.remove("modal-show");
 													self.closeSignUpPopup();
 												}else{
 													self.usernameExists = 'true'
@@ -547,10 +594,96 @@ var signupComponent = Vue.component('signup-popup',{
 			
 		},
 		createUser : function(user){
+			let validation = true;
+			this.usernameExists = '';
+			if(this.user.username === ''){
+				this.$refs.username.style.border = "solid #e50000";
+				this.$refs.username.style.borderWidth = "2px";
+				this.usernameError = 'true';
+				validation = false;
+			}else{
+				this.usernameError = '';
+				this.$refs.username.style.border = "solid grey";
+				this.$refs.username.style.borderWidth = "0.5px";
+				this.$refs.username.style.borderBottom = "0";
+			}
+
+			if(this.user.password === ''){
+				this.$refs.password.style.border = "solid #e50000";
+				this.$refs.password.style.marginTop = "-2px";
+				this.$refs.password.style.borderWidth = "2px";
+				this.passwordError = 'true';
+				validation = false;
+			}else{
+				this.$refs.password.style.border = "solid grey";
+				this.$refs.password.style.marginTop = "0";
+				this.$refs.password.style.borderWidth = "0.5px";
+				this.$refs.password.style.borderBottom = "0";
+				this.passwordError = '';
+			}
+
+			if(this.confirmPassword !== this.user.password){
+				this.$refs.confirmPassword.style.border = "solid #e50000";
+				this.$refs.confirmPassword.style.marginTop = "-2px";
+				this.$refs.confirmPassword.style.borderWidth = "2px";
+				this.confirmPasswordError = 'true';
+				validation = false;
+			}else{
+				this.$refs.confirmPassword.style.border = "solid grey";
+				this.$refs.confirmPassword.style.marginTop = "0";
+				this.$refs.confirmPassword.style.borderWidth = "0.5px";
+				this.$refs.confirmPassword.style.borderBottom = "0";
+				this.confirmPasswordError = '';
+			}
+
+			if(this.user.name === ''){
+				this.$refs.name.style.border = "solid #e50000";
+				this.$refs.name.style.marginTop = "-2px";
+				this.$refs.name.style.borderWidth = "2px";
+				this.nameError = 'true';
+				validation = false;
+			}else{
+				this.$refs.name.style.border = "solid grey";
+				this.$refs.name.style.marginTop = "0";
+				this.$refs.name.style.borderWidth = "0.5px";
+				this.$refs.name.style.borderBottom = "0";
+				this.nameError = '';
+			}
+
+			if(this.user.surname === ''){
+				this.$refs.surname.style.border = "solid #e50000";
+				this.$refs.surname.style.marginTop = "-2px";
+				this.$refs.surname.style.borderWidth = "2px";
+				this.$refs.surname.style.borderRadius = "0 0 8px 8px";
+				this.$refs.surname.classList.remove('last');
+				this.surnameError = 'true';
+				validation = false;
+			}else{
+				this.$refs.surname.style.border = "solid grey";
+				this.$refs.surname.style.marginTop = "0";
+				this.$refs.surname.style.borderWidth = "0.5px";
+				this.$refs.surname.classList.add('last');
+				this.surnameError = '';
+			}
+			
+
+			if(validation === false){
+				return;
+			}
 			let self = this;
 			axios
-				.post("rest/users", user);	
-			this.$refs.signupModal.classList.remove("modal-show");
+				.post("rest/users", user)
+				.then(function(response) 	{	if(response.data !== ''){
+													self.$refs.signupModal.classList.remove("modal-show");
+													self.closeSignUpPopup();
+													self.$parent.filteredUsers.push(response.data);
+//													self.$parent.forceRerender();
+												}else{
+													self.usernameExists = 'true'
+													self.$refs.username.style.border = "solid #e50000";
+													self.$refs.username.style.borderWidth = "2px";
+												}
+											});
 		}
 	}
 });
