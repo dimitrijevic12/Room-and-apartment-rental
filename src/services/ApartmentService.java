@@ -76,7 +76,7 @@ public class ApartmentService {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Apartment> getComments(){
+	public Collection<Apartment> getApartments(){
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		return dao.getAll();
 	}

@@ -9,6 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Apartment {
 	private ApartmentType type;
+	private String name;
 	private int roomCount;
 	private int guestCount;
 	private Location location;
@@ -30,8 +31,11 @@ public class Apartment {
 	@JsonIgnore
 	private List<Reservation> reservations;
 	private long id;
+	private int stars;
 	
 	
+	
+
 	public Apartment() {
 		super();
 		this.type = ApartmentType.APARTMENT;
@@ -52,12 +56,13 @@ public class Apartment {
 		this.id = 0;
 	}
 	
-	public Apartment(long id, ApartmentType type, int roomCount, int guestCount, Location location, List<Date> approvedDates,
+	public Apartment(long id,String name, ApartmentType type, int roomCount, int guestCount, Location location, List<Date> approvedDates,
 			List<Date> availableDates, User host, List<Image> images, double price,
 			Date checkInTime, Date checkOutTime, ApartmentStatus status, List<Long> amenitiesIds,
-			List<Reservation> reservations) {
+			List<Reservation> reservations, int stars) {
 		super();
 		this.type = type;
+		this.name = name;
 		this.roomCount = roomCount;
 		this.guestCount = guestCount;
 		this.location = location;
@@ -73,8 +78,17 @@ public class Apartment {
 		this.reservations = reservations;
 		this.id = id;
 		this.hostUsername = host.getUsername();
+		this.stars = stars;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getHostUsername() {
 		return hostUsername;
 	}
@@ -129,6 +143,14 @@ public class Apartment {
 
 	public void setGuestCount(int guestCount) {
 		this.guestCount = guestCount;
+	}
+	
+	public int getStars() {
+		return stars;
+	}
+
+	public void setStars(int stars) {
+		this.stars = stars;
 	}
 
 	public Location getLocation() {
