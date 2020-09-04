@@ -4,7 +4,7 @@
 }
 
 
-.wrapper {
+.apartments .wrapper {
 	padding-top: 100px;
 	padding-left: 100px;
 	display: grid;
@@ -93,7 +93,6 @@ ul {
 
 .hotel-name {
 	height: 20px;
-	text-align: center;
 	grid-row: 1;
 	grid-column: 2;
 }

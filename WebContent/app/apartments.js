@@ -1,5 +1,6 @@
 Vue.component('apartments',{
 	template: `
+	<div class="apartments">
 		<div class="wrapper">
 		<div class="search-form">
 			<form class="f">
@@ -31,8 +32,8 @@ Vue.component('apartments',{
 					<div class="rating-box">
 						<template v-for="n in 5" >
 							<input type="radio" >
-							<label v-if="a.stars > n"  class="star" >&#127775</label>
-							<label v-else class="star" >&#9733</label>
+							<label v-if="a.stars < n"  class="star" >&#9733</label>
+							<label v-else class="star" >&#127775</label>
 						</template>
 					</div>
 					<label class="activity">status: {{a.status}}</label>
@@ -48,6 +49,7 @@ Vue.component('apartments',{
 				
 			</ul>
 		</div>
+	</div>
 	</div>
 	`,
 		
