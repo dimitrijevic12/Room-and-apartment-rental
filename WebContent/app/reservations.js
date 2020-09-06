@@ -1,4 +1,4 @@
-Vue.component("reservations",{
+Vue.component('reservations',{
 	template: `
 <div class="reservations">
 	<div class="wrapper">
@@ -43,7 +43,7 @@ Vue.component("reservations",{
 				<div class="display-button">
 					<button @click="showReservation(res)">Display</button>
 				</div>	
-				<reservation v-if="mode==='SHOW'"></reservation>
+				<reservation></reservation>
 			</li>
 			</ul>
 		</div>
@@ -54,7 +54,7 @@ Vue.component("reservations",{
 	data: function(){
 		return{
 			reservations: null,
-			mode: "HIDDEN"
+//			mode: "HIDDEN"
 		}
 	},
 
@@ -69,18 +69,10 @@ Vue.component("reservations",{
 	methods: {
 		showReservation(reservation){
 			console.log("pre slanja: "+ reservation.guestUsername);
-			this.$root.$emit('showReservation', reservation);
-			this.mode="SHOW";
+			this.$root.$emit('show-reservation', reservation);
+//			this.mode="SHOW";
 		}
 	}
-/*	beforeRouteUpdate (to, from, next) {
-//    	if(this.App.$cookies.get('user').role === 'ANON') {
-//		if(to.$cookies.get('user').role === 'ANON'){
-		if(this.$cookies.get('user').role === 'ANON'){
-			alert("Pristupanje reservations bez dozvole")
-			next('#');
-		}
-  },*/
 });
 
 Vue.component('reservation',{
@@ -128,16 +120,24 @@ Vue.component('reservation',{
 		},
 		
 		mounted: function(){
-			console.log("usao!!!: ");
-			this.$root.$on('showReservation',(reservation) => {
+//			console.log("usao!!!: ");
+			this.$root.$on('show-reservation',(reservation) => {
 				console.log("u funkciji: " + reservation.guestUsername);
-				this.oneReservation = reservation});
+				this.oneReservation = reservation;
+				axios.get('rest/apartments/'+this.oneReservation.apartmentId)
+					.then((response)=>{
+					this.apartment = response.data;})
+				axios.get('rest/users/'+this.oneReservation.guestUsername)
+					.then((response)=>{
+					this.user = response.data;})
+				this.$refs.showReservationModal.style.display = "block";
+			});
 			
-			console.log("username: "+ this.oneReservation.guestUsername);
+//			console.log("username: "+ this.oneReservation.guestUsername);
 			
 			//axios.get('res/reserevations/'+resId).then((response) => {this.oneReservation = response.data});
 			
-			axios.get('rest/apartments/'+this.oneReservation.apartmentId)
+/*			axios.get('rest/apartments/'+this.oneReservation.apartmentId)
 			.then((response)=>{
 				this.apartment = response.data;
 			})
@@ -146,8 +146,8 @@ Vue.component('reservation',{
 			.then((response)=>{
 				this.user = response.data
 			})
-			
-			this.$refs.showReservationModal.style.display = "block";
+*/			
+//			this.$refs.showReservationModal.style.display = "block";			this.$refs.showReservationModal.style.display = "block";
 	}
 });
 
