@@ -50,6 +50,17 @@ public class CommentDAO {
 		return (comments.containsKey(id) && comments.get(id).getId()!=-1)? comments.get(id): null;
 	}
 	
+	public Collection<Comment> findCommentsByApartment(long id) {
+		List<Comment> comments = new ArrayList<Comment>();
+		for(Comment comment : findAllUndeleted()) {
+			if(comment.getApartmentId() == id) {
+				comments.add(comment);
+			}
+		}
+		
+		return comments;
+	}
+	
 	public Comment save(Comment comment) {
 		long maxId = -1;
 		for(long id : comments.keySet()) {

@@ -28,7 +28,7 @@ Vue.component('apartments',{
 					<div class="image-holder">
 						<!--<img src="images/ap1.jpg" class="">-->
 					</div>
-					<h3 class="hotel-name">{{a.name}}</h3>
+					<router-link class="hotel-name" :to="{ name: 'one-apartment', params: { id: a.id }}"><h3 class="hotel-name">{{a.name}}</h3></router-link>
 					<div class="rating-box">
 						<template v-for="n in 5" >
 							<input type="radio" >

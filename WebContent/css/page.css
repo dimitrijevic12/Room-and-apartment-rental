@@ -4,16 +4,17 @@
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 	height: 100%;
-	margin: 0 auto
+	margin: 0 auto;
 }
 
 .page {
 	background-color: white;
 	background-size: cover;
 	width: 80%;
-	height: 100%;
+	height: fit-content;
 	margin: 0 auto;
-	overflow: auto;
+	overflow: hidden;
+	position: relative;
 }
 
 .page-content {
@@ -22,16 +23,18 @@
 	margin-left: 5%;
 	margin-right: 5%;
 	margin-top: 5%;
+	margin-bottom: 5%;
 	position: relative;
+	display: block;
 }
 
 .search-bar {
-	position: absolute;
 	width: 100%;
 	background-color: #f5f4f3;
 	padding-top: 15px;
 	padding-bottom: 15px;
 	border-radius: 8px;
+	display: flex;
 }
 
 .filter-btn{
@@ -112,8 +115,7 @@
 }
 
 .users-table {
-	margin-top: 90px;
-	position: absolute;
+	margin-top: 20px;
 	background-color: #f5f4f3;
 	height: 100%;
 	width: 100%;

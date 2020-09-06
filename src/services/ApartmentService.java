@@ -2,6 +2,7 @@ package services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -21,6 +22,7 @@ import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Amenity;
 import beans.Apartment;
+import beans.Comment;
 import beans.Role;
 import beans.User;
 
@@ -78,6 +80,7 @@ public class ApartmentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Apartment> getApartments(){
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		
 		return dao.getAll();
 	}
 	
@@ -87,15 +90,24 @@ public class ApartmentService {
 	
 	public Apartment findOne(@PathParam("id") Long id) {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+/*		initAmenityDAO();
+		AmenityDAO amenityDao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
+		
+		Apartment apartment = dao.findApartment(id);
+		List<Amenity> amenities = amenityDao.findAmenitiesById(apartment.getAmenitiesIds());
+		apartment.setAmenities(amenities);
+*/		
 		return dao.findApartment(id);
 	}
 	
 	@GET
-	@Path("/guest")
+	@Path("/comments/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Apartment> getActiveApartments(){
-		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
-		return dao.getActiveApartments();
+	public Collection<Comment> getCommentsByApartment(@PathParam("id") Long id){
+		initCommentDAO();
+		CommentDAO commentDao = (CommentDAO) ctx.getAttribute("commentDAO");
+
+		return commentDao.findCommentsByApartment(id);
 	}
 	
 	@GET
@@ -104,6 +116,14 @@ public class ApartmentService {
 	public Collection<Apartment> getHostApartments(@PathParam("username") String username){
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		return dao.getHostApartments(username);
+	}
+	
+	@GET
+	@Path("/guest")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Apartment> getActiveApartments(){
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		return dao.getActiveApartments();
 	}
 	
 	@POST
