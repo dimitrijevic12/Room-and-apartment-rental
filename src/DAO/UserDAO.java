@@ -14,7 +14,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import beans.Amenity;
 import beans.Apartment;
 import beans.Gender;
 import beans.Reservation;

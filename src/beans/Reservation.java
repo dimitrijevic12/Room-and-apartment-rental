@@ -3,6 +3,7 @@ package beans;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 
 public class Reservation {
@@ -13,7 +14,7 @@ public class Reservation {
 	private double total;
 	private String message;
 	private String guestUsername;
-	@JsonIgnore
+	@JsonProperty
 	private Apartment apartment;
 
 	public long getApartmentId() {

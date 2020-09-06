@@ -1,5 +1,6 @@
 package DAO;
 
+import java.awt.Image;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,14 +16,11 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import java.awt.Image;
-
 import beans.Address;
 import beans.Amenity;
 import beans.Apartment;
 import beans.ApartmentStatus;
 import beans.ApartmentType;
-import beans.Comment;
 import beans.Location;
 import beans.Reservation;
 import beans.User;
