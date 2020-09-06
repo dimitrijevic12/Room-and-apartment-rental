@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import DAO.AmenityDAO;
 import DAO.ApartmentDAO;
 import beans.Amenity;
+import beans.Apartment;
 
 
 @Path("/amenities")
@@ -58,6 +59,17 @@ public class AmenityService {
 	public Collection<Amenity> getAmenities(){
 		AmenityDAO dao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
 		return dao.findAllUndeleted();
+	}
+	
+	@GET
+	@Path("/byApartment/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Amenity> getAmenitiesByApartment(@PathParam("id") long id){
+		AmenityDAO dao = (AmenityDAO) ctx.getAttribute("amenitiesDAO");
+		initApartmentDAO();
+		ApartmentDAO apartmentDao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		Apartment apartment = apartmentDao.findApartment(id);
+		return dao.findAmenitiesById(apartment.getAmenitiesIds());
 	}
 	
 	@POST

@@ -45,6 +45,15 @@ public class AmenityDAO {
 		return (amenities.containsKey(id) && amenities.get(id).getId()!=-1)? amenities.get(id): null;
 	}
 	
+	public List<Amenity> findAmenitiesById(List<Long> ids){
+		List<Amenity> amenities = new ArrayList<Amenity>();
+		for(long id : ids) {
+			amenities.add(findAmenity(id));
+		}
+		
+		return amenities;
+	}
+	
 	public Amenity save(Amenity amenity) {
 		long maxId = -1;
 		for(long id : amenities.keySet()) {

@@ -1,0 +1,166 @@
+.name-header{
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	font-size: 30px;
+	height: 50px;
+	margin: 20px 5% -50px 5%;
+}
+
+.image-slider{
+	height: 400px;
+	border: solid black;
+}
+
+.important-info{
+	margin: 20px 0 0 0;
+	padding: 10px 0 10px 0;
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	display: flex;
+	border-top: solid grey;
+	border-bottom: solid grey;
+}
+
+.label-pair{
+	float: left;
+	padding: 5px 0 5px 0;
+}
+
+.tag{
+	font-size: 20px;
+	margin-left: 10px;
+}
+
+.info{
+	margin: 5px 0 10px 35px;
+}
+
+.street{
+	display: block;
+	font-size: 22px;
+	font-weight: bold;
+}
+
+.city{
+	display: block;
+	font-size: 20px;
+	color: grey;
+}
+
+.lat-long{
+	display: block;
+	font-size: 18px;
+	color: darkgrey;
+}
+
+.host{
+	margin-left: 250px;
+}
+
+.host-username{
+	display: block;
+	font-size: 22px;
+	font-weight: bold;
+}
+
+.host-tag{
+	font-size: 20px;
+	margin-left: 10px;
+}
+
+.reserve-button{
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	font-size: 26px;
+	float: right;
+	padding: 0 50px;
+	text-align: center;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	margin-left: auto;
+	margin-right: 20px;
+	border-radius: 10px;
+	background-color: #0075a6;
+	color: white;
+	border: none;
+}
+
+.reserve-button:hover,
+.reserve-button:focus {
+  background-color: #E5F4FF;
+  color: #113E60;
+}
+
+.description{
+	padding: 10px 0 10px 0;
+	display: flex;
+	border-bottom: solid grey;
+	font-family: 'Times New Roman', Georgia, serif;
+	text-align: left;
+}
+
+.grid-container{
+	display: grid;
+	grid-template-columns: 50%  50%;
+	grid-auto-rows: 50px;
+	width: 100%;
+	margin: 30px 24% 20px 24%;
+	align-items: stretch;
+}
+
+.grid-item{
+	display: flex;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+	border: solid 1px grey;
+	background-color: #f5f4f3;
+}
+
+.list-container{
+	width: 100%;
+	margin: 5px 0 0 60px;
+}
+
+.description-list{
+	width: 100%;
+	font-size: 22px;
+}
+
+.description-list li{
+	margin-top: 5px;
+}
+
+.amenities-container{
+	display: flex;
+	height: auto;
+	border-bottom: solid grey;
+}
+
+.comments-container{
+	display: flex;
+	height: auto;
+	border-bottom: solid grey;
+}
+
+.comments{
+	margin: 0;
+	padding: 20px 30px 20px 30px;
+	grid-auto-rows: auto;
+}
+
+.comment {
+	display: block;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 30px;
+}
+
+.guest-username{
+	margin-bottom: 5px;
+	font-size: 24px;
+}
+
+.comment-text{
+	font-size: 20px;
+}
