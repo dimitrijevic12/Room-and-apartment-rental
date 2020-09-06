@@ -1,6 +1,7 @@
 package DAO;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,8 +42,24 @@ public class ReservationDAO {
 		return reservations.values();
 	}
 	
-	public Reservation findReservation(long id) {
-		return (reservations.containsKey(id) && reservations.get(id).getId()!=-1)? reservations.get(id): null;	}
+	public Collection<Reservation> getAllWithApartment(ApartmentDAO apartmentDAO){
+		List<Reservation> result = new ArrayList<Reservation>();
+		for(long resId : reservations.keySet()) {
+			Reservation reservation = reservations.get(resId);
+			reservation.setApartment(apartmentDAO.findApartment(reservation.getApartmentId()));
+			result.add(reservation);
+		}
+		return result;
+	}
+	
+	public Reservation findReservation(long id,ApartmentDAO apartmentDAO) {
+		if(reservations.containsKey(id) && reservations.get(id).getId()!=-1) {
+			Reservation result = reservations.get(id);
+			result.setApartment(apartmentDAO.findApartment(result.getApartmentId()));
+			return result;
+		}
+		return null;
+	}
 	
 	public void write() {
 		ObjectMapper mapper = new ObjectMapper();

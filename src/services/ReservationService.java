@@ -5,9 +5,11 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,6 +21,7 @@ import DAO.ReservationDAO;
 import DAO.UserDAO;
 import beans.Apartment;
 import beans.Reservation;
+import beans.ReservationStatus;
 import beans.Role;
 import beans.User;
 
@@ -62,6 +65,17 @@ public class ReservationService {
 		return dao.getAll();
 	}
 	
+	@GET
+	@Path("/withApartment")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Reservation> getResevationsWithApartment(){
+		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
+		initApartmentDAO();
+		ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		
+		return dao.getAllWithApartment(apartmentDAO);
+	}
+	
 	
 	@GET
 	@Path("/{id}")
@@ -69,14 +83,16 @@ public class ReservationService {
 	
 	public Reservation findOne(@PathParam("id") long id) {
 		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
-		return dao.findReservation(id);
+		initApartmentDAO();
+		ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		return dao.findReservation(id,apartmentDAO);
 	}
 	
 	
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public void test(String contextpath){
+	public void writeAll(){
 		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
 		dao.write();
 	}
@@ -91,6 +107,19 @@ public class ReservationService {
 		ApartmentDAO apartmentdao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
 		dao.initilazeFile(new ArrayList<Apartment>(apartmentdao.getAll()), new ArrayList<User>(userDAO.getAllUndeletedRoles(Role.GUEST)));
+	}
+	
+	@PUT
+	@Path("{id}/{status}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	
+	public Reservation update(@PathParam("id") long id,@PathParam("status") ReservationStatus status) {
+		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
+		Reservation result = findOne(id);
+		result.setStatus(status);
+		dao.write();
+		return result;
 	}
 	
 	@DELETE

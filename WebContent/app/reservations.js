@@ -14,9 +14,9 @@ Vue.component('reservations',{
 				<label>Apartment's name</label><br>
 				<input class="input" list="apartments" name="name"><br>
 				<datalist id="apartments">
-					<option value="Pupinova palata"></option>
-					<option value="Hotel zlatiborska noc"></option>
-					<option value="Hotel Grande"></option>
+					<template v-for="apart in apartments">
+					<option>{{apart.name}}</option>
+					</template>
 				</datalist>
 				<label>Apartment's status</label><br>
 				<select class="input" name="status">
@@ -36,10 +36,11 @@ Vue.component('reservations',{
 		<div class="reservations-list-label">
 		<ul class="">
 			<li v-for="res in reservations" class="reservation">
-				<label>{{res.apartmentId}}</label>
+				<label>{{res.apartment.name}}</label>
 				<label>{{res.guestUsername}}</label>
 				<label>from: {{res.checkInDate}}</label>
 				<label>nights: {{res.nightCount}}</label>
+				<label>status: {{res.status}}</label>
 				<div class="display-button">
 					<button @click="show_reservation(res)">Display</button>
 				</div>	
@@ -53,16 +54,23 @@ Vue.component('reservations',{
 
 	data: function(){
 		return{
-			reservations: null,
+			reservations: {},
+			apartments: {},
 		}
 	},
 
 	mounted: function(){
 		axios
-			.get('rest/reservations/')
+			.get('rest/reservations/withApartment')
 			.then((response) => {
 				this.reservations = response.data;
-			})
+			});
+		axios
+			.get('rest/apartments/')
+			.then((response) => {
+				this.apartments = response.data;
+			});
+		
 	},
 	
 	methods: {
@@ -100,8 +108,8 @@ Vue.component('reservation-modal',{
 		
 					<div class="row">				
 						<div class="buttons">
-							<button type="button">Prihvati</button>
-							<button type="button">Odbij</button>
+							<button type="button" @click="accept_reservation()">Prihvati</button>
+							<button type="button" @click="decline_reservation()">Odbij</button>
 							<button type="button" @click="close_modal_dialog()">Izadji</button>
 						</div>
 					</div>
@@ -135,7 +143,21 @@ Vue.component('reservation-modal',{
 			close_modal_dialog(){
 				console.log("usao sam da ga odradim");
 				//this.$refs.showReservationModal.classList.remove("modal-show");
+			},
+			accept_reservation(){
+				console.log(this.oneReservation.id);
+				axios.put('rest/reservations/'+this.oneReservation.id+"/ACCEPTED")
+					.then((response) => {
+						alert(response.data.status);
+					});
+			},
+			decline_reservation(){
+				axios.put('rest/reservations/'+this.oneReservation.id+"/DENIED")
+				.then((response) => {
+					console.log(response.data);
+				});
 			}
+			
 		}
 		
 		
