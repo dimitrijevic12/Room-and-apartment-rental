@@ -1,4 +1,4 @@
-Vue.component("reservations",{
+Vue.component('reservations',{
 	template: `
 <div class="reservations">
 	<div class="wrapper">
@@ -41,9 +41,11 @@ Vue.component("reservations",{
 				<label>from: {{res.checkInDate}}</label>
 				<label>nights: {{res.nightCount}}</label>
 				<div class="display-button">
-					<button>Display</button>
-				</div>
+					<button @click="show_reservation(res)">Display</button>
+				</div>	
+				<reservation-modal></reservation-modal>
 			</li>
+			</ul>
 		</div>
 	</div>
 </div>
@@ -51,7 +53,7 @@ Vue.component("reservations",{
 
 	data: function(){
 		return{
-			reservations: null
+			reservations: null,
 		}
 	},
 
@@ -61,13 +63,82 @@ Vue.component("reservations",{
 			.then((response) => {
 				this.reservations = response.data;
 			})
-	}
-/*	beforeRouteUpdate (to, from, next) {
-//    	if(this.App.$cookies.get('user').role === 'ANON') {
-//		if(to.$cookies.get('user').role === 'ANON'){
-		if(this.$cookies.get('user').role === 'ANON'){
-			alert("Pristupanje reservations bez dozvole")
-			next('#');
+	},
+	
+	methods: {
+		show_reservation(reservation){
+			this.$root.$emit('show-reservation', reservation);
 		}
-  },*/
-})
+	}
+});
+
+Vue.component('reservation-modal',{
+	template:
+		`
+			<div id="reservation-modal" class="modal" ref="showReservationModal">
+				<form>
+					<h1 class="naslov">{{apartment.name}}</h1>
+					<div class="row">
+						<label>username: {{oneReservation.guestUsername}}</label>
+					</div>
+					<div>
+						<label>Gost: {{user.name}} {{user.surname}}</label>
+					</div>
+					<div class="row">
+					<label>Pocetni datum: {{oneReservation.checkInDate}}</label>
+					</div>
+					<div class="row">
+					<label>Broj nocenja: {{oneReservation.nightCount}}</label>
+					</div>
+					<div class="row">
+						<label>Cena: {{oneReservation.total}} </label>
+					</div>
+					<div class="row">
+						<label>Komentar:</label><br/>
+						<textarea name="komentar" readonly maxlength="255">{{oneReservation.message}}</textarea>
+					</div>
+		
+					<div class="row">				
+						<div class="buttons">
+							<button type="button">Prihvati</button>
+							<button type="button">Odbij</button>
+							<button type="button" @click="close_modal_dialog()">Izadji</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		`,
+		data: function(){
+			return{
+				oneReservation: {},
+				user: {},
+				apartment: {},
+			}
+		},
+		
+		mounted: function(){
+			this.$root.$on('show-reservation',(reservation) => {
+				this.oneReservation = reservation;
+				
+				axios.get('rest/apartments/'+this.oneReservation.apartmentId)
+					.then((response)=>{
+					this.apartment = response.data;})
+				axios.get('rest/users/'+this.oneReservation.guestUsername)
+					.then((response)=>{
+					this.user = response.data;})
+					this.$refs.showReservationModal.classList.add("modal-show");
+					this.$refs.showReservationModal.style.display = "block";
+			});
+			
+		},
+		methods: {
+			close_modal_dialog(){
+				console.log("usao sam da ga odradim");
+				//this.$refs.showReservationModal.classList.remove("modal-show");
+			}
+		}
+		
+		
+	
+});
+
