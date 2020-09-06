@@ -43,7 +43,7 @@ Vue.component("reservations",{
 				<div class="display-button">
 					<button @click="showReservation(res)">Display</button>
 				</div>	
-				<reservation></reservation>
+				<reservation v-if="mode==='SHOW'"></reservation>
 			</li>
 			</ul>
 		</div>
@@ -68,7 +68,8 @@ Vue.component("reservations",{
 	
 	methods: {
 		showReservation(reservation){
-			this.$root.$emit('show-reservation',reservation);
+			console.log("pre slanja: "+ reservation.guestUsername);
+			this.$root.$emit('showReservation', reservation);
 			this.mode="SHOW";
 		}
 	}
@@ -89,23 +90,23 @@ Vue.component('reservation',{
 				<form>
 					<h1 class="naslov"></h1>
 					<div class="row">
-						<label>username: {{reservation.guestUsername}}</label>
+						<label>username: {{oneReservation.guestUsername}}</label>
 					</div>
 					<div>
 						<label>Gost: </label>
 					</div>
 					<div class="row">
-					<label>Pocetni datum: {{reservation.checkInDate}}</label>
+					<label>Pocetni datum: {{oneReservation.checkInDate}}</label>
 					</div>
 					<div class="row">
-					<label>Broj nocenja: {{reservation.nightCount}}</label>
+					<label>Broj nocenja: {{oneReservation.nightCount}}</label>
 					</div>
 					<div class="row">
-						<label>Cena: {{reservation.total}} </label>
+						<label>Cena: {{oneReservation.total}} </label>
 					</div>
 					<div class="row">
 						<label>Komentar:</label><br/>
-						<textarea name="komentar" readonly maxlength="255">{{reservation.message}}</textarea>
+						<textarea name="komentar" readonly maxlength="255">{{oneReservation.message}}</textarea>
 					</div>
 		
 					<div class="row">				
@@ -118,25 +119,30 @@ Vue.component('reservation',{
 				</form>
 			</div>
 		`,
-		props:['info'],
 		data: function(){
 			return{
-				reservation: null,
+				oneReservation: {},
 				user: null,
 				apartment: null,
 			}
 		},
 		
 		mounted: function(){
+			console.log("usao!!!: ");
+			this.$root.$on('showReservation',(reservation) => {
+				console.log("u funkciji: " + reservation.guestUsername);
+				this.oneReservation = reservation});
 			
-			this.$root.$on('show-reservation',(reservation) => {this.reservation = reservation});
+			console.log("username: "+ this.oneReservation.guestUsername);
 			
-			axios.get('rest/apartments/'+reservation.apartmentId)
+			//axios.get('res/reserevations/'+resId).then((response) => {this.oneReservation = response.data});
+			
+			axios.get('rest/apartments/'+this.oneReservation.apartmentId)
 			.then((response)=>{
 				this.apartment = response.data;
 			})
 			
-			axios.get('rest/users/'+reservation.guestUsername)
+			axios.get('rest/users/'+this.oneReservation.guestUsername)
 			.then((response)=>{
 				this.user = response.data
 			})
