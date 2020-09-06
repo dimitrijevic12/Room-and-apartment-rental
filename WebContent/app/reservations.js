@@ -41,9 +41,11 @@ Vue.component("reservations",{
 				<label>from: {{res.checkInDate}}</label>
 				<label>nights: {{res.nightCount}}</label>
 				<div class="display-button">
-					<button>Display</button>
-				</div>
+					<button @click="showReservation(res)">Display</button>
+				</div>	
+				<reservation></reservation>
 			</li>
+			</ul>
 		</div>
 	</div>
 </div>
@@ -51,7 +53,8 @@ Vue.component("reservations",{
 
 	data: function(){
 		return{
-			reservations: null
+			reservations: null,
+			mode: "HIDDEN"
 		}
 	},
 
@@ -61,6 +64,13 @@ Vue.component("reservations",{
 			.then((response) => {
 				this.reservations = response.data;
 			})
+	},
+	
+	methods: {
+		showReservation(reservation){
+			this.$root.$emit('show-reservation',reservation);
+			this.mode="SHOW";
+		}
 	}
 /*	beforeRouteUpdate (to, from, next) {
 //    	if(this.App.$cookies.get('user').role === 'ANON') {
@@ -70,4 +80,68 @@ Vue.component("reservations",{
 			next('#');
 		}
   },*/
-})
+});
+
+Vue.component('reservation',{
+	template:
+		`
+			<div id="reservation-modal" class="modal" ref="showReservationModal">
+				<form>
+					<h1 class="naslov"></h1>
+					<div class="row">
+						<label>username: {{reservation.guestUsername}}</label>
+					</div>
+					<div>
+						<label>Gost: </label>
+					</div>
+					<div class="row">
+					<label>Pocetni datum: {{reservation.checkInDate}}</label>
+					</div>
+					<div class="row">
+					<label>Broj nocenja: {{reservation.nightCount}}</label>
+					</div>
+					<div class="row">
+						<label>Cena: {{reservation.total}} </label>
+					</div>
+					<div class="row">
+						<label>Komentar:</label><br/>
+						<textarea name="komentar" readonly maxlength="255">{{reservation.message}}</textarea>
+					</div>
+		
+					<div class="row">				
+						<div class="buttons">
+							<button type="button">Prihvati</button>
+							<button type="button">Odbij</button>
+							<button type="button">Izadji</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		`,
+		props:['info'],
+		data: function(){
+			return{
+				reservation: null,
+				user: null,
+				apartment: null,
+			}
+		},
+		
+		mounted: function(){
+			
+			this.$root.$on('show-reservation',(reservation) => {this.reservation = reservation});
+			
+			axios.get('rest/apartments/'+reservation.apartmentId)
+			.then((response)=>{
+				this.apartment = response.data;
+			})
+			
+			axios.get('rest/users/'+reservation.guestUsername)
+			.then((response)=>{
+				this.user = response.data
+			})
+			
+			this.$refs.showReservationModal.style.display = "block";
+	}
+});
+
