@@ -3,52 +3,64 @@ Vue.component('reservations',{
 <div class="reservations">
 	<div class="wrapper">
 		<div class="search-reservation">
-			<form>
+			
 				<h1>Search</h1>
 				<label>Apartment type</label><br>
-				<select class="input" name="type">
-					<option selected>-</option>
+				<select v-model="filter.type" class="input" name="type">
+					<option></option>
 					<option>ROOM</option>
 					<option>APARTMENT</option>
 				</select> <br/>
 				<label>Apartment's name</label><br>
-				<input class="input" list="apartments" name="name"><br>
+				<input class="input" list="apartments" v-model="filter.name" name="name"><br>
 				<datalist id="apartments">
 					<template v-for="apart in apartments">
 					<option>{{apart.name}}</option>
 					</template>
 				</datalist>
+				<template v-if="mode==='HOST' || mode==='ADMIN'">
 				<label>Apartment's status</label><br>
-				<select class="input" name="status">
-					<option selected>-</option>
+				<select v-model="filter.apStatus" class="input" >
+					<option></option>
 					<option>ACTIVE</option>
 					<option>INACTIVE</option>
 				</select> <br/>
+				</template>
 				<label>Date</label><br>
-				<input class="input" type="date" name=""><br>
+				<input v-model="filter.date" class="input" type="date" name=""><br>
+				<label>Reservation status</label><br/>
+				<select v-model="filter.resStatus" class="input">
+					<option></option>
+					<option>CREATED</option>
+					<option>DENIED</option>
+					<option>CANCELED</option>
+					<option>ACCEPTED</option> 
+					<option>COMPLETED</option>
+				</select>
+				<template v-if="mode==='HOST' || mode==='ADMIN'">
 				<label>Username</label><br>
-				<input class="input" type="" name=""><br>
+				<input class="input"  v-model="filter.username" type="" name=""><br>
+				</template>
 				<div class="buttons">
-					<button>Submit</button>
+					<button @click="searchClick()">Submit</button>
 				</div>
-			</form>
 		</div>
 		<div class="reservations-list-label">
 		<ul class="">
-			<li v-for="res in reservations" class="reservation">
+			<li v-for="res in filteredReservations" class="reservation">
 				<label>{{res.apartment.name}}</label>
-				<label>{{res.guestUsername}}</label>
+				<label v-if="mode !== 'GUEST'">{{res.guestUsername}}</label>
 				<label>from: {{res.checkInDate}}</label>
 				<label>nights: {{res.nightCount}}</label>
 				<label>status: {{res.status}}</label>
 				<div class="display-button">
 					<button @click="show_reservation(res)">Display</button>
 				</div>	
-				<reservation-modal></reservation-modal>
 			</li>
 			</ul>
 		</div>
 	</div>
+	<reservation-modal ></reservation-modal>
 </div>
 	`,
 
@@ -56,26 +68,86 @@ Vue.component('reservations',{
 		return{
 			reservations: {},
 			apartments: {},
+			mode: 'GUEST',
+			filter: {
+				type: '',
+				apStatus: '',
+				name: '',
+				date: '',
+				username: '',
+				resStatus: '',
+			},
+			filteredReservations: {},
 		}
 	},
 
 	mounted: function(){
-		axios
-			.get('rest/reservations/withApartment')
+		if(this.$cookies.get('user').role === 'HOST'){
+			this.mode = 'HOST';
+			axios
+				.get('rest/reservations/host/'+this.$cookies.get('user').username)
+				.then((response) => {
+					this.reservations = response.data;
+					this.filteredReservations = response.data;
+				});
+			
+			axios
+			.get('rest/apartments/host/'+this.$cookies.get('user').username)
+			.then((response) => {
+				this.apartments = response.data;
+			});
+			
+		}else if(this.$cookies.get('user').role === 'ADMIN'){
+			this.mode = 'ADMIN';
+			
+			axios
+				.get('rest/reservations/')
+				.then((response) => {
+					this.reservations = response.data;
+					this.filteredReservations = response.data;
+				})
+				
+				axios
+				.get('rest/apartments/')
+				.then((response) => {
+					this.apartments = response.data;
+				});
+		}else{
+			this.mode = 'GUEST';
+			
+			axios
+			.get('rest/reservations/guest/'+this.$cookies.get('user').username)
 			.then((response) => {
 				this.reservations = response.data;
-			});
-		axios
+				this.filteredReservations = response.data;
+			})
+			
+			axios
 			.get('rest/apartments/')
 			.then((response) => {
 				this.apartments = response.data;
 			});
+		}
+		
 		
 	},
 	
 	methods: {
 		show_reservation(reservation){
 			this.$root.$emit('show-reservation', reservation);
+		},
+		searchClick(){
+			if(this.filter.name === '' && this.filter.type === '' && this.filter.apStatus === '' && this.filter.username==='' && this.filter.date === '' && this.filter.resStatus==='' ) 
+				this.filteredReservations = this.reservations;
+			else{
+				this.filteredReservations = this.reservations.filter((item) => {
+					return 	item.apartment.name.toLowerCase().includes(this.filter.name.toLowerCase()) &&
+							item.apartment.type.startsWith(this.filter.type) &&
+							item.apartment.status.startsWith(this.filter.apStatus) &&
+							item.status.startsWith(this.filter.resStatus) &&
+							item.guestUsername.toLowerCase().includes(this.filter.username.toLowerCase());
+				});
+			}
 		}
 	}
 });
@@ -142,7 +214,8 @@ Vue.component('reservation-modal',{
 		methods: {
 			close_modal_dialog(){
 				console.log("usao sam da ga odradim");
-				//this.$refs.showReservationModal.classList.remove("modal-show");
+				this.$refs.showReservationModal.style.display = "none";
+				this.$refs.showReservationModal.classList.remove("modal-show");
 			},
 			accept_reservation(){
 				console.log(this.oneReservation.id);

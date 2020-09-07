@@ -14,6 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import beans.Apartment;
+import beans.ApartmentStatus;
 import beans.Reservation;
 import beans.ReservationStatus;
 import beans.User;
@@ -135,6 +136,26 @@ public class ReservationDAO {
 			}
 				
 		}
+	}
+	
+	public Collection<Reservation> getReservationsForHost(String hostUsername){
+		List<Reservation> result = new ArrayList<Reservation>();
+		for(long resId : reservations.keySet()) {
+			Reservation reservation = reservations.get(resId);
+			if(reservation.getApartment().getHostUsername().equals(hostUsername))
+				result.add(reservation);
+		}
+		return result;
+	}
+	
+	public Collection<Reservation> getReservationForGuest(String guestUsername){
+		List<Reservation> result = new ArrayList<Reservation>();
+		for(long resId : reservations.keySet()) {
+			Reservation reservation = reservations.get(resId);
+			if(reservation.getGuestUsername().equals(guestUsername) && reservation.getApartment().getStatus().equals(ApartmentStatus.ACTIVE))
+				result.add(reservation);
+		}
+		return result;
 	}
 	
 	public void initilazeFile(List<Apartment> ap,List<User> useri) {

@@ -1,9 +1,16 @@
 #reservation-modal {
 	background-color: gray;
 	width: 400px;
-	margin: auto;
+	height: auto;
+	max-height: 600px;
 	padding: 6px 20px 20px 20px;
 	border-radius: 10px;
+	
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center; 
 }
 
 
