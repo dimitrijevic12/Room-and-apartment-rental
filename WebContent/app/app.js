@@ -11,7 +11,7 @@ const router = new VueRouter({
 	  routes: [
 	    { name: 'home', path: '/', component: Homepage},
 		{ name: 'search', path: '/search', component: Search },
-		{ name: 'reservations', path: '/reservations', component: Reservations, meta: { requiresGuest: true } },
+		{ name: 'reservations', path: '/reservations', component: Reservations, meta: { forbidAnon: true } },
     { name: 'apartments', path: '/apartments', component: Apartments},
     { name: 'one-apartment', path: '/apartment/:id', component: OneApartment},
     { name: 'guests', path: '/guests', component: Guests, meta: { requiresHost:true} },
@@ -21,7 +21,14 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   var cookie = this.$cookies.get('user');
-  if(to.meta.requiresAdmin === true){
+   if(to.meta.forbidAnon === true){
+    if(!cookie){
+      next({ name: 'home' })
+    } else{
+      next()
+    }
+  
+  }else if(to.meta.requiresAdmin === true){
     if(!cookie || (cookie.role !== 'ADMIN')){
       next({ name: 'home' })
     } else{

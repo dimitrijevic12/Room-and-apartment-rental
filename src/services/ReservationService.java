@@ -81,8 +81,10 @@ public class ReservationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Reservation> getReservationsForHost(@PathParam("username") String username){
 		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
+		initApartmentDAO();
+		ApartmentDAO apartmentDao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		
-		return dao.getReservationsForHost(username);
+		return dao.getReservationsForHost(username, apartmentDao);
 	}
 	
 	@GET
@@ -90,7 +92,9 @@ public class ReservationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Reservation> getReservationForGuest(@PathParam("username") String username){
 		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
-		return dao.getReservationForGuest(username);
+		initApartmentDAO();
+		ApartmentDAO apartmentDao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		return dao.getReservationForGuest(username, apartmentDao);
 	}
 	
 	
