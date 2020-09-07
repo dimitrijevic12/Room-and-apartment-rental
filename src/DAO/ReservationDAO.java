@@ -138,21 +138,23 @@ public class ReservationDAO {
 		}
 	}
 	
-	public Collection<Reservation> getReservationsForHost(String hostUsername){
+	public Collection<Reservation> getReservationsForHost(String hostUsername, ApartmentDAO dao){
 		List<Reservation> result = new ArrayList<Reservation>();
 		for(long resId : reservations.keySet()) {
 			Reservation reservation = reservations.get(resId);
-			if(reservation.getApartment().getHostUsername().equals(hostUsername))
+			Apartment apartment = dao.findApartment(reservation.getApartmentId());
+			if(apartment.getHostUsername().equals(hostUsername))
 				result.add(reservation);
 		}
 		return result;
 	}
 	
-	public Collection<Reservation> getReservationForGuest(String guestUsername){
+	public Collection<Reservation> getReservationForGuest(String guestUsername, ApartmentDAO dao){
 		List<Reservation> result = new ArrayList<Reservation>();
 		for(long resId : reservations.keySet()) {
 			Reservation reservation = reservations.get(resId);
-			if(reservation.getGuestUsername().equals(guestUsername) && reservation.getApartment().getStatus().equals(ApartmentStatus.ACTIVE))
+			Apartment apartment = dao.findApartment(reservation.getApartmentId());
+			if(reservation.getGuestUsername().equals(guestUsername) && apartment.getStatus().equals(ApartmentStatus.ACTIVE))
 				result.add(reservation);
 		}
 		return result;
