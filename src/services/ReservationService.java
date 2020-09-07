@@ -76,6 +76,23 @@ public class ReservationService {
 		return dao.getAllWithApartment(apartmentDAO);
 	}
 	
+	@GET
+	@Path("/host/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Reservation> getReservationsForHost(@PathParam("username") String username){
+		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
+		
+		return dao.getReservationsForHost(username);
+	}
+	
+	@GET
+	@Path("/guest/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Reservation> getReservationForGuest(@PathParam("username") String username){
+		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
+		return dao.getReservationForGuest(username);
+	}
+	
 	
 	@GET
 	@Path("/{id}")
