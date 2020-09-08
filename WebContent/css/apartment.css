@@ -138,3 +138,12 @@ ul {
 	grid-row: 4;
 	grid-column: 3/5;
 }
+
+.timepicker{
+	width: 50% !important;
+	float: left;
+}
+
+.date-time-picker-container{
+	height: 70px;
+}
