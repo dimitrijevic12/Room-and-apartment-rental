@@ -107,10 +107,11 @@ public class UserService {
 	public Collection<User> getAllGuestsForHost(@PathParam("username") String hostUsername){
 		initApartmentDAO();
 		initReservationDAO();
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		ReservationDAO reservationDAO = (ReservationDAO) ctx.getAttribute("reservationDAO");		
 		Collection<Long> apartmentsIds = apartmentDAO.getApartmentsIdsFromHost(hostUsername);
-		return reservationDAO.getGuestsFromApartments(apartmentsIds);
+		return reservationDAO.getGuestsFromApartments(apartmentsIds, dao);
 	}
 	
 	@POST
