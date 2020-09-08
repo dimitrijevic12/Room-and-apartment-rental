@@ -143,8 +143,12 @@ public class ReservationDAO {
 		for(long resId : reservations.keySet()) {
 			Reservation reservation = reservations.get(resId);
 			Apartment apartment = dao.findApartment(reservation.getApartmentId());
-			if(apartment.getHostUsername().equals(hostUsername))
+			if(apartment.getHostUsername().equals(hostUsername)) {
+				
+				reservation.setApartment(apartment);
 				result.add(reservation);
+
+			}
 		}
 		return result;
 	}
@@ -154,8 +158,10 @@ public class ReservationDAO {
 		for(long resId : reservations.keySet()) {
 			Reservation reservation = reservations.get(resId);
 			Apartment apartment = dao.findApartment(reservation.getApartmentId());
-			if(reservation.getGuestUsername().equals(guestUsername) && apartment.getStatus().equals(ApartmentStatus.ACTIVE))
+			if(reservation.getGuestUsername().equals(guestUsername) && apartment.getStatus().equals(ApartmentStatus.ACTIVE)) {
+				reservation.setApartment(apartment);
 				result.add(reservation);
+			}
 		}
 		return result;
 	}

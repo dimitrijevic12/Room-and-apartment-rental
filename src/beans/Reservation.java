@@ -16,26 +16,10 @@ public class Reservation {
 	private String guestUsername;
 	@JsonProperty
 	private Apartment apartment;
-
-	public long getApartmentId() {
-		return apartmentId;
-	}
-
-	public void setApartmentId(long apartmentId) {
-		this.apartmentId = apartmentId;
-	}
-
-	public String getGuestUsername() {
-		return guestUsername;
-	}
-
-	public void setGuestUsername(String guestUsername) {
-		this.guestUsername = guestUsername;
-	}
-
 	@JsonIgnore
 	private User guest;
 	private ReservationStatus status;
+
 	
 	public Reservation() {
 		super();
@@ -70,6 +54,21 @@ public class Reservation {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+	public long getApartmentId() {
+		return apartmentId;
+	}
+
+	public void setApartmentId(long apartmentId) {
+		this.apartmentId = apartmentId;
+	}
+
+	public String getGuestUsername() {
+		return guestUsername;
+	}
+
+	public void setGuestUsername(String guestUsername) {
+		this.guestUsername = guestUsername;
 	}
 
 	public Apartment getApartment() {

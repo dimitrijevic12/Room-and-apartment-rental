@@ -46,17 +46,17 @@ Vue.component('reservations',{
 				</div>
 		</div>
 		<div class="reservations-list-label">
-		<ul class="">
-			<li v-for="res in filteredReservations" class="reservation">
-				<label>{{res.apartment.name}}</label>
-				<label v-if="mode !== 'GUEST'">{{res.guestUsername}}</label>
-				<label>from: {{res.checkInDate}}</label>
-				<label>nights: {{res.nightCount}}</label>
-				<label>status: {{res.status}}</label>
-				<div class="display-button">
-					<button @click="show_reservation(res)">Display</button>
-				</div>	
-			</li>
+			<ul class="">
+				<li v-for="res in filteredReservations" class="reservation">
+					<label>{{res.apartment.name}}</label>
+					<label v-if="mode !== 'GUEST'">{{res.guestUsername}}</label>
+					<label>from: {{res.checkInDate}}</label>
+					<label>nights: {{res.nightCount}}</label>
+					<label>status: {{res.status}}</label>
+					<div class="display-button">
+						<button @click="show_reservation(res)">Display</button>
+					</div>	
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -129,11 +129,13 @@ Vue.component('reservations',{
 			});
 		}
 		
+		console.log("zavrsio");
 		
 	},
 	
 	methods: {
 		show_reservation(reservation){
+			console.log(reservation);
 			this.$root.$emit('show-reservation', reservation);
 		},
 		searchClick(){
