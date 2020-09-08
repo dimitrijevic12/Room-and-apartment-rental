@@ -101,7 +101,7 @@ Vue.component('reservations',{
 			this.mode = 'ADMIN';
 			
 			axios
-				.get('rest/reservations/')
+				.get('rest/reservations/withApartment')
 				.then((response) => {
 					this.reservations = response.data;
 					this.filteredReservations = response.data;
@@ -182,8 +182,14 @@ Vue.component('reservation-modal',{
 		
 					<div class="row">				
 						<div class="buttons">
-							<button type="button" @click="accept_reservation()">Prihvati</button>
-							<button type="button" @click="decline_reservation()">Odbij</button>
+							<template v-if="role==='GUEST' && (status==='CREATED' || status==='ACCEPTED')">
+								<button type="button" @click="cancel_reservation()">Odustani</button>
+							</template>
+							<template v-if="role==='HOST'">
+								<button type="button" @click="accept_reservation()" v-if="status==='CREATED'">Prihvati</button>
+								<button type="button" @click="complete_reservation()" >Zavrsi</button>
+								<button type="button" @click="decline_reservation()" v-if="status==='CREATED' || status ==='ACCEPTED'">Odbij</button>
+							</template>
 							<button type="button" @click="close_modal_dialog()">Izadji</button>
 						</div>
 					</div>
@@ -195,27 +201,31 @@ Vue.component('reservation-modal',{
 				oneReservation: {},
 				user: {},
 				apartment: {},
+				status: '',
+				role: ''
 			}
 		},
 		
 		mounted: function(){
 			this.$root.$on('show-reservation',(reservation) => {
 				this.oneReservation = reservation;
+				this.status = reservation.status;
 				
 				axios.get('rest/apartments/'+this.oneReservation.apartmentId)
 					.then((response)=>{
-					this.apartment = response.data;})
+					this.apartment = response.data;});
 				axios.get('rest/users/'+this.oneReservation.guestUsername)
 					.then((response)=>{
-					this.user = response.data;})
+					this.user = response.data;
+					
+					});
+					this.role = this.$cookies.get('user').role;
 					this.$refs.showReservationModal.classList.add("modal-show");
-					this.$refs.showReservationModal.style.display = "block";
+					this.$refs.showReservationModal.style.display = "block";			
 			});
-			
 		},
 		methods: {
 			close_modal_dialog(){
-				console.log("usao sam da ga odradim");
 				this.$refs.showReservationModal.style.display = "none";
 				this.$refs.showReservationModal.classList.remove("modal-show");
 			},
@@ -228,6 +238,20 @@ Vue.component('reservation-modal',{
 			},
 			decline_reservation(){
 				axios.put('rest/reservations/'+this.oneReservation.id+"/DENIED")
+				.then((response) => {
+					console.log(response.data);
+				});
+			},
+			
+			complete_reservation(){
+				axios.put('rest/reservations/'+this.oneReservation.id+"/COMPLETED")
+				.then((response) => {
+					console.log(response.data);
+				});
+			},
+			
+			cancel_reservation(){
+				axios.put('rest/reservations/'+this.oneReservation.id+"/CANCELED")
 				.then((response) => {
 					console.log(response.data);
 				});
