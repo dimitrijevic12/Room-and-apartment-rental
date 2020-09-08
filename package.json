@@ -4,7 +4,8 @@
   "description": "Neki opis",
   "main": "index.js",
   "dependencies": {
-    "vue-cookies": "^1.7.3"
+    "vue-cookies": "^1.7.3",
+    "vue-ctk-date-time-picker": "^2.5.0"
   },
   "devDependencies": {},
   "scripts": {
