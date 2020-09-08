@@ -30,7 +30,9 @@ public class Reservation {
 		this.total = 0.0;
 		this.message = "";
 		this.guest = new User();
-		this.status = ReservationStatus.CREATED;
+		this.status = ReservationStatus.DENIED;
+		this.apartmentId=-1;
+		this.guestUsername="";
 	}
 	
 	public Reservation(long id, Apartment apartment, Date checkInDate, int nightCount, double total, String message, User guest,
