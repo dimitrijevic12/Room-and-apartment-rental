@@ -37,7 +37,6 @@ public class Apartment {
 	
 
 	public Apartment() {
-		super();
 		this.type = ApartmentType.APARTMENT;
 		this.roomCount = 0;
 		this.guestCount = 0;
@@ -53,7 +52,10 @@ public class Apartment {
 		this.status = ApartmentStatus.INACTIVE;
 		this.amenities = new ArrayList<Amenity>();
 		this.reservations = new ArrayList<Reservation>();
+		this.hostUsername="";
+		this.amenitiesIds = new ArrayList<Long>();
 		this.id = 0;
+		this.name = "";
 	}
 	
 	public Apartment(long id,String name, ApartmentType type, int roomCount, int guestCount, Location location, List<Date> approvedDates,
@@ -61,6 +63,7 @@ public class Apartment {
 			Date checkInTime, Date checkOutTime, ApartmentStatus status, List<Long> amenitiesIds,
 			List<Reservation> reservations, int stars) {
 		super();
+		
 		this.type = type;
 		this.name = name;
 		this.roomCount = roomCount;
