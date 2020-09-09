@@ -100,6 +100,7 @@ public class ApartmentService {
 		return dao.findApartment(id);
 	}
 	
+	
 	@GET
 	@Path("/comments/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -119,7 +120,7 @@ public class ApartmentService {
 	}
 	
 	@GET
-	@Path("/guest")
+	@Path("/active")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Apartment> getActiveApartments(){
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");

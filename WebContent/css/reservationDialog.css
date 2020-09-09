@@ -1,4 +1,4 @@
-#reservation-modal {
+.reservation-modal {
 	background-color: gray;
 	width: 400px;
 	height: auto;
@@ -14,7 +14,7 @@
 }
 
 
-#reservation-modal .buttons {
+.reservation-modal .buttons {
 	text-align: center;
 	/*margin-bottom: 20px;*/
 	margin-top: 30px;
@@ -22,7 +22,7 @@
 	justify-content: space-around;
 }
 
-#reservation-modal .row {
+.reservation-modal .row {
 	
 	padding: 10px 0 10px 0;
 	/*display: flex;
@@ -30,7 +30,7 @@
 
 }
 
-#reservation-modal .row input {
+.reservation-modal .row input {
 	padding: 5px;
 	border-radius: 5px;
 	border: none;
@@ -38,7 +38,7 @@
 }
 
 
-#reservation-modal .buttons button {
+.reservation-modal .buttons button {
 	/*padding:10px 30px 10px 30px;*/
 	padding:0.5em;
 	min-width: 9em;
@@ -46,7 +46,7 @@
 	border: none;
 }
 
-#reservation-modal textarea{
+.reservation-modal textarea{
 	width: 100%;
 	height: 8em;
 	margin-top: 3px;
@@ -56,12 +56,12 @@
 	overflow-y: scroll;
 }
 
-#reservation-modal .naslov {
+.reservation-modal .naslov {
 	text-align: center;
 }
 
 
-#reservation-modal  h1{
+.reservation-modal  h1{
 	border-bottom: 1px solid rgba(255,255,255,0.5);
 	padding-bottom: 10px;
 }
