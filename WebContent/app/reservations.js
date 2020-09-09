@@ -157,7 +157,7 @@ Vue.component('reservations',{
 Vue.component('reservation-modal',{
 	template:
 		`
-			<div id="reservation-modal" class="modal" ref="showReservationModal">
+			<div id="reservation-modal" class="modal reservation-modal" ref="showReservationModal">
 				<form>
 					<h1 class="naslov">{{apartment.name}}</h1>
 					<div class="row">
