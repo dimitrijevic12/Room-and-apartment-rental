@@ -90,6 +90,7 @@ Vue.component('users',{
 				.then((response) => {this.users = response.data;
 									 this.filteredUsers = response.data})
 		}
+		console.log(this.mode);
 	},
 	methods: {
 		filter(){
@@ -114,16 +115,15 @@ Vue.component('users',{
 		},
 
 		editProfile(user){
-			this.$root.$emit('open-edit-profile-table', user);
+			if(this.$cookies.get('user').role === 'HOST'){
+				return;
+			}else{
+				this.$root.$emit('open-edit-profile-table', user);
+			}
 		},
 
 		createUser(){
 			this.$root.$emit('open-create-user');
-		},
-
-		forceRerender(){
-//			this.tableKey += 1;
-			this.$forceUpdate();
 		}
 	}
 })
