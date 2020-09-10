@@ -76,7 +76,7 @@ public class ApartmentDAO{
 			Apartment apartment = apartments.get(apartmentId);
 			if(apartment.IsDeleted()) continue;
 			
-			if(apartment.getHost().getUsername().equals(username)) 
+			if(apartment.getHostUsername().equals(username)) 
 				result.add(apartment.getId()) ;
 		}
 		return result;

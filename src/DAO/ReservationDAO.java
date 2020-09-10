@@ -93,14 +93,14 @@ public class ReservationDAO {
 		write();
 	}
 	
-	public Set<User> getGuestsFromApartments(Collection<Long> apartmentsIds){
+	public Set<User> getGuestsFromApartments(Collection<Long> apartmentsIds, UserDAO dao){
 		Set<User> result = new HashSet<User>();
 		for (Long reservationId : reservations.keySet()) {
 			Reservation reservation = reservations.get(reservationId);
 			if(reservation.IsDeleted()) continue;
 			
-			if(isApartmansContainsReservation(reservation, apartmentsIds))
-				result.add(reservation.getGuest());
+			if(isApartmentsContainsReservation(reservation, apartmentsIds))
+				result.add(dao.getUserByUsername(reservation.getGuestUsername()));
 		}
 		return result;
 		
@@ -119,7 +119,7 @@ public class ReservationDAO {
 		return false;
 	}
 	
-	private boolean isApartmansContainsReservation(Reservation reservation,Collection<Long> apartmentsIds) {
+	private boolean isApartmentsContainsReservation(Reservation reservation,Collection<Long> apartmentsIds) {
 		for (Long id : apartmentsIds) {
 			if(reservation.getApartment().getId()==id) return true;
 		}
