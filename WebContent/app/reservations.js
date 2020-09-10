@@ -50,7 +50,7 @@ Vue.component('reservations',{
 				<li v-for="res in filteredReservations" class="reservation">
 					<label>{{res.apartment.name}}</label>
 					<label v-if="mode !== 'GUEST'">{{res.guestUsername}}</label>
-					<label>from: {{res.checkInDate}}</label>
+					<label>from: {{res.checkInDate | dateFormat('DD/MM/YYYY')}}</label>
 					<label>nights: {{res.nightCount}}</label>
 					<label>status: {{res.status}}</label>
 					<div class="display-button">
@@ -78,6 +78,13 @@ Vue.component('reservations',{
 				resStatus: '',
 			},
 			filteredReservations: {},
+		}
+	},
+	
+	filters:{
+		dateFormat: function(value,format){
+			var parsed = moment(value);
+			return parsed.format(format);
 		}
 	},
 
@@ -167,7 +174,7 @@ Vue.component('reservation-modal',{
 						<label>Gost: {{user.name}} {{user.surname}}</label>
 					</div>
 					<div class="row">
-					<label>Pocetni datum: {{oneReservation.checkInDate}}</label>
+					<label>Pocetni datum: {{oneReservation.checkInDate | dateFormat('DD/MM/YYYY')}}</label>
 					</div>
 					<div class="row">
 					<label>Broj nocenja: {{oneReservation.nightCount}}</label>
@@ -187,7 +194,7 @@ Vue.component('reservation-modal',{
 							</template>
 							<template v-if="role==='HOST'">
 								<button type="button" @click="accept_reservation()" v-if="status==='CREATED'">Prihvati</button>
-								<button type="button" @click="complete_reservation()" >Zavrsi</button>
+								<button type="button" v-if="expired === true && status === 'ACCEPTED'" @click="complete_reservation()" >Zavrsi</button>
 								<button type="button" @click="decline_reservation()" v-if="status==='CREATED' || status ==='ACCEPTED'">Odbij</button>
 							</template>
 							<button type="button" @click="close_modal_dialog()">Izadji</button>
@@ -202,7 +209,15 @@ Vue.component('reservation-modal',{
 				user: {},
 				apartment: {},
 				status: '',
-				role: ''
+				role: '',
+				expired: false,
+			}
+		},
+		
+		filters:{
+			dateFormat: function(value,format){
+				var parsed = moment(value);
+				return parsed.format(format);
 			}
 		},
 		
@@ -210,6 +225,10 @@ Vue.component('reservation-modal',{
 			this.$root.$on('show-reservation',(reservation) => {
 				this.oneReservation = reservation;
 				this.status = reservation.status;
+				let reservationEndDate = new Date(reservation.checkInDate);
+					reservationEndDate.setDate(reservationEndDate.getDate() + reservation.nightCount);
+				
+				this.expired = reservationEndDate<Date.now(); 
 				
 				axios.get('rest/apartments/'+this.oneReservation.apartmentId)
 					.then((response)=>{

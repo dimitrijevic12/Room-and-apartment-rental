@@ -192,7 +192,7 @@ Vue.component('apartments',{
 							(this.filter.maxRoom === '' || item.roomCount<=this.filter.maxRoom)&&
 							(this.filter.type === '' || item.type === this.filter.type)&&
 							(this.filter.status === '' || item.status === this.filter.status) &&
-							bool1&& bool2;	
+							bool1 && bool2;	
 				});
 			}
 		},
