@@ -16,8 +16,14 @@ Vue.component('apartments',{
 					</datalist>
 					
 					<li><vue-ctk-date-time-picker class="search-field" v-model="filter.date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']"></vue-ctk-date-time-picker></li>
-					<li><input type="number" class="priceField" v-model="filter.minPrice" min="0" name="minPrice" placeholder="min price"><span>&nbsp;-</span>
-					<input type="number" class="priceField"  v-model="filter.maxPrice" min="0" name="maxPrice" placeholder="max price"></li>
+					<li>
+						<input type="number" class="minMaxField" v-model="filter.minPrice" min="0" name="minPrice" placeholder="min price"><span>&nbsp;-</span>
+						<input type="number" class="minMaxField"  v-model="filter.maxPrice" min="0" name="maxPrice" placeholder="max price">
+					</li>
+					<li>
+						<input type="number" class="minMaxField" v-model="filter.minRoom" min="1" placeholder="min room"><span>&nbsp;-</span>
+						<input type="number" class="minMaxField"  v-model="filter.maxRoom" min="1"placeholder="max room">
+					</li>
 					<li><input type="number" class="search-field" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests"></li>
 					<li><button type="button" @click="searchClick()">Search</button></li>
 				</ul>
@@ -67,6 +73,8 @@ Vue.component('apartments',{
 				guestNum:'',
 				minPrice:'',
 				maxPrice:'',
+				minRoom: '',
+				maxRoom: '',
 				date: {
 					start: '',
 					end: ''
@@ -132,14 +140,16 @@ Vue.component('apartments',{
 		searchClick(){
 			 
 			if(this.filter.city === '' && this.filter.guestNum === '' && this.filter.minPrice === '' && 
-					this.filter.maxPrice === '' && this.filter.date.start === '' && this.filter.date.start === '')
+					this.filter.maxPrice === '' && this.filter.minRoom === '' && this.filter.maxRoom === '' && this.filter.date.start === '' && this.filter.date.start === '')
 				this.filteredApartments = this.apartments;
 			else{
 				this.filteredApartments = this.apartments.filter((item) => {					
 					return item.location.address.city.toLowerCase().includes(this.filter.city.toLowerCase()) &&
 					(this.filter.guestNum === '' || item.guestCount>= this.filter.guestNum) &&
 					(this.filter.minPrice ==='' || item.price>=this.filter.minPrice) &&
-					(this.filter.maxPrice ==='' || item.price<=this.filter.maxPrice);
+					(this.filter.maxPrice ==='' || item.price<=this.filter.maxPrice) &&
+					(this.filter.minRoom === '' || item.roomCount>=this.filter.minRoom)&&
+					(this.filter.maxRoom === '' || item.roomCount<=this.filter.maxRoom);
 						
 				});
 			}
