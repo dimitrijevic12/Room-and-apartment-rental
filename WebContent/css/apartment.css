@@ -8,13 +8,14 @@
 	padding-top: 100px;
 	padding-left: 100px;
 	display: grid;
-	grid-template-columns: 3fr 10fr ;
+	grid-template-columns: 4fr 10fr ;
 	grid-template-rows: auto;
 }
 
 .f {
 	/*width: 200px;*/
 	border: 1px solid green;
+	max-width: 300px;
 	padding: 20px;
 }
 
@@ -43,7 +44,23 @@ ul {
 }
 
 .form-ul li {
-	display: inline;
+	display: flex;
+	justify-content: space-around;
+}
+
+.form-ul li button{
+	width:10em;
+	height: 3em;
+	padding: 3px;
+}
+
+.form-ul li .priceField{
+	width:6em;
+}
+
+.form-ul li .search-field{
+	width:90%;
+	margin: 1em;
 }
 
 .ap-ul li {

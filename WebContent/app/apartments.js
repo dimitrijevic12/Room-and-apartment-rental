@@ -7,27 +7,27 @@ Vue.component('apartments',{
 		<div class="search-form">
 			<form class="f">
 				<h1 class="search">Search</h1>
-				<label for="fname">Location:</label><br>
 				<ul class="form-ul">
-					<li><input type="text" id="searchLocation" name="searchLocation" placeholder="Where would you like to go..."><br></li>
+					<li><input list="cities" id="searchLocation" class="search-field" v-model="filter.city" name="searchLocation" placeholder="Where would you like to go..."><br></li>
+					<datalist id="cities">
+						<template v-for="city in cities"> 
+							<option>{{city}}</option>
+						</template>
+					</datalist>
+					
+					<li><vue-ctk-date-time-picker class="search-field" v-model="filter.date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']"></vue-ctk-date-time-picker></li>
+					<li><input type="number" class="priceField" v-model="filter.minPrice" min="0" name="minPrice" placeholder="min price"><span>&nbsp;-</span>
+					<input type="number" class="priceField"  v-model="filter.maxPrice" min="0" name="maxPrice" placeholder="max price"></li>
+					<li><input type="number" class="search-field" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests"></li>
+					<li><button type="button" @click="searchClick()">Search</button></li>
 				</ul>
-				
-				<label for="lname">Date:</label><br>
-				<input type="date" placeholder="Check in date" id="checkInDate" name="checkInDate">
-				<input type="date" id="checkOutDate" name="checkOutDate" placeholder="Check out date"><br>
-				<label>Price:</label><br>
-				<input type="number" name="minPrice" placeholder="min price">
-				<input type="number" name="maxPrice" placeholder="max price"><br>
-				<label>Guests number: </label><br>
-				<input type="number" name="guestNum" value="number of guests"><br><br>
-				<input type="submit" value="Search">
 			</form>
 		</div>
 
 		<div class="apartments-label">
 			<button @click="openAddApartmentModal">Add apartment</button>
 			<ul class="ap-ul">
-				<li v-for="a in apartments" class="apartment">
+				<li v-for="a in filteredApartments" class="apartment">
 					<div class="image-holder">
 						<!--<img src="images/ap1.jpg" class="">-->
 					</div>
@@ -46,7 +46,7 @@ Vue.component('apartments',{
 					<h4 class="sobe">room count:{{a.roomCount}}</h4>
 					<h4 class="gosti">guest count: {{a.guestCount}}</h4>
 					<button type="button" class="amenities">Sadrzaj</button> 
-					<h3 class="price">200e</h3>
+					<h3 class="price">{{a.price}}e</h3>
 					<button type="button" v-if="role==='GUEST' " class="reserve" @click="openReserveDialog(a)">rezervisi</button>
 				</li>
 			</ul>
@@ -59,8 +59,20 @@ Vue.component('apartments',{
 		
 	data: function() {
 		return{
-			apartments: null,
-			role: 'ANON'
+			apartments: {},
+			role: 'ANON',
+			filteredApartments: {},
+			filter: {
+				city: '',
+				guestNum:'',
+				minPrice:'',
+				maxPrice:'',
+				date: {
+					start: '',
+					end: ''
+				},
+			},
+			cities: [],
 		}
 	},
 	
@@ -74,19 +86,38 @@ Vue.component('apartments',{
 			.get('rest/apartments/')
 			.then((response) => {
 				this.apartments = response.data;
+				let allCities = [];
+				for(let apartment of this.apartments){
+					allCities.push(apartment.location.address.city) ;
+				}
+				this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
+				this.filteredApartments = this.apartments;
 			});
+			
 		}
 		else if(this.role === 'HOST'){
 			axios
 				.get('rest/apartments/host/'+this.$cookies.get('user').username)
 				.then((response) => {
 					this.apartments = response.data;
+					let allCities = [];
+					for(let apartment of this.apartments){
+						allCities.push(apartment.location.address.city) ;
+					}
+					this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
+					this.filteredApartments = this.apartments;
 				})
 		}else{
 			axios
 				.get('rest/apartments/active')
 				.then((response) => {
 					this.apartments = response.data;
+					let allCities = [];
+					for(let apartment of this.apartments){
+						allCities.push(apartment.location.address.city) ;
+					}
+					this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
+					this.filteredApartments = this.apartments;
 				})
 		}
 		
@@ -97,6 +128,21 @@ Vue.component('apartments',{
 		},
 		openReserveDialog(apartment){
 			this.$root.$emit('reserve-dialog',apartment);
+		},
+		searchClick(){
+			 
+			if(this.filter.city === '' && this.filter.guestNum === '' && this.filter.minPrice === '' && 
+					this.filter.maxPrice === '' && this.filter.date.start === '' && this.filter.date.start === '')
+				this.filteredApartments = this.apartments;
+			else{
+				this.filteredApartments = this.apartments.filter((item) => {					
+					return item.location.address.city.toLowerCase().includes(this.filter.city.toLowerCase()) &&
+					(this.filter.guestNum === '' || item.guestCount>= this.filter.guestNum) &&
+					(this.filter.minPrice ==='' || item.price>=this.filter.minPrice) &&
+					(this.filter.maxPrice ==='' || item.price<=this.filter.maxPrice);
+						
+				});
+			}
 		},
 	}
 
@@ -155,7 +201,8 @@ Vue.component('add-apartment-modal',{
 				</div>
 				<div class="label-input-signup date-time-picker-container">
 					<div class='label-error'>
-						<label>Approve dates</label>
+						<label>Approve 
+s</label>
 					</div>
 					<vue-ctk-date-time-picker v-model="approvedDates" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']"></vue-ctk-date-time-picker><br>
 				</div>
