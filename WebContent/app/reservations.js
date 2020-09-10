@@ -7,9 +7,9 @@ Vue.component('reservations',{
 				<h1>Search</h1>
 				<label>Apartment type</label><br>
 				<select v-model="filter.type" class="input" name="type">
-					<option></option>
-					<option>ROOM</option>
-					<option>APARTMENT</option>
+					<option value="">ALL</option>
+					<option value="ROOM">ROOMS</option>
+					<option value="APARTMENT">APARTMENTS</option>
 				</select> <br/>
 				<label>Apartment's name</label><br>
 				<input class="input" list="apartments" v-model="filter.name" name="name"><br>

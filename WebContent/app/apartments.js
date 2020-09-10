@@ -8,17 +8,30 @@ Vue.component('apartments',{
 			<form class="f">
 				<h1 class="search">Search</h1>
 				<ul class="form-ul">
-					<li><input list="cities" id="searchLocation" class="search-field" v-model="filter.city" name="searchLocation" placeholder="Where would you like to go..."><br></li>
+					<li><input list="cities" id="searchLocation" class="search-field" v-model="filter.city"  placeholder="Where would you like to go..."><br></li>
 					<datalist id="cities">
 						<template v-for="city in cities"> 
 							<option>{{city}}</option>
 						</template>
 					</datalist>
-					
+					<li v-if="role === 'ADMIN' || role === 'HOST'">
+						<select v-model="filter.type" class="search-field">
+							<option value="">ALL</option>
+							<option value="ROOM">ROOMS</option>
+							<option value="APARTMENT">APARTMENTS</option>
+						</select>
+					</li>
+					<li v-if="role === 'ADMIN' || role === 'HOST'">
+						<select v-model="filter.status"  class="search-field">
+							<option value="">ALL</option>
+							<option>ACTIVE</option>
+							<option>INACTIVE</option>
+						</select>
+					</li>
 					<li><vue-ctk-date-time-picker class="search-field" v-model="filter.date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']"></vue-ctk-date-time-picker></li>
 					<li>
-						<input type="number" class="minMaxField" v-model="filter.minPrice" min="0" name="minPrice" placeholder="min price"><span>&nbsp;-</span>
-						<input type="number" class="minMaxField"  v-model="filter.maxPrice" min="0" name="maxPrice" placeholder="max price">
+						<input type="number" class="minMaxField" v-model="filter.minPrice" min="0"  placeholder="min price"><span>&nbsp;-</span>
+						<input type="number" class="minMaxField"  v-model="filter.maxPrice" min="0"  placeholder="max price">
 					</li>
 					<li>
 						<input type="number" class="minMaxField" v-model="filter.minRoom" min="1" placeholder="min room"><span>&nbsp;-</span>
@@ -51,7 +64,7 @@ Vue.component('apartments',{
 					</div>
 					<h4 class="sobe">room count:{{a.roomCount}}</h4>
 					<h4 class="gosti">guest count: {{a.guestCount}}</h4>
-					<button type="button" class="amenities">Sadrzaj</button> 
+					<button type="button" class="amenities" @click="showAmenities(a)">Sadrzaj</button> 
 					<h3 class="price">{{a.price}}e</h3>
 					<button type="button" v-if="role==='GUEST' " class="reserve" @click="openReserveDialog(a)">rezervisi</button>
 				</li>
@@ -79,6 +92,8 @@ Vue.component('apartments',{
 					start: '',
 					end: ''
 				},
+				type: '',
+				status: '',
 			},
 			cities: [],
 		}
@@ -131,26 +146,53 @@ Vue.component('apartments',{
 		
 	},
 	methods: {
+		
 		openAddApartmentModal: function(){
 			this.$root.$emit('open-add-apartment-modal');
 		},
 		openReserveDialog(apartment){
 			this.$root.$emit('reserve-dialog',apartment);
 		},
+		showAmenities(apartment){
+			alert('Sredi ovo bozidare!')
+		},
 		searchClick(){
-			 
 			if(this.filter.city === '' && this.filter.guestNum === '' && this.filter.minPrice === '' && 
-					this.filter.maxPrice === '' && this.filter.minRoom === '' && this.filter.maxRoom === '' && this.filter.date.start === '' && this.filter.date.start === '')
+					this.filter.maxPrice === '' && this.filter.minRoom === '' && this.filter.maxRoom === '' && 
+					(this.filter.date == null || this.filter.date.start === '' )&& (this.filter.date == null || this.filter.date.end === '') && this.filter.type === '' && this.filter.status === '')
 				this.filteredApartments = this.apartments;
 			else{
-				this.filteredApartments = this.apartments.filter((item) => {					
+				this.filteredApartments = this.apartments.filter((item) => {		
+					let filterCheckInDay;
+					let filterCheckOutDay;
+					let itemCheckInDay;
+					let itemCheckOutDay;
+					
+					let bool1 = true;
+					let bool2 = true;
+					
+					if(this.filter.date.start) { 
+						filterCheckInDay = new Date(this.filter.date.start);
+						itemCheckInDay = new Date(item.checkInTime);
+						bool1 = filterCheckInDay>=itemCheckInDay
+					}
+					if(this.filter.date.end ) {
+						filterCheckOutDay = new Date(this.filter.date.end);
+						 itemCheckOutDay = new Date(item.checkOutTime);
+						 bool2 =filterCheckOutDay<=itemCheckOutDay;
+					}
+					
+					
+					
 					return item.location.address.city.toLowerCase().includes(this.filter.city.toLowerCase()) &&
-					(this.filter.guestNum === '' || item.guestCount>= this.filter.guestNum) &&
-					(this.filter.minPrice ==='' || item.price>=this.filter.minPrice) &&
-					(this.filter.maxPrice ==='' || item.price<=this.filter.maxPrice) &&
-					(this.filter.minRoom === '' || item.roomCount>=this.filter.minRoom)&&
-					(this.filter.maxRoom === '' || item.roomCount<=this.filter.maxRoom);
-						
+							(this.filter.guestNum === '' || item.guestCount>= this.filter.guestNum) &&
+							(this.filter.minPrice ==='' || item.price>=this.filter.minPrice) &&
+							(this.filter.maxPrice ==='' || item.price<=this.filter.maxPrice) &&
+							(this.filter.minRoom === '' || item.roomCount>=this.filter.minRoom)&&
+							(this.filter.maxRoom === '' || item.roomCount<=this.filter.maxRoom)&&
+							(this.filter.type === '' || item.type === this.filter.type)&&
+							(this.filter.status === '' || item.status === this.filter.status) &&
+							bool1&& bool2;	
 				});
 			}
 		},

@@ -23,6 +23,8 @@
 	padding: 10px;
 }
 
+
+
 /*.search-form {
 	background-color: red;
 }*/
@@ -32,6 +34,7 @@
 	border: 1px solid red;
 	margin-left: 30px;
 }
+
 
 .ap-ul {
 	list-style-type: none;
@@ -61,6 +64,14 @@ ul {
 .form-ul li .search-field{
 	width:90%;
 	margin: 1em;
+}
+
+li label{
+	margin: auto;
+}
+
+.apartments select{
+	padding: 10px;
 }
 
 .ap-ul li {
