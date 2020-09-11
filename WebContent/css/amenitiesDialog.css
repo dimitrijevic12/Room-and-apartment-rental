@@ -1,0 +1,12 @@
+#amenities-list{
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+}
+
+#amenities-modal {
+	background-color: gray;
+	width: 300px;
+	margin: auto;
+	padding: 6px 20px 20px 20px;
+	border-radius: 10px;
+}

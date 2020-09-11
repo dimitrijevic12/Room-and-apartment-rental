@@ -5,8 +5,6 @@
 
 
 .apartments .wrapper {
-	padding-top: 100px;
-	padding-left: 100px;
 	display: grid;
 	grid-template-columns: 4fr 10fr ;
 	grid-template-rows: auto;
@@ -59,11 +57,16 @@ ul {
 
 .form-ul li .minMaxField{
 	width:6em;
+	margin: 5px 0;
 }
 
 .form-ul li .search-field{
 	width:90%;
 	margin: 1em;
+}
+
+.form-ul span{
+	padding: 5px;
 }
 
 li label{
