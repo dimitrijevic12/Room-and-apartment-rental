@@ -1,11 +1,13 @@
 package services;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,6 +16,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import DAO.AmenityDAO;
 import DAO.ApartmentDAO;
@@ -165,6 +171,15 @@ public class ApartmentService {
 		reservationDAO.deleteReservationsForApartment(id);
 		
 		return dao.delete(id);
+	}
+	
+	@POST
+	@Path("/images")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	public void uploadImages(@FormDataParam("image") InputStream fileInputStream) throws IOException {
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		dao.saveImages(fileInputStream);
 	}
 	
 }

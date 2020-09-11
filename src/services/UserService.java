@@ -146,7 +146,7 @@ public class UserService {
 	}
 	
 	@POST
-	@Path("/")
+	@Path("")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public User addUser(User user) {

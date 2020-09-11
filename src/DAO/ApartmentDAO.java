@@ -1,7 +1,11 @@
 package DAO;
 
 import java.awt.Image;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +19,14 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+
+import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeBodyPart;
+import com.sun.xml.internal.ws.encoding.MimeMultipartParser;
+import com.sun.xml.internal.ws.message.MimeAttachmentSet;
 
 import beans.Address;
 import beans.Amenity;
@@ -134,6 +146,45 @@ public class ApartmentDAO{
 		}
 		write();
 	}
+	
+	public void saveImages(InputStream is) throws IOException {
+		/*		 BufferedImage bImage = null;
+		         try {
+//		        	 File initialImage = new File("C://Users/Nemanja/Desktop/1592816366616.jpg");
+//		        	 File image = (File)  request.getAttribute("image");
+		        	 
+//		            bImage = ImageIO.read(is);
+		             
+//		            ImageIO.write(bImage, "jpg", new File("C://Users/Nemanja/Desktop/image.png"));
+
+		        } catch (IOException e) {
+		              System.out.println("Exception occured :" + e.getMessage());
+		        }
+		        System.out.println("Images were written succesfully.");
+		*/	
+				try {
+					MimeBodyPart bodyPart = new MimeBodyPart(is);
+					InputStream in = (InputStream) bodyPart.getContent();
+					try
+				    {
+				        OutputStream out = new FileOutputStream(new File("C://Users/Nemanja/Desktop/upload.jpg"));
+				        byte[] b = new byte[2048];
+				        int length;
+				        while ((length = in.read(b)) != -1) {
+				            out.write(b, 0, length);
+				        }
+				        out.flush();
+				        out.close();
+				    } catch (IOException e) 
+				    {
+				        
+				    }
+				} catch (MessagingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
 	
 	
 	public void initilazeFile(List<User> users,List<Amenity> amenities) {

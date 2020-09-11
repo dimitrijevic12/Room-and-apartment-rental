@@ -1,0 +1,21 @@
+.add-apartment-column{
+	flex: 50%;
+}
+
+.add-apartment-content {
+	background-color: white;
+	margin: 30px auto; /* 15% from the top and centered */
+	padding: 20px;
+	border: 1px solid #888;
+	width: 60%; /* Could be more or less, depending on screen size */
+	text-decoration: none;
+	font-size: 20px;
+	font-family: 'Times New Roman', Georgia, serif;
+	text-align: center;
+	border-radius: 15px;
+	display: block;
+}
+
+.apartment-form-container{
+	display: flex;
+}
