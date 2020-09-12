@@ -2,6 +2,7 @@ package services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -149,9 +150,10 @@ public class ApartmentService {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public void test() {
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Apartment test(Apartment apartment) {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
-		dao.write();
+		return dao.save(apartment);
 	}
 	
 	
@@ -177,9 +179,9 @@ public class ApartmentService {
 	@Path("/images")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.MULTIPART_FORM_DATA})
-	public void uploadImages(@FormDataParam("image") InputStream fileInputStream) throws IOException {
+	public String uploadImages(@FormDataParam("image") InputStream fileInputStream) throws IOException {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
-		dao.saveImages(fileInputStream);
+		return dao.saveImages(fileInputStream);
 	}
 	
 }

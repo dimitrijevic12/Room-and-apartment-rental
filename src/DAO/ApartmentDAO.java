@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.soap.MimeHeader;
+
+import org.codehaus.jackson.JsonNode;
 //import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -23,6 +26,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
+import com.mysql.cj.xdevapi.JsonString;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeBodyPart;
 import com.sun.xml.internal.ws.encoding.MimeMultipartParser;
@@ -36,11 +40,13 @@ import beans.ApartmentType;
 import beans.Location;
 import beans.Reservation;
 import beans.User;
+import jdk.nashorn.internal.parser.JSONParser;
 
 
 public class ApartmentDAO{
 	private HashMap<Long,Apartment> apartments = new HashMap<Long,Apartment>();
 	private String path;
+	private String folderPath;
 	
 	public ApartmentDAO() {
 		
@@ -48,6 +54,7 @@ public class ApartmentDAO{
 	
 	public ApartmentDAO(String contextPath) {
 		path = contextPath + "repositories/apartments.json";
+		this.folderPath = contextPath + "repositories\\images\\";
 		loadApartments();
 	}
 
@@ -115,6 +122,14 @@ public class ApartmentDAO{
 			e.printStackTrace();
 		}
 	}
+	
+	public Apartment save(Apartment apartment) {
+		if(apartments.containsKey(apartment.getId())) return null; //TODO odrediti sta ce se desiti ako postoji vec korisnik sa unetim username
+		
+		apartments.put(apartment.getId(),apartment);
+		write();
+		return apartment;
+	}
 
 	public Apartment delete(long id) {
 		if(apartments.containsKey(id)) {
@@ -147,7 +162,7 @@ public class ApartmentDAO{
 		write();
 	}
 	
-	public void saveImages(InputStream is) throws IOException {
+	public String saveImages(InputStream is) throws IOException {
 		/*		 BufferedImage bImage = null;
 		         try {
 //		        	 File initialImage = new File("C://Users/Nemanja/Desktop/1592816366616.jpg");
@@ -162,12 +177,14 @@ public class ApartmentDAO{
 		        }
 		        System.out.println("Images were written succesfully.");
 		*/	
+				String filePath = folderPath + "image" + getLastIndex() + ".jpg";
 				try {
 					MimeBodyPart bodyPart = new MimeBodyPart(is);
 					InputStream in = (InputStream) bodyPart.getContent();
 					try
 				    {
-				        OutputStream out = new FileOutputStream(new File("C://Users/Nemanja/Desktop/upload.jpg"));
+//						System.out.println(folderPath + "image" + getLastIndex() + ".jpg");
+				        OutputStream out = new FileOutputStream(new File(filePath));
 				        byte[] b = new byte[2048];
 				        int length;
 				        while ((length = in.read(b)) != -1) {
@@ -175,6 +192,7 @@ public class ApartmentDAO{
 				        }
 				        out.flush();
 				        out.close();
+				        return filePath;
 				    } catch (IOException e) 
 				    {
 				        
@@ -183,9 +201,35 @@ public class ApartmentDAO{
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+
+//				return "{\"result\":" + "\"" + filePath + "\"}";
+				return filePath;
 			}
 	
+	private int getLastIndex() {
+		System.out.println(folderPath);
+		File folder = new File(folderPath);
+		File[] listOfFiles = folder.listFiles();
+		int index = 0;
+		
+		if(listOfFiles.length == 0) {
+			return index;
+		}
+		for (int i = 0; i < listOfFiles.length; i++) {
+			System.out.println(listOfFiles[i].getName());
+			char lastIndexString = listOfFiles[i].getName().charAt(listOfFiles[i].getName().length()-5);
+			System.out.println(lastIndexString);
+			int lastIndex = Character.getNumericValue(lastIndexString);
+			System.out.println(lastIndex);
+			if(index < lastIndex) {
+				index = lastIndex;
+			}
+		}
+		
+		++index;
+		System.out.println(index);
+		return index;
+	}
 	
 	public void initilazeFile(List<User> users,List<Amenity> amenities) {
 		ApartmentType type1 = ApartmentType.ROOM;
@@ -204,12 +248,12 @@ public class ApartmentDAO{
 		amenitiesIds2.add(amenities.get(0).getId());
 		amenitiesIds2.add(amenities.get(3).getId());
 		//Apartment at1 = new Apartment(0, type1, 10, 4, location, dates, dates, users.get(0).getUsername(), commentsIds, images, price, checkInTime, checkOutTime, status, amenitiesIds, reservations)
-		Apartment at1 = new Apartment(0,"Hotel zlatiborska noc",type1,10,4,location,dates,dates,users.get(0),images,222,d,d,active,amenitiesIds1,res,4);
-		Apartment at2 = new Apartment(1,"Pupinova palata",type2,13,0,location,dates,dates,users.get(1),images,500,d,d,inactive,amenitiesIds2,res,3);		
+//		Apartment at1 = new Apartment(0,"Hotel zlatiborska noc",type1,10,4,location,dates,dates,users.get(0),images,222,d,d,active,amenitiesIds1,res,4);
+//		Apartment at2 = new Apartment(1,"Pupinova palata",type2,13,0,location,dates,dates,users.get(1),images,500,d,d,inactive,amenitiesIds2,res,3);		
 		
 		HashMap<Long,Apartment> apartmentsFake = new HashMap<Long,Apartment>();
-		apartmentsFake.put(at1.getId(),at1);
-		apartmentsFake.put(at2.getId(),at2);
+//		apartmentsFake.put(at1.getId(),at1);
+//		apartmentsFake.put(at2.getId(),at2);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {

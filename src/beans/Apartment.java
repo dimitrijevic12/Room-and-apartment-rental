@@ -13,14 +13,14 @@ public class Apartment {
 	private int roomCount;
 	private int guestCount;
 	private Location location;
-	private List<Date> approvedDates;
+	private List<Pair<Date,Date>> approvedDates;
 	private List<Date> availableDates;
 	@JsonIgnore
 	private User host;
 	private String hostUsername;
 	@JsonIgnore
 	private List<Comment> comments;
-	private List<Image> images;
+	private List<String> images;
 	private double price;
 	private Date checkInTime;
 	private Date checkOutTime;
@@ -31,7 +31,6 @@ public class Apartment {
 	@JsonIgnore
 	private List<Reservation> reservations;
 	private long id;
-	private int stars;
 	
 	
 	
@@ -41,11 +40,11 @@ public class Apartment {
 		this.roomCount = 0;
 		this.guestCount = 0;
 		this.location = new Location();
-		this.approvedDates = new ArrayList<Date>();
+		this.approvedDates = new ArrayList<Pair<Date,Date>>();
 		this.availableDates = new ArrayList<Date>();
 		this.host = new User();
 		this.comments = new ArrayList<Comment>();
-		this.images = new ArrayList<Image>();
+		this.images = new ArrayList<String>();
 		this.price = 0;
 		this.checkInTime = new Date();
 		this.checkOutTime = new Date();
@@ -58,10 +57,10 @@ public class Apartment {
 		this.name = "";
 	}
 	
-	public Apartment(long id,String name, ApartmentType type, int roomCount, int guestCount, Location location, List<Date> approvedDates,
-			List<Date> availableDates, User host, List<Image> images, double price,
+	public Apartment(long id,String name, ApartmentType type, int roomCount, int guestCount, Location location, ArrayList<Pair<Date,Date>> approvedDates,
+			List<Date> availableDates, User host, List<String> images, double price,
 			Date checkInTime, Date checkOutTime, ApartmentStatus status, List<Long> amenitiesIds,
-			List<Reservation> reservations, int stars) {
+			List<Reservation> reservations) {
 		super();
 		
 		this.type = type;
@@ -81,7 +80,6 @@ public class Apartment {
 		this.reservations = reservations;
 		this.id = id;
 		this.hostUsername = host.getUsername();
-		this.stars = stars;
 	}
 	
 	public String getName() {
@@ -147,14 +145,6 @@ public class Apartment {
 	public void setGuestCount(int guestCount) {
 		this.guestCount = guestCount;
 	}
-	
-	public int getStars() {
-		return stars;
-	}
-
-	public void setStars(int stars) {
-		this.stars = stars;
-	}
 
 	public Location getLocation() {
 		return location;
@@ -164,11 +154,11 @@ public class Apartment {
 		this.location = location;
 	}
 
-	public List<Date> getApprovedDates() {
+	public List<Pair<Date,Date>> getApprovedDates() {
 		return approvedDates;
 	}
 
-	public void setApprovedDates(List<Date> approvedDates) {
+	public void setApprovedDates(List<Pair<Date,Date>> approvedDates) {
 		this.approvedDates = approvedDates;
 	}
 
@@ -189,11 +179,11 @@ public class Apartment {
 	}
 
 
-	public List<Image> getImages() {
+	public List<String> getImages() {
 		return images;
 	}
 
-	public void setImages(List<Image> images) {
+	public void setImages(List<String> images) {
 		this.images = images;
 	}
 
