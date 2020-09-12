@@ -37,7 +37,9 @@ Vue.component('apartments',{
 						<input type="number" class="minMaxField" v-model="filter.minRoom" min="1" placeholder="min room"><span>&nbsp;-</span>
 						<input type="number" class="minMaxField"  v-model="filter.maxRoom" min="1"placeholder="max room">
 					</li>
-					<li><input type="number" class="search-field" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests"></li>
+					<li>
+						<input type="number" class="search-field" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests">
+					</li>
 					<li><button type="button" @click="searchClick()">Search</button></li>
 				</ul>
 			</form>
@@ -202,8 +204,8 @@ Vue.component('select-amenities-for-search',{
 				<div id="amenities-modal">
 					<h1>Amenities</h1>
 					<div id="amenities-list">
-						<ul v-for="a in amenities">
-							<li>{{a.name}}</li>
+						<ul>
+							<li v-for="a in amenities">{{a.name}}</li>
 						</ul>
 		            </div>
 					<button type="button" @click="closeDialog">Izadji</button>
