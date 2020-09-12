@@ -7,7 +7,7 @@
 	margin: 30px auto; /* 15% from the top and centered */
 	padding: 20px;
 	border: 1px solid #888;
-	width: 60%; /* Could be more or less, depending on screen size */
+	width: 75%; /* Could be more or less, depending on screen size */
 	text-decoration: none;
 	font-size: 20px;
 	font-family: 'Times New Roman', Georgia, serif;
@@ -18,4 +18,86 @@
 
 .apartment-form-container{
 	display: flex;
+}
+
+.bigger{
+	overflow: visible;
+	height: auto;
+}
+
+.remove{
+	color: #aaa;
+	float: right;
+	margin-right: 10px;
+	font-weight: bold;
+}
+
+.remove:hover,
+.remove:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.create-button-container{
+	display: block;	
+}
+
+.amenities-containter{
+	display: flex;
+	margin: 5px 20px 5px 20px;
+	align-items: center;
+  	justify-content: center;
+}
+
+.amenity-button-container{
+	display:block;
+}
+
+.amenity-table{
+	border: solid 0.5px black;
+	background-color: #f5f4f3;
+	width: 200px;
+	height: 100px;
+	margin-top:  20px;
+	margin-left: 10px; 
+	margin-right: 10px; 
+	display: inline-block;
+	overflow: auto;
+}
+
+.amenity-table tr{
+	width: 100%;
+	display: block;
+}
+
+.amenity-table tr:onlick{
+	background-color: #E5F4FF;
+}
+
+.amenity-table th div{
+	margin-top: -20px;
+	position: absolute;
+	color: grey;
+	font-size: 16px;
+	text-align: center;
+	font-weight: normal;
+}
+
+.arrow-button{
+	background-color: #0075a6;
+	margin: 5px 0 3px 0;
+	border-radius: 50%;
+	display: inline-block;
+  	padding: 8px 16px;
+  	text-decoration: none;
+  	border: none;
+  	color:white;
+	font-size: 20px
+}
+
+.arrow-button span {
+	display:block;
+	color:white;
+	font-size: 30px
 }
