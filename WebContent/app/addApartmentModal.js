@@ -101,7 +101,7 @@ s</label>
 		return{
 			apartment : {
 					type:"ROOM",
-					name:"Poslednji test pred commit",
+					name:"Test sa slikom",
 					roomCount:10,
 					guestCount:4,
 					location:{
@@ -156,6 +156,10 @@ s</label>
 				.then((response) => {this.apartment.images.push(response.data); 
 									if(this.files.length > 1){
 										this.uploadImage(1);
+									}else{
+										axios
+										.post('rest/apartments', this.apartment)
+										.then((response) => {console.log(response.data)})
 									} })
 		},
 		
