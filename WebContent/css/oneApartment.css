@@ -11,6 +11,11 @@
 	border: solid black;
 }
 
+.image-view{
+	height: 400px;
+	width: 100%
+}
+
 .important-info{
 	margin: 20px 0 0 0;
 	padding: 10px 0 10px 0;
