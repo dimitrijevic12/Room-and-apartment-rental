@@ -7,7 +7,7 @@ Vue.component('one-apartment',{
 				</div>
 				<div class="page-content">
 					<div class="image-slider">
-
+						<img class="image-view" v-bind:src = "images[0]">
 					</div>
 					<div class="important-info">
 						<div class="label-pair">
@@ -67,7 +67,8 @@ Vue.component('one-apartment',{
 			host: {},
 			amenities: null,
 			comments: null,
-			mode: ''
+			mode: '',
+			images: {}
 		}
 	},
 	mounted(){
@@ -82,7 +83,10 @@ Vue.component('one-apartment',{
 									 .then((response) => {this.amenities = response.data;});
 								 axios
 									 .get('rest/apartments/comments/' + this.$route.params.id)
-									 .then((response) => this.comments = response.data);})
+									 .then((response) => this.comments = response.data);
+								 						console.log(this.apartment);
+								 						this.images = this.apartment.images;
+								 						console.log(this.images[0]);})
 		
 		console.log(this.amenities)							  
 		if(!this.$cookies.get('user') || this.$cookies.get('user').role === 'GUEST'){

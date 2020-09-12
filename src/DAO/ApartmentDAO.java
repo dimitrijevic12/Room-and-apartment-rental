@@ -178,6 +178,7 @@ public class ApartmentDAO{
 		        System.out.println("Images were written succesfully.");
 		*/	
 				String filePath = folderPath + "image" + getLastIndex() + ".jpg";
+				String url = "repositories/images/image" + getLastIndex() + ".jpg";
 				try {
 					MimeBodyPart bodyPart = new MimeBodyPart(is);
 					InputStream in = (InputStream) bodyPart.getContent();
@@ -192,7 +193,7 @@ public class ApartmentDAO{
 				        }
 				        out.flush();
 				        out.close();
-				        return filePath;
+				        return url;
 				    } catch (IOException e) 
 				    {
 				        
@@ -203,7 +204,7 @@ public class ApartmentDAO{
 				}
 
 //				return "{\"result\":" + "\"" + filePath + "\"}";
-				return filePath;
+				return url;
 			}
 	
 	private int getLastIndex() {
