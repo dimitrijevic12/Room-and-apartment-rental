@@ -101,3 +101,31 @@
 	color:white;
 	font-size: 30px
 }
+
+.autocomplete-results {
+    width: 100%;
+    border: 1px solid #eeeeee;
+    height: 120px;
+    overflow: auto;
+    z-index:99;
+    position:relative;
+    background-color: white;
+    display: none;
+  }
+
+  .autocomplete-result {
+    list-style: none;
+    text-align: left;
+    padding: 4px 2px;
+    cursor: pointer;
+    color: grey;
+  }
+
+  .autocomplete-result:hover {
+    background-color: #E5F4FF;
+  }
+  
+.map{
+	height: 300px;
+	width: 300px;
+}

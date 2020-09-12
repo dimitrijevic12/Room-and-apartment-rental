@@ -17,7 +17,10 @@ Vue.component('add-apartment-modal',{
 						<div class='label-error'>
 							<label>Location:</label>
 						</div>
-						<input type="text"/><br/>
+						<input v-model="location" type="text" @keypress="geocode" ref="autocompleteInput"/>
+						<ul class="autocomplete-results" ref="autocompleteResults">
+					      	<li @click="setLocation(result)" v-for="result in results" class="autocomplete-result">{{result.properties.formatted}}</li>
+					    </ul>
 					</div>
 					<div class="label-input-signup">
 						<div class='label-error'>
@@ -93,6 +96,7 @@ s</label>
 			<div class="create-button-container">
 					<button @click="test">Create</button>
 					<button @click="test2">test2</button>
+					<div id="map" class="map"></div>
 			</div>
 			</div>
 		</div>
@@ -101,16 +105,16 @@ s</label>
 		return{
 			apartment : {
 					type:"ROOM",
-					name:"Test sa slikom",
+					name:"Test sa adresom i slikom",
 					roomCount:10,
 					guestCount:4,
 					location:{
-						latitude:212.0,
-						longitude:214.0,
+						latitude:0.0,
+						longitude:0.0,
 						address:{
-							street:"Topolska 18",
-							city:"New Now",
-							postalCode:21000
+							street:"",
+							city:"",
+							postalCode:0
 						}
 					},
 					approvedDates:[],
@@ -122,7 +126,7 @@ s</label>
 					checkOutTime:2323223232,
 					status:"ACTIVE",
 					amenitiesIds:[],
-					id:4,
+					id:10,
 			},
 			checkInTime: null,
 			checkOutTime: null,
@@ -136,6 +140,8 @@ s</label>
 			listKey: 0,
 			selectedAmenity : null,
 			addedAmenities : [],
+			location : "",
+			results: [],
 		}
 	},
 	mounted(){
@@ -143,11 +149,48 @@ s</label>
 		axios	
 			.get('rest/amenities')
 			.then((response) =>{this.amenities = response.data})
+			
+			var map = new ol.Map({
+			    target: 'map',
+			    layers: [
+			      new ol.layer.Tile({
+			        source: new ol.source.OSM()
+			      })
+			    ],
+			    view: new ol.View({
+			      center: ol.proj.fromLonLat([37.41, 8.82]),
+			      zoom: 4
+			    })
+			  });
 	},
 	methods: {
 		closeAddApartmentModal(){
 			this.$refs.addApartmentModal.style.display="none";
 		},
+		
+		geocode(){
+			axios.defaults.withCredentials = false;
+			axios
+//				.get("https://app.geocodeapi.io/api/v1/autocomplete?apikey=b9897470-f4a6-11ea-aca1-459b89b18dba&text=" + this.location + "&size=5")
+//				.get("https://app.geocodeapi.io/api/v1/autocomplete?apikey=b9897470-f4a6-11ea-aca1-459b89b18dba&text=666%20Fifth%20Ave&size=5")
+				.get("https://api.geoapify.com/v1/geocode/autocomplete?text=" + this.location + "&limit=5&apiKey=7a05874016ad4a03b94ee8be997eb3e5&type=amenity")
+				.then((response) => {console.log(response.data);
+									 this.results = response.data.features;
+									 this.$refs.autocompleteResults.style.display="block";
+									 console.log(this.results)})
+		},
+		
+		setLocation(result){
+			this.apartment.location.latitude = result.properties.lat;
+			this.apartment.location.longitude = result.properties.lon;
+			this.apartment.location.address.street = result.properties.street;
+			this.apartment.location.address.city = result.properties.city;
+			this.apartment.location.address.postalCode = result.properties.postcode;
+			
+			this.$refs.autocompleteInput.value = result.properties.formatted;
+			console.log(this.apartment.location);
+		},
+		
 		test(){
 			fd = new FormData();
 			fd.append('image', this.files[0])
