@@ -130,11 +130,11 @@ tr:nth-child(even) {background-color: white;}
 
 tr:hover {background-color: #E5F4FF;}
 
-th, td{
+.users-table th, td{
 	padding: 5px 10px 10px 10px;
 }
 
-th{
+.users-table th{
 	background-color: #113E60;
 	color: white;
 	height: 60px;
