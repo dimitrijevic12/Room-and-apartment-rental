@@ -37,7 +37,9 @@ Vue.component('apartments',{
 						<input type="number" class="minMaxField" v-model="filter.minRoom" min="1" placeholder="min room"><span>&nbsp;-</span>
 						<input type="number" class="minMaxField"  v-model="filter.maxRoom" min="1"placeholder="max room">
 					</li>
-					<li><input type="number" class="search-field" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests"></li>
+					<li>
+						<input type="number" class="search-field" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests">
+					</li>
 					<li><button type="button" @click="searchClick()">Search</button></li>
 				</ul>
 			</form>
@@ -51,13 +53,6 @@ Vue.component('apartments',{
 						<!--<img src="images/ap1.jpg" class="">-->
 					</div>
 					<router-link class="hotel-name" :to="{ name: 'one-apartment', params: { id: a.id }}"><h3 class="hotel-name">{{a.name}}</h3></router-link>
-					<div class="rating-box">
-						<template v-for="n in 5" >
-							<input type="radio" >
-							<label v-if="a.stars < n"  class="star" >&#9733</label>
-							<label v-else class="star" >&#127775</label>
-						</template>
-					</div>
 					<label class="activity">status: {{a.status}}</label>
 					<div class="host-data">
 						<h4 class="host-username">username: {{a.hostUsername}}</h4>
@@ -72,6 +67,7 @@ Vue.component('apartments',{
 		</div>
 		</div>
 		<add-apartment-modal></add-apartment-modal>
+		<select-amenities-for-search></select-amenities-for-search>
 		<reservate-apartment-modal></reservate-apartment-modal>
 	</div>
 	`,
@@ -154,7 +150,7 @@ Vue.component('apartments',{
 			this.$root.$emit('reserve-dialog',apartment);
 		},
 		showAmenities(apartment){
-			alert('Sredi ovo bozidare!')
+			this.$root.$emit('apartment-amenities-dialog',apartment.amenitiesIds);
 		},
 		searchClick(){
 			if(this.filter.city === '' && this.filter.guestNum === '' && this.filter.minPrice === '' && 
@@ -198,6 +194,55 @@ Vue.component('apartments',{
 		},
 	}
 
+})
+
+Vue.component('select-amenities-for-search',{
+	template: 
+		`
+		<div class="modal" ref="showAmenitiesModal">
+			<form>
+				<div id="amenities-modal">
+					<h1>Amenities</h1>
+					<div id="amenities-list">
+						<ul>
+							<li v-for="a in amenities">{{a.name}}</li>
+						</ul>
+		            </div>
+					<button type="button" @click="closeDialog">Izadji</button>
+	            </div>
+			</form>
+		</div>
+		`,
+	data: function() {
+		return {
+			amenities: [],
+		}
+	},
+	
+	mounted: function(){
+		this.$root.$on('apartment-amenities-dialog',(amenitiesIds)=>{
+			axios.get('rest/amenities')
+				.then((response)=> {
+					let allAmenities = response.data;
+					this.amenities = allAmenities.filter((item)=>{
+						for(let id of amenitiesIds){
+							if(id===item.id) return true;
+						}
+						return false;
+					})
+					this.$refs.showAmenitiesModal.classList.add("modal-show");
+					this.$refs.showAmenitiesModal.style.display = "block";
+				})
+		});	
+	},
+	
+	methods: {
+		closeDialog(){
+			this.$refs.showAmenitiesModal.classList.remove("modal-show");
+			this.$refs.showAmenitiesModal.style.display = "none";
+
+		}
+	}
 })
 
 Vue.component('reservate-apartment-modal',{

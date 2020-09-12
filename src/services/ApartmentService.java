@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,10 +18,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import DAO.AmenityDAO;
 import DAO.ApartmentDAO;
@@ -179,7 +176,7 @@ public class ApartmentService {
 	@Path("/images")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.MULTIPART_FORM_DATA})
-	public String uploadImages(@FormDataParam("image") InputStream fileInputStream) throws IOException {
+	public String uploadImages(InputStream fileInputStream) throws IOException {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		return dao.saveImages(fileInputStream);
 	}
