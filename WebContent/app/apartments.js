@@ -39,6 +39,7 @@ Vue.component('apartments',{
 					</li>
 					<li>
 						<input type="number" class="search-field" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests">
+						<button type="button" class="minMaxField" @click="filterAmenities()">Amenities</button>
 					</li>
 					<li><button type="button" @click="searchClick()">Search</button></li>
 				</ul>
@@ -67,8 +68,9 @@ Vue.component('apartments',{
 		</div>
 		</div>
 		<add-apartment-modal></add-apartment-modal>
-		<select-amenities-for-search></select-amenities-for-search>
 		<reservate-apartment-modal></reservate-apartment-modal>
+		<show-apartment-amenities></show-apartment-amenities>
+		<select-amenities-for-search></select-amenities-for-search>
 	</div>
 	`,
 		
@@ -90,6 +92,7 @@ Vue.component('apartments',{
 				},
 				type: '',
 				status: '',
+				amenitiesIds: [],
 			},
 			cities: [],
 		}
@@ -152,32 +155,47 @@ Vue.component('apartments',{
 		showAmenities(apartment){
 			this.$root.$emit('apartment-amenities-dialog',apartment.amenitiesIds);
 		},
+		filterAmenities(){
+			this.$root.$emit('show-amenities-for-select');
+		},
+		
+		IsApartmentAvailable(apartment){
+			//alert(apartment.id);
+			return true;
+			/*let filterCheckInDay;
+			let filterCheckOutDay;
+			
+			if(this.filter.date.start) { 
+				filterCheckInDay = new Date(this.filter.date.start);
+				/*itemCheckInDay = new Date(item.checkInTime);
+				bool1 = filterCheckInDay>=itemCheckInDay
+		}
+			if(this.filter.date.end ) {
+				filterCheckOutDay = new Date(this.filter.date.end);
+				 /*itemCheckOutDay = new Date(item.checkOutTime);
+				 bool2 =filterCheckOutDay<=itemCheckOutDay;
+			}*/
+			
+		},
+		
+		IsApartmentContainsAmenities(apartment){
+			for(let amenityId of this.filter.amenitiesIds){
+				let intAmenityId = parseInt(amenityId,10);
+				if(!apartment.amenitiesIds.includes(intAmenityId)) return false; 
+			}
+			return true;
+		},
+		
 		searchClick(){
+			this.$root.$on('selected-amenities',(response)=>{
+				this.filter.amenitiesIds = response;
+			})
 			if(this.filter.city === '' && this.filter.guestNum === '' && this.filter.minPrice === '' && 
 					this.filter.maxPrice === '' && this.filter.minRoom === '' && this.filter.maxRoom === '' && 
-					(this.filter.date == null || this.filter.date.start === '' )&& (this.filter.date == null || this.filter.date.end === '') && this.filter.type === '' && this.filter.status === '')
+					(this.filter.date == null || this.filter.date.start === '' )&& (this.filter.date == null || this.filter.date.end === '') && this.filter.type === '' && this.filter.status === '' && this.filter.amenitiesIds.length === 0)
 				this.filteredApartments = this.apartments;
 			else{
 				this.filteredApartments = this.apartments.filter((item) => {		
-					let filterCheckInDay;
-					let filterCheckOutDay;
-					let itemCheckInDay;
-					let itemCheckOutDay;
-					
-					let bool1 = true;
-					let bool2 = true;
-					
-					if(this.filter.date.start) { 
-						filterCheckInDay = new Date(this.filter.date.start);
-						itemCheckInDay = new Date(item.checkInTime);
-						bool1 = filterCheckInDay>=itemCheckInDay
-					}
-					if(this.filter.date.end ) {
-						filterCheckOutDay = new Date(this.filter.date.end);
-						 itemCheckOutDay = new Date(item.checkOutTime);
-						 bool2 =filterCheckOutDay<=itemCheckOutDay;
-					}
-					
 					
 					
 					return item.location.address.city.toLowerCase().includes(this.filter.city.toLowerCase()) &&
@@ -187,8 +205,8 @@ Vue.component('apartments',{
 							(this.filter.minRoom === '' || item.roomCount>=this.filter.minRoom)&&
 							(this.filter.maxRoom === '' || item.roomCount<=this.filter.maxRoom)&&
 							(this.filter.type === '' || item.type === this.filter.type)&&
-							(this.filter.status === '' || item.status === this.filter.status) &&
-							bool1 && bool2;	
+							(this.filter.status === '' || item.status === this.filter.status) && 
+							this.IsApartmentAvailable(item) && this.IsApartmentContainsAmenities(item);	
 				});
 			}
 		},
@@ -197,6 +215,59 @@ Vue.component('apartments',{
 })
 
 Vue.component('select-amenities-for-search',{
+	template: 
+		`
+		<div class="modal" ref="showAmenitiesForSelectModal">
+			<form>
+				<div id="amenities-modal">
+					<h1>Amenities</h1>
+					<div id="amenities-list">
+						<div v-for="a in amenities">
+							<input type="checkbox" :value="a.id" name="cb"><label>{{a.name}}</label>
+						</div>
+		            </div>
+					<button type="button" @click="closeDialog">Potvrdi</button>
+	            </div>
+			</form>
+		</div>
+		`,
+		
+		data: function(){
+			return {
+				amenities: {},
+			}
+		},
+		
+		mounted: function(){
+			this.$root.$on('show-amenities-for-select',()=>{
+				axios.get('rest/amenities/').then((response) =>{
+					this.amenities = response.data;
+					this.$refs.showAmenitiesForSelectModal.classList.add("modal-show");
+					this.$refs.showAmenitiesForSelectModal.style.display = "block";
+				});
+			})
+		},
+		
+		methods: {
+			closeDialog(){
+				
+				let allCheckBoxs = document.getElementsByName('cb');
+				let allSelectedIds = [];
+				
+				for(let checkbox of allCheckBoxs){
+					if(checkbox.checked){
+						allSelectedIds.push(checkbox.value);
+					}
+				}
+				this.$root.$emit('selected-amenities',allSelectedIds);
+				this.$refs.showAmenitiesForSelectModal.classList.remove("modal-show");
+				this.$refs.showAmenitiesForSelectModal.style.display = "none";
+
+			}
+		}
+})
+
+Vue.component('show-apartment-amenities',{
 	template: 
 		`
 		<div class="modal" ref="showAmenitiesModal">
