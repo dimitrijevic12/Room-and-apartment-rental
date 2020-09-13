@@ -38,11 +38,25 @@ Vue.component('apartments',{
 						<input type="number" class="minMaxField"  v-model="filter.maxRoom" min="1"placeholder="max room">
 					</li>
 					<li>
-						<input type="number" class="search-field" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests">
+						<input type="number" class="minMaxField" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests">
 						<button type="button" class="minMaxField" @click="filterAmenities()">Amenities</button>
 					</li>
 					<li><button type="button" @click="searchClick()">Search</button></li>
 				</ul>
+			</form>
+		</div>
+		
+		<div class="modal" ref="showAmenitiesForSelectModal">
+			<form>
+				<div id="amenities-modal">
+					<h1>Amenities</h1>
+					<div id="amenities-list">
+						<div v-for="a in amenities">
+							<input type="checkbox" :value="a.id" name="cb"><label>{{a.name}}</label>
+						</div>
+		            </div>
+					<button type="button" @click="closeSelectAmenitieDialog()">Potvrdi</button>
+	            </div>
 			</form>
 		</div>
 
@@ -70,7 +84,6 @@ Vue.component('apartments',{
 		<add-apartment-modal></add-apartment-modal>
 		<reservate-apartment-modal></reservate-apartment-modal>
 		<show-apartment-amenities></show-apartment-amenities>
-		<select-amenities-for-search></select-amenities-for-search>
 	</div>
 	`,
 		
@@ -95,6 +108,7 @@ Vue.component('apartments',{
 				amenitiesIds: [],
 			},
 			cities: [],
+			amenities: {},
 		}
 	},
 	
@@ -143,6 +157,11 @@ Vue.component('apartments',{
 				})
 		}
 		
+		axios.get('rest/amenities/').then((response) =>{
+			this.amenities = response.data;
+
+		});
+		
 	},
 	methods: {
 		
@@ -156,26 +175,66 @@ Vue.component('apartments',{
 			this.$root.$emit('apartment-amenities-dialog',apartment.amenitiesIds);
 		},
 		filterAmenities(){
-			this.$root.$emit('show-amenities-for-select');
+			this.$refs.showAmenitiesForSelectModal.classList.add("modal-show");
+			this.$refs.showAmenitiesForSelectModal.style.display = "block";
 		},
 		
 		IsApartmentAvailable(apartment){
-			//alert(apartment.id);
-			return true;
-			/*let filterCheckInDay;
+			let filterCheckInDay;
 			let filterCheckOutDay;
 			
-			if(this.filter.date.start) { 
+			if(!this.filter.date) return true;
+ 			
+			if(this.filter.date.start) {
 				filterCheckInDay = new Date(this.filter.date.start);
-				/*itemCheckInDay = new Date(item.checkInTime);
-				bool1 = filterCheckInDay>=itemCheckInDay
-		}
+				filterCheckInDay.setHours(0,0,0,0);
+			}
+				
 			if(this.filter.date.end ) {
 				filterCheckOutDay = new Date(this.filter.date.end);
-				 /*itemCheckOutDay = new Date(item.checkOutTime);
-				 bool2 =filterCheckOutDay<=itemCheckOutDay;
-			}*/
+				filterCheckOutDay.setHours(0,0,0,0);
+			}
+				
+			if(!this.filter.date.start && !this.filter.date.end) return true;
+			else if(!this.filter.date.start || !this.filter.date.end){
+				let availableDate = (this.filter.date.start)? filterCheckInDay : filterCheckOutDay
+				for(let day of apartment.availableDates){
+					let parsedDay = new Date(day);
+					parsedDay.setHours(0,0,0,0);
+					if(parsedDay.getTime() === availableDate.getTime()) return true;
+				}
+				return false;
+			}else{
+				let isAvailable = false;
+				let currentDay = filterCheckInDay;
+				for(let day of apartment.availableDates){
+					let parsedDay = new Date(day);
+					parsedDay.setHours(0,0,0,0);
+					if(parsedDay.getTime() > currentDay.getTime()) return false; //u slucaju da nismo naisli na trazeni dan, a naisli smo na veci od njega
+					else if(parsedDay.getTime() === currentDay.getTime()) {
+						isAvailable = true;
+						if( currentDay.getTime() === filterCheckOutDay.getTime()) return isAvailable;
+						currentDay.setDate(currentDay.getDate() + 1);
+					}
+				}
+			}
+
 			
+		},
+		
+		closeSelectAmenitieDialog(){
+			
+			let allCheckBoxs = document.getElementsByName('cb');
+			let allSelectedIds = [];
+			
+			for(let checkbox of allCheckBoxs){
+				if(checkbox.checked){
+					allSelectedIds.push(checkbox.value);
+				}
+			}
+			this.filter.amenitiesIds = allSelectedIds;
+			this.$refs.showAmenitiesForSelectModal.classList.remove("modal-show");
+			this.$refs.showAmenitiesForSelectModal.style.display = "none";
 		},
 		
 		IsApartmentContainsAmenities(apartment){
@@ -187,9 +246,11 @@ Vue.component('apartments',{
 		},
 		
 		searchClick(){
-			this.$root.$on('selected-amenities',(response)=>{
-				this.filter.amenitiesIds = response;
-			})
+			if(this.dialogOpened){
+				this.$root.$on('selected-amenities',(response)=>{
+					this.filter.amenitiesIds = response;
+				})
+			}
 			if(this.filter.city === '' && this.filter.guestNum === '' && this.filter.minPrice === '' && 
 					this.filter.maxPrice === '' && this.filter.minRoom === '' && this.filter.maxRoom === '' && 
 					(this.filter.date == null || this.filter.date.start === '' )&& (this.filter.date == null || this.filter.date.end === '') && this.filter.type === '' && this.filter.status === '' && this.filter.amenitiesIds.length === 0)
@@ -212,59 +273,6 @@ Vue.component('apartments',{
 		},
 	}
 
-})
-
-Vue.component('select-amenities-for-search',{
-	template: 
-		`
-		<div class="modal" ref="showAmenitiesForSelectModal">
-			<form>
-				<div id="amenities-modal">
-					<h1>Amenities</h1>
-					<div id="amenities-list">
-						<div v-for="a in amenities">
-							<input type="checkbox" :value="a.id" name="cb"><label>{{a.name}}</label>
-						</div>
-		            </div>
-					<button type="button" @click="closeDialog">Potvrdi</button>
-	            </div>
-			</form>
-		</div>
-		`,
-		
-		data: function(){
-			return {
-				amenities: {},
-			}
-		},
-		
-		mounted: function(){
-			this.$root.$on('show-amenities-for-select',()=>{
-				axios.get('rest/amenities/').then((response) =>{
-					this.amenities = response.data;
-					this.$refs.showAmenitiesForSelectModal.classList.add("modal-show");
-					this.$refs.showAmenitiesForSelectModal.style.display = "block";
-				});
-			})
-		},
-		
-		methods: {
-			closeDialog(){
-				
-				let allCheckBoxs = document.getElementsByName('cb');
-				let allSelectedIds = [];
-				
-				for(let checkbox of allCheckBoxs){
-					if(checkbox.checked){
-						allSelectedIds.push(checkbox.value);
-					}
-				}
-				this.$root.$emit('selected-amenities',allSelectedIds);
-				this.$refs.showAmenitiesForSelectModal.classList.remove("modal-show");
-				this.$refs.showAmenitiesForSelectModal.style.display = "none";
-
-			}
-		}
 })
 
 Vue.component('show-apartment-amenities',{
