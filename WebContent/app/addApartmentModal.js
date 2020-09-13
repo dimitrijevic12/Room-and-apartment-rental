@@ -105,7 +105,7 @@ s</label>
 		return{
 			apartment : {
 					type:"ROOM",
-					name:"Test sa adresom i slikom",
+					name:"Test sa 3 slike",
 					roomCount:10,
 					guestCount:4,
 					location:{
@@ -126,7 +126,7 @@ s</label>
 					checkOutTime:2323223232,
 					status:"ACTIVE",
 					amenitiesIds:[],
-					id:10,
+					id:4,
 			},
 			checkInTime: null,
 			checkOutTime: null,
