@@ -6,8 +6,14 @@ Vue.component('one-apartment',{
 					{{apartment.name}}
 				</div>
 				<div class="page-content">
-					<div class="image-slider">
-						<img class="image-view" v-bind:src = "images[0]">
+					<div class="image-slider" :key="index">
+						<div class="slider-button-container elft">
+							<button class="slider-button" @click="prevImage">&#8249</button>
+						</div>
+						<img class="image-view" v-bind:src = "images[index]">
+						<div class="slider-button-container right">
+							<button class="slider-button" @click="nextImage">&#8250</button>
+						</div>
 					</div>
 					<div class="important-info">
 						<div class="label-pair">
@@ -52,7 +58,7 @@ Vue.component('one-apartment',{
 					<div class="comments-container">
 						<div class="grid-container comments">
 							<div v-for="comment in comments" class="comment">
-								<label class="guest-username">{{comment.guestUsername}} {{comment.grade}}</label><br>
+								<label class="guest-username">{{comment.guestUsername}} <span class="comment-grade" v-html="loadComment(comment.grade)"></span></label><br>
 								<label class="comment-text">{{comment.text}}</label>
 							</div>
 						</div>
@@ -68,7 +74,8 @@ Vue.component('one-apartment',{
 			amenities: null,
 			comments: null,
 			mode: '',
-			images: {}
+			images: {},
+			index : 0,
 		}
 	},
 	mounted(){
@@ -96,10 +103,43 @@ Vue.component('one-apartment',{
 		}
 									 
 	},
+	methods:{
+		prevImage(){
+			if((this.index-1) < 0){
+				this.index = this.images.length-1;
+			}else{
+				this.index = this.index-1
+			}
+			console.log(this.images[this.index])
+		},
+		
+		nextImage(){
+			if((this.index+1) > this.images.length-1){
+				this.index = 0;
+			}else{
+				this.index = this.index+1
+			}
+			console.log(this.images[this.index])
+		},
+		
+		loadComment(grade){
+   			if(grade === 'ONE'){
+   				return '&#11088;&#9733;&#9733;&#9733;&#9733;'
+   			}else if(grade === 'TWO'){
+   				return '&#11088;&#11088;&#9733;&#9733;&#9733;'
+   			}else if(grade === 'THREE'){
+   				return '&#11088;&#11088;&#11088;&#9733;&#9733;'
+   			}else if(grade === 'FOUR'){
+   				return '&#11088;&#11088;&#11088;&#11088;&#9733;'
+   			}else{
+   				return '&#11088;&#11088;&#11088;&#11088;&#11088;'
+   			}
+   		}
+	},
 	filters: {
     	dateFormat: function (value, format) {
     		var parsed = moment(value);
     		return parsed.format(format);
     	}
-   	}
+   	},
 })
