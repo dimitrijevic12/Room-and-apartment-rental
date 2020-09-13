@@ -46,6 +46,9 @@ Vue.component('reservations',{
 				</div>
 		</div>
 		<div class="reservations-list-label">
+		<div class="topMenu">
+			<label>Sort: <button ref="sortPriceButton" @click="sortByValue('price')">Price {{sort.price}}</button></label>
+		</div>
 			<ul class="">
 				<li v-for="res in filteredReservations" class="reservation">
 					<label>{{res.apartment.name}}</label>
@@ -53,6 +56,7 @@ Vue.component('reservations',{
 					<label>from: {{res.checkInDate | dateFormat('DD/MM/YYYY')}}</label>
 					<label>nights: {{res.nightCount}}</label>
 					<label>status: {{res.status}}</label>
+					<label>total: {{res.total}} </label>
 					<div class="display-button">
 						<button @click="show_reservation(res)">Display</button>
 					</div>	
@@ -78,6 +82,9 @@ Vue.component('reservations',{
 				resStatus: '',
 			},
 			filteredReservations: {},
+			sort:{
+				price: 'desc',
+			},
 		}
 	},
 	
@@ -144,6 +151,16 @@ Vue.component('reservations',{
 		show_reservation(reservation){
 			console.log(reservation);
 			this.$root.$emit('show-reservation', reservation);
+		},
+		
+		sortByValue(propname){
+			if(this.sort[propname] == 'desc'){
+				this.sort[propname] = 'asc'
+				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] > b[propname] ? 1: -1);
+			}else{
+				this.sort[propname] = 'desc'
+				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] < b[propname] ? 1: -1);					
+			}
 		},
 		searchClick(){
 			if(this.filter.name === '' && this.filter.type === '' && this.filter.apStatus === '' && this.filter.username==='' && this.filter.date === '' && this.filter.resStatus==='' ) 

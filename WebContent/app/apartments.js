@@ -61,7 +61,18 @@ Vue.component('apartments',{
 		</div>
 
 		<div class="apartments-label">
-			<button @click="openAddApartmentModal">Add apartment</button>
+			<div class="topMenu">
+				<button @click="openAddApartmentModal">Add apartment</button>
+				<div>
+				<label>Sort: </label>
+					<button ref="sortPriceButton" @click="sortByValue('price')">Price {{sort.price}}</button>
+					<button ref="sortPriceButton" @click="sortByValue('type')">Type {{sort.type}}</button>
+					<button v-if="role === 'ADMIN' || role==='HOST'" ref="sortPriceButton" @click="sortByValue('status')">Status {{sort.status}}</button>
+					<button ref="sortPriceButton" @click="sortByValue('name')">Name {{sort.name}}</button>
+					<button ref="sortPriceButton" @click="sortByRooms('roomCount')">Rooms {{sort.roomCount}}</button>
+					<button ref="sortPriceButton" @click="sortByPrice('guestCount')">Guests {{sort.guestCount}}</button>
+				</div>
+			</div>
 			<ul class="ap-ul">
 				<li v-for="a in filteredApartments" class="apartment">
 					<div class="image-holder">
@@ -89,9 +100,9 @@ Vue.component('apartments',{
 		
 	data: function() {
 		return{
-			apartments: {},
+			apartments: [],
 			role: 'ANON',
-			filteredApartments: {},
+			filteredApartments: [],
 			filter: {
 				city: '',
 				guestNum:'',
@@ -109,6 +120,14 @@ Vue.component('apartments',{
 			},
 			cities: [],
 			amenities: {},
+			sort:{
+				price: 'desc',
+				type: 'desc',
+				status: 'desc',
+				name: 'desc',
+				roomCount: 'desc',
+				guestCount: 'desc',
+			},
 		}
 	},
 	
@@ -177,6 +196,16 @@ Vue.component('apartments',{
 		filterAmenities(){
 			this.$refs.showAmenitiesForSelectModal.classList.add("modal-show");
 			this.$refs.showAmenitiesForSelectModal.style.display = "block";
+		},
+		
+		sortByValue(propname){
+			if(this.sort[propname] == 'desc'){
+				this.sort[propname] = 'asc'
+				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] > b[propname] ? 1: -1);
+			}else{
+				this.sort[propname] = 'desc'
+				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] < b[propname] ? 1: -1);					
+			}
 		},
 		
 		IsApartmentAvailable(apartment){
