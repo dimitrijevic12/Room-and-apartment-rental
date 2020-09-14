@@ -76,7 +76,7 @@ Vue.component('apartments',{
 			<ul class="ap-ul">
 				<li v-for="a in filteredApartments" class="apartment">
 					<div class="image-holder">
-						<!--<img src="images/ap1.jpg" class="">-->
+						<img v-bind:src="a.images[0]" class="">
 					</div>
 					<router-link class="hotel-name" :to="{ name: 'one-apartment', params: { id: a.id }}"><h3 class="hotel-name">{{a.name}}</h3></router-link>
 					<label class="activity">status: {{a.status}}</label>
