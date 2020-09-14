@@ -7,15 +7,17 @@ Vue.component('add-apartment-modal',{
 				</div>
 				<div class="apartment-form-container">
 					<div class="add-apartment-column">
-					<div class="label-input-signup first">
+					<div class="label-input-signup first" ref="nameError">
 						<div class='label-error'>
 							<label>Name:</label>
+							<label v-if="nameError == true" class="error-message">You cant leave this field empty!</label>
 						</div>
 						<input type="text" v-model="apartment.name"/><br/>
 					</div>
-					<div class="label-input-signup">
+					<div class="label-input-signup" ref="locationError">
 						<div class='label-error'>
 							<label>Location:</label>
+							<label v-if="locationError == true" class="error-message">You cant leave this field empty!</label>
 						</div>
 						<input v-model="location" type="text" @keypress="geocode" ref="autocompleteInput" v-click-outside="closeAutocomplete"/>
 						<ul class="autocomplete-results" ref="autocompleteResults">
@@ -62,29 +64,33 @@ Vue.component('add-apartment-modal',{
 					</div>
 				</div>
 				<div class="add-apartment-column" :key="listKey">
-					<div class="label-input-signup bigger">
+					<div class="label-input-signup bigger" ref="imagesError">
 					<div class='label-error'>
 						<label>Images:</label>
+						<label v-if="imagesError == true" class="error-message">Value must be a number!</label>
 					</div>
-					<input type="file" chips ref="browseImages" accept=".jpg,.png" @change="imageAdded($event)" multiple/><br/>
-					<div v-for="file in files"><label>{{file.name}}</label></div>
+					<input style="display:none" type="file" chips ref="browseImages" accept=".jpg,.png" @change="imageAdded($event)" multiple/>
+					<button class="browse-images-button" @click="$refs.browseImages.click()">Browse images</button>
+					<div v-for="file in files"><label class="images-list">{{file.name}}</label></div>
 				</div>
-				<div class="label-input-signup date-time-picker-container">
+				<div class="label-input-signup date-time-picker-container" ref="checkInOutError">
 					<div class='label-error'>
 						<label>Check in - Check out time:</label>
+						<label v-if="checkInOutError == true" class="error-message">You need to pick both! (check in and check out time)</label>
 					</div>
 					<div>
 						<vue-ctk-date-time-picker class="timepicker" v-model="checkInTime" :label="'Check in'" :format="'HH:mm'" :formatted="'HH:mm'" :inputSize="'sm'" :onlyTime="true"></vue-ctk-date-time-picker>
 						<vue-ctk-date-time-picker class="timepicker" v-model="checkOutTime" :label="'Check out'" :format="'HH:mm'" :formatted="'HH:mm'" :inputSize="'sm'" :onlyTime="true"></vue-ctk-date-time-picker>
 					</div>
 				</div>
-				<div class="label-input-signup date-time-picker-container bigger">
+				<div class="label-input-signup date-time-picker-container bigger" ref="approvedDatesError">
 					<div class='label-error'>
 						<label>Approved dates</label>
+						<label v-if="approvedDatesError == true" class="error-message">You need to approve dates for reservations!</label>
 					</div>
-					<vue-ctk-date-time-picker v-model="approvedDate" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']" v-bind:minDate="today" @validate="addApprovedDate"></vue-ctk-date-time-picker><br>
+					<vue-ctk-date-time-picker :key="disabledDates[0]" v-model="approvedDate" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="disabledDates" v-bind:minDate="today" @validate="addApprovedDate"></vue-ctk-date-time-picker><br>
 					<ul>
-						<li v-for="date in apartment.approvedDates">{{date.dateStart | dateFormat('DD/MM/YYYY')}} - {{date.dateEnd | dateFormat('DD/MM/YYYY')}}</li>
+						<li :key="date.l" v-for="date in this.apartment.approvedDates">{{date.l | dateFormat('DD/MM/YYYY')}} - {{date.r | dateFormat('DD/MM/YYYY')}} <span class="close" @click="removeApprovedDate(date)">&times;</span></li>
 					</ul>
 					
 				</div>
@@ -135,7 +141,7 @@ Vue.component('add-apartment-modal',{
 					},
 					approvedDates:[],
 					availableDates:[],
-					hostUsername:"marija",
+					hostUsername:"",
 					images: [],
 					price:0.0,
 					checkInTime: 0,
@@ -147,18 +153,26 @@ Vue.component('add-apartment-modal',{
 			checkInTime: null,
 			checkOutTime: null,
 			approvedDate: {
-				start: '09/09/2020',
-				end: '10/09/2020'
+				start: '',
+				end: ''
 			},
 			today: '',
 			amenities: null,
-			files: null,
+			files: [],
 			image: null,
 			listKey: 0,
 			selectedAmenity : {},
 			addedAmenities : [],
 			location : "",
 			results: [],
+			disabledDates: [],
+			approvedDates: [],
+			nameError: false,
+			locationError: false,
+			imagesError: false,
+			checkInOutError: false,
+			approvedDatesError: false,
+			
 		}
 	},
 	mounted(){
@@ -186,6 +200,48 @@ Vue.component('add-apartment-modal',{
 	methods: {
 		closeAddApartmentModal(){
 			this.$refs.addApartmentModal.style.display="none";
+			
+			this.apartment.name = "";
+			this.$refs.nameError.classList.remove('error-border')
+			this.nameError = false;
+			
+			this.apartment.location = {
+					latitude:0.0,
+					longitude:0.0,
+					address:{
+						street:"",
+						city:"",
+						postalCode:0
+					}
+				};
+			this.$refs.locationError.classList.remove('error-border')
+			this.locationError = false;
+			
+			this.apartment.roomCount = 0;
+			this.apartment.guestCount = 0;
+			this.apartment.price = 0;
+			
+			this.files = []
+			this.$refs.imagesError.classList.remove('error-border')
+			this.imagesError = false;
+			
+			this.checkInTime = null
+			this.checkOutTime = null
+			this.$refs.checkInOutError.classList.remove('error-border')
+			this.checkInOutError = false;
+			
+			this.approvedDate = {
+				start: '',
+				end: ''
+			},
+			this.$refs.approvedDatesError.classList.remove('error-border')
+			this.approvedDatesError = false;
+			
+			this.apartment.amenitiesIds = [];
+			this.addedAmenities = [];
+			axios	
+			.get('rest/amenities')
+			.then((response) =>{this.amenities = response.data})
 		},
 		
 		geocode(){
@@ -193,7 +249,7 @@ Vue.component('add-apartment-modal',{
 			axios
 //				.get("https://app.geocodeapi.io/api/v1/autocomplete?apikey=b9897470-f4a6-11ea-aca1-459b89b18dba&text=" + this.location + "&size=5")
 //				.get("https://app.geocodeapi.io/api/v1/autocomplete?apikey=b9897470-f4a6-11ea-aca1-459b89b18dba&text=666%20Fifth%20Ave&size=5")
-				.get("https://api.geoapify.com/v1/geocode/autocomplete?text=" + this.location + "&limit=5&apiKey=7a05874016ad4a03b94ee8be997eb3e5&type=amenity")
+				.get("https://api.geoapify.com/v1/geocode/autocomplete?text=" + this.location + "&limit=5&apiKey=7a05874016ad4a03b94ee8be997eb3e5&type=street")
 				.then((response) => {console.log(response.data);
 									 this.results = response.data.features;
 									 this.$refs.autocompleteResults.style.display="block";
@@ -213,6 +269,56 @@ Vue.component('add-apartment-modal',{
 		},
 		
 		addApartment(){
+			var validation = true;
+			if(this.apartment.name === ''){
+				this.$refs.nameError.classList.add('error-border');
+				this.nameError = true;
+				validation = false;
+			}else{
+				this.$refs.nameError.classList.remove('error-border')
+				this.nameError = false;
+			}
+			
+			if(this.apartment.location.address.postalCode === 0){
+				this.$refs.locationError.classList.add('error-border');
+				this.locationError = true;
+				validation = false;
+			}else{
+				this.$refs.locationError.classList.remove('error-border')
+				this.locationError = false;
+			}
+			
+			if(this.files.length === 0){
+				this.$refs.imagesError.classList.add('error-border');
+				this.imagesError = true;
+				validation = false;
+			}else{
+				this.$refs.imagesError.classList.remove('error-border')
+				this.imagesError = false;
+			}
+			
+			if(this.checkInTime === null || this.checkOutTime === null){
+				this.$refs.checkInOutError.classList.add('error-border');
+				this.checkInOutError = true;
+				validation = false;
+			}else{
+				this.$refs.checkInOutError.classList.remove('error-border')
+				this.checkInOutError = false;
+			}
+			
+			if(this.approvedDate.start === "" || this.approvedDate.end === ""){
+				this.$refs.approvedDatesError.classList.add('error-border');
+				this.approvedDatesError = true;
+				validation = false;
+			}else{
+				this.$refs.approvedDatesError.classList.remove('error-border')
+				this.approvedDatesError = false;
+			}
+			
+			if(validation === false){
+				return;
+			}
+			
 			this.apartment.checkInTime = moment(this.checkInTime, 'HH:mm')
 			this.apartment.checkOutTime = moment(this.checkOutTime, 'HH:mm')
 			
@@ -228,6 +334,8 @@ Vue.component('add-apartment-modal',{
 			}
 			console.log(this.apartment.availableDates)
 			
+			this.apartment.hostUsername = this.$cookies.get('user').username;
+			console.log(this.apartment.hostUsername);
 			
 			fd = new FormData();
 			fd.append('image', this.files[0])
@@ -239,12 +347,14 @@ Vue.component('add-apartment-modal',{
 									}else{
 										axios
 										.post('rest/apartments', this.apartment)
-										.then((response) => {console.log(response.data)})
+										.then((response) => {console.log(response.data)
+										this.$refs.addApartmentModal.style.display="none";
+										this.$emit('refresh-apartments')})
 									} })
 		},
 		
 		closeAutocomplete(){
-			this.$refs.autocompleteResults.style.display = "none"
+			this.$refs.autocompleteResults.style.display = "none";
 		},
 		
 		uploadImage(index){
@@ -260,7 +370,9 @@ Vue.component('add-apartment-modal',{
 											 console.log(this.apartment);
 											 axios
 												.post('rest/apartments', this.apartment)
-												.then((response) => {console.log(response.data)})
+												.then((response) => {console.log(response.data);
+												this.$refs.addApartmentModal.style.display="none";
+												this.$emit('refresh-apartments')})
 										 }
 										 })
 		},
@@ -279,9 +391,53 @@ Vue.component('add-apartment-modal',{
 		},
 		
 		addApprovedDate(){
+			var startDate = moment(this.approvedDate.start, 'DD/MM/YYYY')
+			var endDate = moment(this.approvedDate.end, 'DD/MM/YYYY')
+			
+			while(startDate <= endDate){
+				var dateToRemove = startDate.format("YYYY-MM-DD");
+				console.log(dateToRemove)
+				this.disabledDates.push(dateToRemove)
+				startDate = startDate.add(1,'d')
+			}
+			
+			var apDateStart = this.approvedDate.start;
+			var apDateEnd = this.approvedDate.end;
+			this.approvedDates.push({apDateStart, apDateEnd});
+			console.log(this.approvedDates)
+			
 			var l = moment(this.approvedDate.start, 'DD/MM/YYYY');
 			var r = moment(this.approvedDate.end, 'DD/MM/YYYY');
 			this.apartment.approvedDates.push({l, r});
+			console.log(this.apartment.approvedDates)
+		},
+		
+		removeApprovedDate(date){
+			var l = moment(date.l, 'DD/MM/YYYY');
+			var r = moment(date.r, 'DD/MM/YYYY');
+			console.log(date)
+			
+			console.log(this.apartment.approvedDates)
+			for(i = 0; i < this.apartment.approvedDates.length; ++i){
+				if(l.isSame(this.apartment.approvedDates[i].l)){
+					this.apartment.approvedDates.splice(i,1)
+				}
+			}
+			
+			console.log(this.approvedDate.start);
+			console.log(this.approvedDate.end);
+			var startDate = moment(date.l, 'DD/MM/YYYY')
+			var endDate = moment(date.r, 'DD/MM/YYYY')
+			
+			while(startDate <= endDate){
+				for(j = 0; j < this.disabledDates.length; ++j){
+					var temp = moment(this.disabledDates[j], "YYYY-MM-DD")
+					if(temp.isSame(startDate)){
+						this.disabledDates.splice(j,1)
+					}
+				}
+				startDate = startDate.add(1,'d')
+			}
 			console.log(this.apartment.approvedDates)
 		},
 		

@@ -227,9 +227,12 @@ public class ApartmentDAO{
 		}
 		for (int i = 0; i < listOfFiles.length; i++) {
 			System.out.println(listOfFiles[i].getName());
-			char lastIndexString = listOfFiles[i].getName().charAt(listOfFiles[i].getName().length()-5);
+//			char lastIndexString = listOfFiles[i].getName().charAt(listOfFiles[i].getName().length()-5);
+			String lastIndexString = listOfFiles[i].getName().replace(".jpg", "");
+			lastIndexString = lastIndexString.replace("image", "");
 			System.out.println(lastIndexString);
-			int lastIndex = Character.getNumericValue(lastIndexString);
+//			int lastIndex = Character.getNumericValue(lastIndexString);
+			int lastIndex = Integer.parseInt(lastIndexString);
 			System.out.println(lastIndex);
 			if(index < lastIndex) {
 				index = lastIndex;

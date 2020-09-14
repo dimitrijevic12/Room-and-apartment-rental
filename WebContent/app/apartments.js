@@ -62,7 +62,7 @@ Vue.component('apartments',{
 
 		<div class="apartments-label">
 			<div class="topMenu">
-				<button @click="openAddApartmentModal">Add apartment</button>
+				<button v-if="role==='HOST'" @click="openAddApartmentModal">Add apartment</button>
 				<div>
 				<label>Sort: </label>
 					<button ref="sortPriceButton" @click="sortByValue('price')">Price {{sort.price}}</button>
@@ -73,8 +73,8 @@ Vue.component('apartments',{
 					<button ref="sortPriceButton" @click="sortByValue('guestCount')">Guests {{sort.guestCount}}</button>
 				</div>
 			</div>
-			<ul class="ap-ul">
-				<li v-for="a in filteredApartments" class="apartment">
+			<ul class="ap-ul" :key="apKey">
+				<li v-for="a in filteredApartments" class="apartment" :key="a.id">
 					<div class="image-holder">
 						<img v-bind:src="a.images[0]" class="">
 					</div>
@@ -92,7 +92,7 @@ Vue.component('apartments',{
 			</ul>
 		</div>
 		</div>
-		<add-apartment-modal></add-apartment-modal>
+		<add-apartment-modal @refresh-apartments="refreshApartments" ></add-apartment-modal>
 		<reservate-apartment-modal></reservate-apartment-modal>
 		<show-apartment-amenities></show-apartment-amenities>
 	</div>
@@ -128,6 +128,7 @@ Vue.component('apartments',{
 				roomCount: 'desc',
 				guestCount: 'desc',
 			},
+			apKey : 0,
 		}
 	},
 	
@@ -136,6 +137,20 @@ Vue.component('apartments',{
 		let user = this.$cookies.get('user');
 		if(user) this.role = user.role;
 		
+		//Refresh kada se doda apartment
+/*		this.$root.$on('refresh-apartments', () => {axios
+			.get('rest/apartments/host/'+this.$cookies.get('user').username)
+			.then((response) => {
+				this.apartments = response.data;
+				let allCities = [];
+				for(let apartment of this.apartments){
+					allCities.push(apartment.location.address.city) ;
+				}
+				this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
+				this.filteredApartments = this.apartments;
+				this.apKey += 1;
+			})})
+*/		
 		if(this.role === 'ADMIN'){
 			axios
 			.get('rest/apartments/')
@@ -299,6 +314,23 @@ Vue.component('apartments',{
 							this.IsApartmentAvailable(item) && this.IsApartmentContainsAmenities(item);	
 				});
 			}
+		},
+		
+		refreshApartments(){
+			console.log('Promenjen je kljuc!')
+			axios
+			.get('rest/apartments/host/'+this.$cookies.get('user').username)
+			.then((response) => {
+				this.apartments = response.data;
+				let allCities = [];
+				for(let apartment of this.apartments){
+					allCities.push(apartment.location.address.city) ;
+				}
+				this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
+				this.filteredApartments = this.apartments;
+				this.apKey += 1;
+			})
+			this.apKey += 1;
 		},
 	}
 
