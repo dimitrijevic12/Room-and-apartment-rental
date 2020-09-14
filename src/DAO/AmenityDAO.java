@@ -120,5 +120,13 @@ public class AmenityDAO {
 			e.printStackTrace();
 		}
 	}
+
+	public Amenity edit(Amenity amenity) {
+		Amenity amenityToEdit = findAmenity(amenity.getId());
+		amenityToEdit = amenity;
+		amenities.put(amenityToEdit.getId(),amenityToEdit);
+		write();
+		return amenityToEdit;
+	}
 	
 }

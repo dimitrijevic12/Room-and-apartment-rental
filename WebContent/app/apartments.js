@@ -50,12 +50,27 @@ Vue.component('apartments',{
 			<form>
 				<div id="amenities-modal">
 					<h1>Amenities</h1>
+					<div v-if="role === 'ADMIN'">
+						<input v-model="newAmenity.name" type="text">
+						<button type="button" @click="addAmenity()">Add</button>
+					</div>
+					<div v-if="role === 'ADMIN'">
+						<select v-model="selectedAmenity">
+							<option value="" selected>-</option>
+						<template v-for="a in amenities" >
+							<option :value="a.id">{{a.name}}</option>
+						</template>
+						</select>
+						<input v-model="newAmenityName" type="text">
+						<button type="button" @click="editAmenity()">Edit</button>
+					</div>
 					<div id="amenities-list">
-						<div v-for="a in amenities">
+						<div v-for="a in amenities" :key="a.name">
 							<input type="checkbox" :value="a.id" name="cb"><label>{{a.name}}</label>
 						</div>
 		            </div>
 					<button type="button" @click="closeSelectAmenitieDialog()">Potvrdi</button>
+					<button type="button" v-if="role === 'ADMIN'" @click="deleteSelectedAmenities()">Delete</button>
 	            </div>
 			</form>
 		</div>
@@ -128,7 +143,14 @@ Vue.component('apartments',{
 				roomCount: 'desc',
 				guestCount: 'desc',
 			},
+
 			apKey : 0,
+			newAmenity: {
+				id: -1,
+				name: '',
+			},
+			selectedAmenity: {},
+			newAmenityName: '',
 		}
 	},
 	
@@ -266,8 +288,7 @@ Vue.component('apartments',{
 			
 		},
 		
-		closeSelectAmenitieDialog(){
-			
+		getAllSelectedCheckBoxs(){
 			let allCheckBoxs = document.getElementsByName('cb');
 			let allSelectedIds = [];
 			
@@ -276,7 +297,55 @@ Vue.component('apartments',{
 					allSelectedIds.push(checkbox.value);
 				}
 			}
-			this.filter.amenitiesIds = allSelectedIds;
+			return allSelectedIds;
+		},
+		
+		deleteSelectedAmenities(){
+			for(let amenityId of this.getAllSelectedCheckBoxs()){
+				axios.delete('rest/amenities/'+amenityId).
+					then((response)=>{
+						if(response) {
+							let index = this.findIndex(amenityId);
+							this.amenities.splice(index,1);
+							alert('Uspesno uklonjen '+response.data.name);
+						}
+						else alert('Neuspesno uklonjen '+response.data.name);
+					});
+				
+				
+				
+			}
+		},
+		addAmenity(){
+			axios.post('rest/amenities',this.newAmenity)
+				.then(response =>{
+					this.amenities.push(response.data);
+					console.log('Usepsno kreiranje: '+response.data);
+				})
+		},
+		
+		editAmenity(){
+			let index = this.findIndex(this.selectedAmenity);
+			let amenityToEdit = this.amenities[index];
+			amenityToEdit.name = this.newAmenityName;
+			axios.put('rest/amenities',amenityToEdit)
+				.then(response => {
+					if(response) {
+						alert('Uspesno izmenjen sadrzaj!');
+					}else alert('Neuspesno izmenjen sadrzaj!');
+				})
+		},
+		
+		findIndex(amenityId){
+			for(let i=0;i<this.amenities.length;i++){
+				if(amenityId == this.amenities[i].id) return i;
+			}
+			return -1;
+		},
+		
+		
+		closeSelectAmenitieDialog(){
+			this.filter.amenitiesIds = this.getAllSelectedCheckBoxs();
 			this.$refs.showAmenitiesForSelectModal.classList.remove("modal-show");
 			this.$refs.showAmenitiesForSelectModal.style.display = "none";
 		},
