@@ -146,7 +146,7 @@ Vue.component('add-apartment-modal',{
 					price:0.0,
 					checkInTime: 0,
 					checkOutTime: 0,
-					status:"ACTIVE",
+					status:"INACTIVE",
 					amenitiesIds:[],
 					id:0,
 			},
@@ -393,6 +393,7 @@ Vue.component('add-apartment-modal',{
 		addApprovedDate(){
 			var startDate = moment(this.approvedDate.start, 'DD/MM/YYYY')
 			var endDate = moment(this.approvedDate.end, 'DD/MM/YYYY')
+			console.log(this.apartment.status)
 			
 			while(startDate <= endDate){
 				var dateToRemove = startDate.format("YYYY-MM-DD");
