@@ -69,8 +69,8 @@ Vue.component('apartments',{
 					<button ref="sortPriceButton" @click="sortByValue('type')">Type {{sort.type}}</button>
 					<button v-if="role === 'ADMIN' || role==='HOST'" ref="sortPriceButton" @click="sortByValue('status')">Status {{sort.status}}</button>
 					<button ref="sortPriceButton" @click="sortByValue('name')">Name {{sort.name}}</button>
-					<button ref="sortPriceButton" @click="sortByRooms('roomCount')">Rooms {{sort.roomCount}}</button>
-					<button ref="sortPriceButton" @click="sortByPrice('guestCount')">Guests {{sort.guestCount}}</button>
+					<button ref="sortPriceButton" @click="sortByValue('roomCount')">Rooms {{sort.roomCount}}</button>
+					<button ref="sortPriceButton" @click="sortByValue('guestCount')">Guests {{sort.guestCount}}</button>
 				</div>
 			</div>
 			<ul class="ap-ul">
@@ -201,10 +201,10 @@ Vue.component('apartments',{
 		sortByValue(propname){
 			if(this.sort[propname] == 'desc'){
 				this.sort[propname] = 'asc'
-				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] > b[propname] ? 1: -1);
+				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] >= b[propname] ? 1: -1);
 			}else{
 				this.sort[propname] = 'desc'
-				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] < b[propname] ? 1: -1);					
+				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] <= b[propname] ? 1: -1);					
 			}
 		},
 		

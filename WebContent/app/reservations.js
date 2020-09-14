@@ -47,7 +47,7 @@ Vue.component('reservations',{
 		</div>
 		<div class="reservations-list-label">
 		<div class="topMenu">
-			<label>Sort: <button ref="sortPriceButton" @click="sortByValue('price')">Price {{sort.price}}</button></label>
+			<label>Sort: <button ref="sortPriceButton" @click="sortByValue('total')">Price {{sort.total}}</button></label>
 		</div>
 			<ul class="">
 				<li v-for="res in filteredReservations" class="reservation">
@@ -83,7 +83,7 @@ Vue.component('reservations',{
 			},
 			filteredReservations: {},
 			sort:{
-				price: 'desc',
+				total: 'desc',
 			},
 		}
 	},
@@ -156,10 +156,10 @@ Vue.component('reservations',{
 		sortByValue(propname){
 			if(this.sort[propname] == 'desc'){
 				this.sort[propname] = 'asc'
-				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] > b[propname] ? 1: -1);
+				this.filteredReservations = this.filteredReservations.sort((a,b)=> a[propname] > b[propname] ? 1: -1);
 			}else{
 				this.sort[propname] = 'desc'
-				this.filteredApartments = this.filteredApartments.sort((a,b)=> a[propname] < b[propname] ? 1: -1);					
+				this.filteredReservations = this.filteredReservations.sort((a,b)=> a[propname] < b[propname] ? 1: -1);					
 			}
 		},
 		searchClick(){
