@@ -215,10 +215,20 @@ Vue.component('add-apartment-modal',{
 		addApartment(){
 			this.apartment.checkInTime = moment(this.checkInTime, 'HH:mm')
 			this.apartment.checkOutTime = moment(this.checkOutTime, 'HH:mm')
-			console.log(this.apartment.checkInTime)
-			console.log(this.apartment.checkOutTime)
-			console.log(this.checkInTime)
-			console.log(this.checkOutTime)
+			
+			//Pravljenje niza available dates
+			var startDate = moment(this.approvedDate.start, 'DD/MM/YYYY')
+			var endDate = moment(this.approvedDate.end, 'DD/MM/YYYY')
+			
+			while(startDate <= endDate){
+				var dateToAdd = startDate.clone();
+				this.apartment.availableDates.push(dateToAdd)
+				console.log(dateToAdd)
+				startDate = startDate.add(1,'d')
+			}
+			console.log(this.apartment.availableDates)
+			
+			
 			fd = new FormData();
 			fd.append('image', this.files[0])
 			axios
