@@ -122,8 +122,19 @@ public class ApartmentDAO{
 	}
 	
 	public Apartment save(Apartment apartment) {
-		if(apartments.containsKey(apartment.getId())) return null; //TODO odrediti sta ce se desiti ako postoji vec korisnik sa unetim username
+/*		if(apartments.containsKey(apartment.getId())) return null; //TODO odrediti sta ce se desiti ako postoji vec korisnik sa unetim username
 		
+		apartments.put(apartment.getId(),apartment);
+		write();
+		return apartment;
+*/		
+		long maxId = -1;
+		for(long id : apartments.keySet()) {
+			if(apartments.get(id).getId()==-1) break;
+			if(maxId<id) maxId=id;
+		}
+		maxId++;
+		apartment.setId(maxId);
 		apartments.put(apartment.getId(),apartment);
 		write();
 		return apartment;
