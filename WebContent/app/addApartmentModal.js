@@ -11,13 +11,13 @@ Vue.component('add-apartment-modal',{
 						<div class='label-error'>
 							<label>Name:</label>
 						</div>
-						<input type="text"/><br/>
+						<input type="text" v-model="apartment.name"/><br/>
 					</div>
 					<div class="label-input-signup">
 						<div class='label-error'>
 							<label>Location:</label>
 						</div>
-						<input v-model="location" type="text" @keypress="geocode" ref="autocompleteInput"/>
+						<input v-model="location" type="text" @keypress="geocode" ref="autocompleteInput" v-click-outside="closeAutocomplete"/>
 						<ul class="autocomplete-results" ref="autocompleteResults">
 					      	<li @click="setLocation(result)" v-for="result in results" class="autocomplete-result">{{result.properties.formatted}}</li>
 					    </ul>
@@ -26,22 +26,39 @@ Vue.component('add-apartment-modal',{
 						<div class='label-error'>
 							<label>Type:</label>
 						</div>
-						<select>
-							<option value="ROOM">Room</option>
-							<option value="APARTMENT">Apartment</option>
-						</select><br/>
+						<div class="apartment-type-radio-container">
+							<input class="typeRadio" type="radio" id="typeRoom" value="ROOM" v-model="apartment.type">
+							<label class="typeLabel" for="typeRoom">Room</label>
+							<input class="typeRadio" type="radio" id="typeApartment" value="APARTMENT" v-model="apartment.type">
+							<label class="typeLabel" for="typeApartment">Apartment</label>
+						</div>
 					</div>
 					<div class="label-input-signup">
 						<div class='label-error'>
 							<label>Room count:</label>
 						</div>
-						<input type="number"/>
+						<input type="number" v-model="apartment.roomCount"/>
 					</div>
-					<div class="label-input-signup last">
+					<div class="label-input-signup">
 						<div class='label-error'>
 							<label>Guest count:</label>
 						</div>
-						<input type="number"/>
+						<input type="number" v-model="apartment.guestCount"/>
+					</div>
+					<div class="label-input-signup last bigger">
+						<div class='label-error'>
+							<label>Price per night:</label>
+						</div>
+						<div class="price-container">
+							<input type="number" v-model="apartment.price"/>
+							<select>
+								<option>$</option>
+								<option>€</option>
+								<option>£</option>
+								<option>RSD</option>
+								<option>¥</option>
+							</select>
+						</div>
 					</div>
 				</div>
 				<div class="add-apartment-column" :key="listKey">
@@ -52,19 +69,20 @@ Vue.component('add-apartment-modal',{
 					<input type="file" chips ref="browseImages" accept=".jpg,.png" @change="imageAdded($event)" multiple/><br/>
 					<div v-for="file in files"><label>{{file.name}}</label></div>
 				</div>
-				<div class="label-input-signup date-time-picker-contain">
+				<div class="label-input-signup date-time-picker-container">
 					<div class='label-error'>
 						<label>Check in - Check out time:</label>
 					</div>
-					<vue-ctk-date-time-picker class="timepicker" v-model="checkInTime" :label="'Check in'" :format="'HH:mm'" :formatted="'HH:mm'" :inputSize="'sm'" :onlyTime="true"></vue-ctk-date-time-picker>
-					<vue-ctk-date-time-picker class="timepicker" v-model="checkOutTime" :label="'Check out'" :format="'HH:mm'" :formatted="'HH:mm'" :inputSize="'sm'" :onlyTime="true"></vue-ctk-date-time-picker>
+					<div>
+						<vue-ctk-date-time-picker class="timepicker" v-model="checkInTime" :label="'Check in'" :format="'HH:mm'" :formatted="'HH:mm'" :inputSize="'sm'" :onlyTime="true"></vue-ctk-date-time-picker>
+						<vue-ctk-date-time-picker class="timepicker" v-model="checkOutTime" :label="'Check out'" :format="'HH:mm'" :formatted="'HH:mm'" :inputSize="'sm'" :onlyTime="true"></vue-ctk-date-time-picker>
+					</div>
 				</div>
 				<div class="label-input-signup date-time-picker-container bigger">
 					<div class='label-error'>
-						<label>Approve 
-s</label>
+						<label>Approved dates</label>
 					</div>
-					<vue-ctk-date-time-picker v-model="approvedDate" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']" @validate="addApprovedDate"></vue-ctk-date-time-picker><br>
+					<vue-ctk-date-time-picker v-model="approvedDate" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']" v-bind:minDate="today" @validate="addApprovedDate"></vue-ctk-date-time-picker><br>
 					<ul>
 						<li v-for="date in apartment.approvedDates">{{date.dateStart | dateFormat('DD/MM/YYYY')}} - {{date.dateEnd | dateFormat('DD/MM/YYYY')}}</li>
 					</ul>
@@ -77,7 +95,7 @@ s</label>
 						<div class="amenities-containter">
 							<table class="amenity-table">
 								<tr><th><div>All</div></th></tr>
-								<tr v-for="amenity in amenities" @click="selectedAmenity = amenity">{{amenity.name}}</tr>
+								<tr v-for="amenity in amenities" @click="selectedAmenity = amenity" :class="amenity.id === selectedAmenity.id ? 'selected-amenity' : ''">{{amenity.name}}</tr>
 							</table>
 							<div class="amenity-button-container">
 								<button class="arrow-button" @click="addAmenity">&#8250;</button>
@@ -85,7 +103,7 @@ s</label>
 							</div>
 							<table class="amenity-table">
 								<tr><th><div>In apartment</div></th></tr>
-								<tr v-for="amenity in addedAmenities" @click="selectedAmenity = amenity">{{amenity.name}}</tr>
+								<tr v-for="amenity in addedAmenities" @click="selectedAmenity = amenity" :class="amenity.id === selectedAmenity.id ? 'selected-amenity' : ''">{{amenity.name}}</tr>
 							</table>
 						</div
 					</div>
@@ -94,9 +112,7 @@ s</label>
 				<br>
 			</div>
 			<div class="create-button-container">
-					<button @click="test">Create</button>
-					<button @click="test2">test2</button>
-					<div id="map" class="map"></div>
+				<button class="create-button" @click="addApartment">Create</button>
 			</div>
 			</div>
 		</div>
@@ -105,9 +121,9 @@ s</label>
 		return{
 			apartment : {
 					type:"ROOM",
-					name:"Test sa 3 slike",
-					roomCount:10,
-					guestCount:4,
+					name:"",
+					roomCount:0,
+					guestCount:0,
 					location:{
 						latitude:0.0,
 						longitude:0.0,
@@ -121,12 +137,12 @@ s</label>
 					availableDates:[],
 					hostUsername:"marija",
 					images: [],
-					price:222.0,
-					checkInTime:2323223232,
-					checkOutTime:2323223232,
+					price:0.0,
+					checkInTime: 0,
+					checkOutTime: 0,
 					status:"ACTIVE",
 					amenitiesIds:[],
-					id:4,
+					id:0,
 			},
 			checkInTime: null,
 			checkOutTime: null,
@@ -134,11 +150,12 @@ s</label>
 				start: '09/09/2020',
 				end: '10/09/2020'
 			},
+			today: '',
 			amenities: null,
 			files: null,
 			image: null,
 			listKey: 0,
-			selectedAmenity : null,
+			selectedAmenity : {},
 			addedAmenities : [],
 			location : "",
 			results: [],
@@ -149,6 +166,9 @@ s</label>
 		axios	
 			.get('rest/amenities')
 			.then((response) =>{this.amenities = response.data})
+		
+		this.today = new Date().toISOString().slice(0, 10)
+		console.log(this.today)
 			
 			var map = new ol.Map({
 			    target: 'map',
@@ -188,10 +208,17 @@ s</label>
 			this.apartment.location.address.postalCode = result.properties.postcode;
 			
 			this.$refs.autocompleteInput.value = result.properties.formatted;
+			this.$refs.autocompleteResults.style.display = "none"
 			console.log(this.apartment.location);
 		},
 		
-		test(){
+		addApartment(){
+			this.apartment.checkInTime = moment(this.checkInTime, 'HH:mm')
+			this.apartment.checkOutTime = moment(this.checkOutTime, 'HH:mm')
+			console.log(this.apartment.checkInTime)
+			console.log(this.apartment.checkOutTime)
+			console.log(this.checkInTime)
+			console.log(this.checkOutTime)
 			fd = new FormData();
 			fd.append('image', this.files[0])
 			axios
@@ -206,8 +233,8 @@ s</label>
 									} })
 		},
 		
-		test2(){
-			console.log(this.apartment);
+		closeAutocomplete(){
+			this.$refs.autocompleteResults.style.display = "none"
 		},
 		
 		uploadImage(index){
@@ -249,6 +276,11 @@ s</label>
 		},
 		
 		addAmenity(){
+			for(i = 0; i < this.apartment.amenitiesIds.length; ++i){
+				if(this.addedAmenities[i].id === this.selectedAmenity.id){
+					return;
+				}
+			}
 			this.addedAmenities.push(this.selectedAmenity);
 			this.apartment.amenitiesIds.push(this.selectedAmenity.id)
 			for(i = 0; i < this.amenities.length; ++i){
@@ -259,6 +291,11 @@ s</label>
 		},
 		
 		removeAmenity(){
+			for(i = 0; i < this.amenities.length; ++i){
+				if(this.amenities[i].id === this.selectedAmenity.id){
+					return;
+				}
+			}
 			this.amenities.push(this.selectedAmenity);
 			for(i = 0; i < this.addedAmenities.length; ++i){
 				if(this.addedAmenities[i].id === this.selectedAmenity.id){

@@ -40,7 +40,29 @@
 }
 
 .create-button-container{
-	display: block;	
+	display: block;
+	margin-top: 50px;
+	margin-bottom: 20px;	
+}
+
+.create-button{
+	background-color: #0075a6;
+	color: white;
+	padding: 15px 15px;
+	text-decoration: none;
+	font-size: 20px;
+	font-family: 'Times New Roman', Georgia, serif;
+	border: #FFFFFF;
+	outline: none;
+	text-align: center;
+	width: 150px;
+	border-radius: 8px;
+}
+
+.create-button:hover {
+  background-color: #009bdb;
+  color: white;
+  cursor: pointer;
 }
 
 .amenities-containter{
@@ -52,6 +74,8 @@
 
 .amenity-button-container{
 	display:block;
+	text-align: center;
+	margin-top: 10px;
 }
 
 .amenity-table{
@@ -64,6 +88,7 @@
 	margin-right: 10px; 
 	display: inline-block;
 	overflow: auto;
+	text-align: center;
 }
 
 .amenity-table tr{
@@ -71,9 +96,14 @@
 	display: block;
 }
 
-.amenity-table tr:onlick{
+.amenity-table tr:hover{
 	background-color: #E5F4FF;
+	cursor: pointer;
 }
+
+.selected-amenity{
+	background-color: lightgreen !important;
+} 
 
 .amenity-table th div{
 	margin-top: -20px;
@@ -96,6 +126,12 @@
 	font-size: 20px
 }
 
+.arrow-button:hover{
+	background-color: #009bdb;
+  	color: white;
+  	cursor: pointer;
+}
+
 .arrow-button span {
 	display:block;
 	color:white;
@@ -111,21 +147,47 @@
     position:relative;
     background-color: white;
     display: none;
-  }
+ }
 
-  .autocomplete-result {
-    list-style: none;
-    text-align: left;
-    padding: 4px 2px;
-    cursor: pointer;
-    color: grey;
-  }
+.autocomplete-result {
+  list-style: none;
+  text-align: left;
+  padding: 4px 2px;
+  cursor: pointer;
+  color: grey;
+}
 
-  .autocomplete-result:hover {
-    background-color: #E5F4FF;
-  }
+.autocomplete-result:hover {
+  background-color: #E5F4FF;
+}
   
 .map{
 	height: 300px;
 	width: 300px;
+}
+
+.apartment-type-radio-container{
+	float: left;
+	clear: none;
+	margin-left: 20px;
+}
+
+.typeLabel{
+	float: left;
+      clear: none;
+      display: block !important;
+      padding: 0px 1em 0px 8px;
+	color: black !important;
+	border-radius: 0 !important;
+}
+
+.typeRadio{
+	float: left;
+	width: auto !important;
+	margin-left: 50px
+}
+
+.price-container{
+	display: flex;
+	width:100%;
 }
