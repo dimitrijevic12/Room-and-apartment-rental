@@ -153,6 +153,19 @@ public class ReservationDAO {
 		return result;
 	}
 	
+	public Reservation save(Reservation reservation) {
+		long maxId = -1;
+		for(long id: reservations.keySet()) {
+			if(reservations.get(id).getId()==-1) break;
+			if(maxId<id) maxId = id;
+		}
+		maxId++;
+		reservation.setId(maxId);
+		reservations.put(reservation.getId(),reservation);
+		write();
+		return reservation;
+	}
+	
 	public Collection<Reservation> getReservationForGuest(String guestUsername, ApartmentDAO dao){
 		List<Reservation> result = new ArrayList<Reservation>();
 		for(long resId : reservations.keySet()) {
