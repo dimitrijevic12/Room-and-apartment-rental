@@ -2,8 +2,9 @@
 	text-decoration: none;
 	font-family: 'Times New Roman', Georgia, serif;
 	font-size: 30px;
-	height: 50px;
+	height: auto;
 	margin: 20px 5% -50px 5%;
+	overflow: auto;
 }
 
 .image-slider{
@@ -129,8 +130,9 @@
 
 .reserve-button:hover,
 .reserve-button:focus {
-  background-color: #E5F4FF;
-  color: #113E60;
+ 	background-color: #009bdb;
+  	color: white;
+  	cursor: pointer;
 }
 
 .description{
@@ -209,4 +211,46 @@
 
 .comment-grade{
 	margin-left: 15px;
+}
+
+.edit-apartment-button{
+text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	font-size: 26px;
+	float: right;
+	padding: 10px 50px;
+	text-align: center;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	margin-left: auto;
+	margin-right: 20px;
+	border-radius: 10px;
+	background-color: #0075a6;
+	color: white;
+	border: none;
+}
+
+.apartment-name-container{
+	width: auto;
+	height: 100%;
+    float:left;
+}
+
+.edit-apartment-button-container{
+	overflow: hidden; 
+}
+
+.edit-apartment-button:hover,
+.edit-apartment-button:focus {
+  	background-color: #009bdb;
+  	color: white;
+  	cursor: pointer;
+}
+
+.apartment-name{
+	float: left;
+	width: 100%;
+	margin-top: 25%; 
+	margin-bottom: 25%;
+	font-size: 40px 
 }

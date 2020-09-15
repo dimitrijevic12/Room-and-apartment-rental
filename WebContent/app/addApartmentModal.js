@@ -14,7 +14,7 @@ Vue.component('add-apartment-modal',{
 						</div>
 						<input type="text" v-model="apartment.name"/><br/>
 					</div>
-					<div class="label-input-signup" ref="locationError">
+					<div v-if="mode==='CREATE'" class="label-input-signup" ref="locationError">
 						<div class='label-error'>
 							<label>Location:</label>
 							<label v-if="locationError == true" class="error-message">You cant leave this field empty!</label>
@@ -71,7 +71,8 @@ Vue.component('add-apartment-modal',{
 					</div>
 					<input style="display:none" type="file" chips ref="browseImages" accept=".jpg,.png" @change="imageAdded($event)" multiple/>
 					<button class="browse-images-button" @click="$refs.browseImages.click()">Browse images</button>
-					<div v-for="file in files"><label class="images-list">{{file.name}}</label></div>
+					<div v-if="mode==='CREATE'" v-for="file in files"><label class="images-list">{{file.name}}</label></div>
+					<div v-if="mode==='EDIT'" v-for="file in files"><img class="image-preview" v-bind:src="file"><span @click="removeImage(file)" class="close">&times;</span></div>
 				</div>
 				<div class="label-input-signup date-time-picker-container" ref="checkInOutError">
 					<div class='label-error'>
@@ -118,13 +119,15 @@ Vue.component('add-apartment-modal',{
 				<br>
 			</div>
 			<div class="create-button-container">
-				<button class="create-button" @click="addApartment">Create</button>
+				<button v-if="mode === 'CREATE'" class="create-button" @click="addApartment">Create</button>
+				<button v-if="mode === 'EDIT'" class="create-button" @click="editApartment">Edit</button>
 			</div>
 			</div>
 		</div>
 	`,
 	data: function(){
 		return{
+			mode: '',
 			apartment : {
 					type:"ROOM",
 					name:"",
@@ -172,15 +175,46 @@ Vue.component('add-apartment-modal',{
 			imagesError: false,
 			checkInOutError: false,
 			approvedDatesError: false,
-			
+			filesOnLoad: [],
+			imagesToUpload: [],
 		}
 	},
 	mounted(){
-		this.$root.$on('open-add-apartment-modal', () => {this.$refs.addApartmentModal.style.display = "block";});
-		axios	
-			.get('rest/amenities')
-			.then((response) =>{this.amenities = response.data})
+		this.$root.$on('open-add-apartment-modal', () => {this.$refs.addApartmentModal.style.display = "block";
+															axios	
+																.get('rest/amenities')
+																.then((response) =>{this.amenities = response.data;
+																				this.mode = "CREATE"})});
 		
+			
+			
+		this.$root.$on('open-edit-apartment-modal', () => {this.$refs.addApartmentModal.style.display = "block";
+															axios	
+															.get('rest/amenities')
+															.then((response) =>{this.amenities = response.data;
+																				this.mode = "EDIT";
+																				axios
+																					.get('rest/apartments/' + this.$route.params.id)
+																					.then((response) => {this.apartment = response.data;
+																										 var checkInTimeMoment = moment(this.apartment.checkInTime)
+																										 var checkOutTimeMoment = moment(this.apartment.checkOutTime);
+																										 console.log(checkInTimeMoment)
+																										 console.log(checkOutTimeMoment)
+																										 this.checkInTime = checkInTimeMoment.format('HH:mm');
+																										 this.checkOutTime = checkOutTimeMoment.format('HH:mm');
+																										 this.approvedDates = this.apartment.approvedDates;
+																										 this.addDisabledDates();
+																										 this.files = this.apartment.images.slice();
+																										 this.filesOnLoad = this.apartment.images.slice();
+																										 console.log(this.files);
+																										 axios
+																											 .get('rest/amenities/byApartment/' + this.apartment.id)
+																											 .then((response) => {this.addedAmenities = response.data;
+																											 					  this.removeAmenities()});})
+															})});
+		
+			
+			
 		this.today = new Date().toISOString().slice(0, 10)
 		console.log(this.today)
 			
@@ -214,8 +248,11 @@ Vue.component('add-apartment-modal',{
 						postalCode:0
 					}
 				};
-			this.$refs.locationError.classList.remove('error-border')
-			this.locationError = false;
+			
+			if(this.mode === 'CREATE'){
+				this.$refs.locationError.classList.remove('error-border')
+				this.locationError = false;
+			}
 			
 			this.apartment.roomCount = 0;
 			this.apartment.guestCount = 0;
@@ -266,6 +303,77 @@ Vue.component('add-apartment-modal',{
 			this.$refs.autocompleteInput.value = result.properties.formatted;
 			this.$refs.autocompleteResults.style.display = "none"
 			console.log(this.apartment.location);
+		},
+		
+		editApartment(){
+			var imagesToDelete = []
+			for(i = 0; i < this.apartment.images.length; ++i){
+				if(this.files.includes(this.apartment.images[i]) === false){
+					imagesToDelete.push(this.apartment.images[i]);
+				}
+			}
+			
+			this.apartment.checkInTime = moment(this.checkInTime, 'HH:mm')
+			this.apartment.checkOutTime = moment(this.checkOutTime, 'HH:mm')
+			
+			//Pravljenje niza available dates
+			var startDate = moment(this.approvedDate.start, 'DD/MM/YYYY')
+			var endDate = moment(this.approvedDate.end, 'DD/MM/YYYY')
+			
+			while(startDate <= endDate){
+				var dateToAdd = startDate.clone();
+				this.apartment.availableDates.push(dateToAdd)
+				console.log(dateToAdd)
+				startDate = startDate.add(1,'d')
+			}
+			console.log(this.apartment.availableDates)
+			
+			this.apartment.hostUsername = this.$cookies.get('user').username;
+			console.log(this.apartment.hostUsername);
+			
+			for(i = 0; i < this.files.length; ++i){
+				if(this.apartment.images.includes(this.files[i]) === false){
+					this.imagesToUpload.push(this.files[i]);
+				}
+			}
+			
+			for(i = 0; i < imagesToDelete.length; ++i){
+				for(j = 0; j < this.apartment.images.length; ++j){
+					if(imagesToDelete[i] === this.apartment.images[j]){
+						this.apartment.images.splice(i, 1)
+					}
+				}
+			}
+			
+			console.log(this.imagesToUpload)
+			console.log(imagesToDelete)
+			console.log(this.apartment.images)
+			axios
+				.delete('rest/apartments/deleteImages',{ data:  imagesToDelete })
+				.then((response) => {
+										if(this.imagesToUpload.length > 0){
+											fd = new FormData();
+											fd.append('image', this.imagesToUpload[0])
+											axios
+												.post('rest/apartments/images', fd)
+												.then((response) => {this.apartment.images.push(response.data); 
+																	if(this.imagesToUpload.length > 1){
+																		this.uploadImageEdit(1);
+																	}else{
+																		axios
+																		.put('rest/apartments/editApartment', this.apartment)
+																		.then((response) => {console.log(response.data)
+																		this.$refs.addApartmentModal.style.display="none";
+																		this.$emit('refresh-apartments')})
+																	} })
+									}else{
+										axios
+										.put('rest/apartments/editApartment', this.apartment)
+										.then((response) => {console.log(response.data)
+										this.$refs.addApartmentModal.style.display="none";
+										this.$emit('refresh-apartments')})
+									}
+														})
 		},
 		
 		addApartment(){
@@ -377,15 +485,64 @@ Vue.component('add-apartment-modal',{
 										 })
 		},
 		
+		uploadImageEdit(index){
+			fd = new FormData();
+			fd.append('image', this.imagesToUpload[index])
+			axios
+				.post('rest/apartments/images', fd)
+				.then((response) => {this.apartment.images.push(response.data); 
+									 if(++index < this.imagesToUpload.length){ 
+										 this.uploadImageEdit(index);
+									 }else{
+										 console.log(this.apartment);
+										 axios
+											.put('rest/apartments/editApartment', this.apartment)
+											.then((response) => {console.log(response.data);
+											this.$refs.addApartmentModal.style.display="none";
+											this.$emit('refresh-apartments')})
+									 }
+									 })
+		},
+		
 		imageAdded(event){
-			this.files = event.target.files;
-			this.listKey += 1;
+			if(this.mode === 'CREATE'){
+				this.files = event.target.files;
+				this.listKey += 1;
+			}else{
+				for(i = 0; i < event.target.files.length; ++i){
+					this.files.push(event.target.files[i]);
+				}
+				this.listKey += 1;
+			}
 		},
 		
 		removeImage(file){
-			for(i = 0, j = 0; i < this.files.length; ++i){
+/*			for(i = 0, j = 0; i < this.files.length; ++i){
 				if(file.name !== this.files[i].name){
 					this.files[j++] = this.files[i];
+				}
+			}*/
+			for(i = 0; i < this.files.length; ++i){
+				if(file === this.files[i]){
+					this.files.splice(i, 1);
+				}
+			}
+			console.log(this.files);
+		},
+		
+		addDisabledDates(){
+			console.log(this.approvedDates[0]);
+			for(i = 0; i < this.approvedDates.length; ++i){
+				var date = this.approvedDates[i];
+				console.log(date);
+				var startDate = moment(date.l)
+				var endDate = moment(date.r)
+				
+				while(startDate <= endDate){
+					var dateToRemove = startDate.format("YYYY-MM-DD");
+					console.log(dateToRemove)
+					this.disabledDates.push(dateToRemove)
+					startDate = startDate.add(1,'d')
 				}
 			}
 		},
@@ -468,6 +625,19 @@ Vue.component('add-apartment-modal',{
 				if(this.addedAmenities[i].id === this.selectedAmenity.id){
 					this.addedAmenities.splice(i,1);
 					this.apartment.amenitiesIds.splice(i,1);
+				}
+			}
+		},
+		
+		removeAmenities(){
+			for(i = 0; i < this.addedAmenities.length; ++i){
+				for(j = 0; j < this.amenities.length; ++j){
+					console.log(this.addedAmenities[i])
+					console.log(this.amenities[j])
+					if(this.addedAmenities[i].id === this.amenities[j].id){
+						this.amenities.splice(j,1);
+						break;
+					}
 				}
 			}
 		}

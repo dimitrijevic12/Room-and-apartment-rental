@@ -2,17 +2,17 @@ package services;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -172,6 +172,17 @@ public class ApartmentService {
 		return dao.delete(id);
 	}
 	
+	@DELETE
+	@Path("/deleteImages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void deleteImages(List<String> imagesToDelete) {
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		
+		System.out.println(imagesToDelete);
+		dao.deleteImages(imagesToDelete);
+		
+	}
+	
 	@POST
 	@Path("/images")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -179,6 +190,14 @@ public class ApartmentService {
 	public String uploadImages(InputStream fileInputStream) throws IOException {
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		return dao.saveImages(fileInputStream);
+	}
+	
+	@PUT
+	@Path("/editApartment")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Apartment editApartment(Apartment apartment){
+		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+		return dao.editApartment(apartment);
 	}
 	
 }
