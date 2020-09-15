@@ -71,8 +71,8 @@ Vue.component('add-apartment-modal',{
 					</div>
 					<input style="display:none" type="file" chips ref="browseImages" accept=".jpg,.png" @change="imageAdded($event)" multiple/>
 					<button class="browse-images-button" @click="$refs.browseImages.click()">Browse images</button>
-					<div v-if="mode==='CREATE'" v-for="file in files"><label class="images-list">{{file.name}}</label></div>
-					<div v-if="mode==='EDIT'" v-for="file in files"><img class="image-preview" v-bind:src="file"><span @click="removeImage(file)" class="close">&times;</span></div>
+					<div v-if="mode==='CREATE'" v-for="file in files"><img class="image-preview" v-bind:src="readImage(file)"></img></div>
+					<div v-if="mode==='EDIT'" v-for="file in files"><img v-if="typeof(file.name) === 'undefined'"  class="image-preview" v-bind:src="file"><img class="image-preview" v-else v-bind:src="readImage(file)"></img><span @click="removeImage(file)" class="close">&times;</span></div>
 				</div>
 				<div class="label-input-signup date-time-picker-container" ref="checkInOutError">
 					<div class='label-error'>
@@ -514,6 +514,13 @@ Vue.component('add-apartment-modal',{
 				}
 				this.listKey += 1;
 			}
+			console.log(this.files);
+		},
+		
+		readImage(file){
+			console.log(file)
+//			var file = e.target.files[0]
+			return URL.createObjectURL(file);
 		},
 		
 		removeImage(file){
