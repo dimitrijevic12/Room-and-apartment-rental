@@ -217,7 +217,6 @@ Vue.component('add-apartment-modal',{
 			
 		this.today = new Date().toISOString().slice(0, 10)
 		console.log(this.today)
-			
 			var map = new ol.Map({
 			    target: 'map',
 			    layers: [
@@ -414,7 +413,7 @@ Vue.component('add-apartment-modal',{
 				this.checkInOutError = false;
 			}
 			
-			if(this.approvedDate.start === "" || this.approvedDate.end === ""){
+			if(this.apartment.approvedDates.length === 0){
 				this.$refs.approvedDatesError.classList.add('error-border');
 				this.approvedDatesError = true;
 				validation = false;
@@ -429,18 +428,6 @@ Vue.component('add-apartment-modal',{
 			
 			this.apartment.checkInTime = moment(this.checkInTime, 'HH:mm')
 			this.apartment.checkOutTime = moment(this.checkOutTime, 'HH:mm')
-			
-			//Pravljenje niza available dates
-			var startDate = moment(this.approvedDate.start, 'DD/MM/YYYY')
-			var endDate = moment(this.approvedDate.end, 'DD/MM/YYYY')
-			
-			while(startDate <= endDate){
-				var dateToAdd = startDate.clone();
-				this.apartment.availableDates.push(dateToAdd)
-				console.log(dateToAdd)
-				startDate = startDate.add(1,'d')
-			}
-			console.log(this.apartment.availableDates)
 			
 			this.apartment.hostUsername = this.$cookies.get('user').username;
 			console.log(this.apartment.hostUsername);
@@ -524,11 +511,6 @@ Vue.component('add-apartment-modal',{
 		},
 		
 		removeImage(file){
-/*			for(i = 0, j = 0; i < this.files.length; ++i){
-				if(file.name !== this.files[i].name){
-					this.files[j++] = this.files[i];
-				}
-			}*/
 			for(i = 0; i < this.files.length; ++i){
 				if(file === this.files[i]){
 					this.files.splice(i, 1);
@@ -554,17 +536,68 @@ Vue.component('add-apartment-modal',{
 			}
 		},
 		
+		refreshDates(){
+			if(this.approvedDates.length === 0){
+				this.apartment.availableDates = [];
+				this.disabledDates = [];
+				return;
+			}
+			for(i = 0; i < this.approvedDates.length; ++i){
+				var startDate = moment(this.approvedDates[i].l, 'DD/MM/YYYY')
+				var endDate = moment(this.approvedDates[i].r, 'DD/MM/YYYY')
+				console.log(this.approvedDates)
+				
+				var availableDates = []
+				while(startDate <= endDate){
+					var dateToAdd = startDate.clone();
+					var dateToRemove = startDate.format("YYYY-MM-DD");
+					console.log(dateToRemove)
+					availableDates.push(dateToAdd);
+//					this.apartment.availableDates.push(dateToAdd)
+					this.disabledDates.push(dateToRemove)
+					startDate = startDate.add(1,'d')
+				}
+				
+				console.log(this.apartment.availableDates);
+				var availableDatesSet = new Set(availableDates);
+				this.apartment.availableDates = Array.from(availableDatesSet);
+				console.log('Available dates u apartmanu array' + this.apartment.availableDates);
+			}
+		},
+		
 		addApprovedDate(){
 			var startDate = moment(this.approvedDate.start, 'DD/MM/YYYY')
 			var endDate = moment(this.approvedDate.end, 'DD/MM/YYYY')
-			console.log(this.apartment.status)
 			
+			var datesToAdd = this.apartment.availableDates.slice();
 			while(startDate <= endDate){
+				var dateToAdd = startDate.clone();
 				var dateToRemove = startDate.format("YYYY-MM-DD");
-				console.log(dateToRemove)
+				datesToAdd.push(dateToAdd);
+//				this.apartment.availableDates.push(dateToAdd)
 				this.disabledDates.push(dateToRemove)
 				startDate = startDate.add(1,'d')
 			}
+			
+			var datesToAddString = [];
+			for(i = 0; i < datesToAdd.length; ++i){
+				var dateString = moment(datesToAdd[i]).format('DD/MM/YYYY');
+				datesToAddString.push(dateString);
+			}
+			console.log(datesToAddString)
+			datesToAddString = Array.from(new Set(datesToAddString));
+			console.log(datesToAddString)
+			
+			this.apartment.availableDates = []
+			for(i = 0; i < datesToAddString.length; ++i){
+				var date = moment(datesToAddString[i], 'DD/MM/YYYY');
+				this.apartment.availableDates.push(date);
+			}
+			
+//			console.log(this.apartment.availableDates);
+//			var availableDatesSet = new Set(this.apartment.availableDates);
+//			this.apartment.availableDates = Array.from(availableDatesSet);
+			console.log('Available dates u apartmanu array' + this.apartment.availableDates);
 			
 			var apDateStart = this.approvedDate.start;
 			var apDateEnd = this.approvedDate.end;
@@ -588,22 +621,25 @@ Vue.component('add-apartment-modal',{
 					this.apartment.approvedDates.splice(i,1)
 				}
 			}
+			this.approvedDates = this.apartment.approvedDates.slice();
+			console.log(this.apartment.approvedDates)
 			
-			console.log(this.approvedDate.start);
-			console.log(this.approvedDate.end);
 			var startDate = moment(date.l, 'DD/MM/YYYY')
 			var endDate = moment(date.r, 'DD/MM/YYYY')
 			
 			while(startDate <= endDate){
 				for(j = 0; j < this.disabledDates.length; ++j){
-					var temp = moment(this.disabledDates[j], "YYYY-MM-DD")
-					if(temp.isSame(startDate)){
-						this.disabledDates.splice(j,1)
+					var disToRemove = moment(this.disabledDates[j], "YYYY-MM-DD")
+					if(disToRemove.isSame(startDate)){
+						this.disabledDates.splice(j,1);
+						this.apartment.availableDates.splice(j,1);
 					}
 				}
 				startDate = startDate.add(1,'d')
 			}
-			console.log(this.apartment.approvedDates)
+			console.log(this.apartment.availableDates)
+			this.refreshDates()
+			
 		},
 		
 		addAmenity(){
