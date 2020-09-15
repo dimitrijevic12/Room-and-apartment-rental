@@ -1,3 +1,9 @@
+function getDateFromVueDatePicker(formattedDate){
+	let splitedDate = formattedDate.split('/');
+	let result = new Date(splitedDate[2],parseInt(splitedDate[1],10)-1,parseInt(splitedDate[0],10),0,0,0);
+	return result;
+}
+
 Vue.component('vue-ctk-date-time-picker', window['vue-ctk-date-time-picker']);
 
 Vue.component('apartments',{
@@ -28,7 +34,7 @@ Vue.component('apartments',{
 							<option>INACTIVE</option>
 						</select>
 					</li>
-					<li><vue-ctk-date-time-picker class="search-field" v-model="filter.date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']"></vue-ctk-date-time-picker></li>
+					<li><vue-ctk-date-time-picker class="search-field" :no-shortcuts="true" v-model="filter.date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" ></vue-ctk-date-time-picker></li>
 					<li>
 						<input type="number" class="minMaxField" v-model="filter.minPrice" min="0"  placeholder="min price"><span>&nbsp;-</span>
 						<input type="number" class="minMaxField"  v-model="filter.maxPrice" min="0"  placeholder="max price">
@@ -151,6 +157,7 @@ Vue.component('apartments',{
 			},
 			selectedAmenity: {},
 			newAmenityName: '',
+			noShortcut: true,
 		}
 	},
 	
@@ -252,12 +259,12 @@ Vue.component('apartments',{
 			if(!this.filter.date) return true;
  			
 			if(this.filter.date.start) {
-				filterCheckInDay = new Date(this.filter.date.start);
+				filterCheckInDay = getDateFromVueDatePicker(this.filter.date.start);
 				filterCheckInDay.setHours(0,0,0,0);
 			}
 				
 			if(this.filter.date.end ) {
-				filterCheckOutDay = new Date(this.filter.date.end);
+				filterCheckOutDay = getDateFromVueDatePicker(this.filter.date.end);
 				filterCheckOutDay.setHours(0,0,0,0);
 			}
 				
@@ -461,8 +468,8 @@ Vue.component('reservate-apartment-modal',{
 			<form>
 				<h1 class="naslov">{{apartment.name}}</h1>
 				<div class="row">
-				<label>Pocetni datum:</label>
-				<vue-ctk-date-time-picker class="search-field" v-model="date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:min-date="dateRange.min" v-bind:max-date="dateRange.max" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']"></vue-ctk-date-time-picker>
+				<label>Datum:</label>
+				<vue-ctk-date-time-picker class="search-field" v-model="date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:min-date="dateRange.min" v-bind:max-date="dateRange.max" v-bind:disabledDates="disabledDates"></vue-ctk-date-time-picker>
 				</div>
 				<div class="row">
 					<label>Broj nocenja: {{getNightCount()}}</label>
@@ -492,6 +499,7 @@ Vue.component('reservate-apartment-modal',{
 			reservation: {
 				message:'',
 			},
+			disabledDates: [],
 			dateRange:{
 				min: '',
 				max: '',
@@ -512,6 +520,7 @@ Vue.component('reservate-apartment-modal',{
 			this.reservation.nightCount=1;
 			
 			this.apartment.availableDates = this.apartment.availableDates.sort((a,b)=> a >= b ? 1: -1);
+			this.disabledDates = this.getDisabledDates();
 			this.dateRange.min = this.formatDate(new Date(this.apartment.availableDates[0])).join('-');
 			this.dateRange.max = this.formatDate(new Date(this.apartment.availableDates[this.apartment.availableDates.length-1])).join('-');
 		});		
@@ -519,6 +528,26 @@ Vue.component('reservate-apartment-modal',{
 	},
 	
 	methods: {
+		
+		getDisabledDates(){
+			let day = new Date(this.apartment.availableDates[0]);
+			let lastDay = new Date(this.apartment.availableDates[this.apartment.availableDates.length-1]);
+			let index = 0;
+			let result = [];
+			do{
+				let availableDay= new Date(this.apartment.availableDates[index]);
+				availableDay.setHours(0,0,0);
+				day.setHours(0,0,0);
+				if(day.getTime()<availableDay.getTime()){
+					result.push(this.formatDate(day));
+				}else{
+					index= index+1;
+				}
+				day.setDate(day.getDate() + 1);
+				
+			}while(day.getTime() <= lastDay.getTime());
+			return result;
+		},
 		closeDialog(){
 			this.$refs.reservateApartmentModal.style.display = "none";
 			this.$refs.reservateApartmentModal.classList.remove("modal-show");
@@ -530,7 +559,7 @@ Vue.component('reservate-apartment-modal',{
 			reservation = {
 					id: -1,
 					apartmentId : this.apartment.id,
-					checkInDate: this.getDateFromVueDatePicker(this.date.start).getTime(),
+					checkInDate: getDateFromVueDatePicker(this.date.start).getTime(),
 					nightCount: this.getNightCount(),
 					total: this.getNightCount()*this.apartment.price,
 					message: this.reservation.message,
@@ -564,20 +593,15 @@ Vue.component('reservate-apartment-modal',{
 		    return [year, month, day];
 		},
 		
-		getDateFromVueDatePicker(formattedDate){
-			let splitedDate = formattedDate.split('/');
-			let result = new Date(splitedDate[2],parseInt(splitedDate[1],10)-1,parseInt(splitedDate[0],10),0,0,0);
-			return result;
-		},
+		
 		
 		getNightCount(){
 			if(!this.date || !this.date.start) return 0;
 			if(this.date.start!=='' && !this.date.end) return 1;
-			let date1 = this.getDateFromVueDatePicker(this.date.start);
-			let date2 = this.getDateFromVueDatePicker(this.date.end);
+			let date1 = getDateFromVueDatePicker(this.date.start);
+			let date2 = getDateFromVueDatePicker(this.date.end);
 			let diffTime = Math.abs(date2-date1);
 			let result = Math.ceil(diffTime/ (1000*60*60*24));
-			console.log(result);
 			return result;
 		}
 	}
