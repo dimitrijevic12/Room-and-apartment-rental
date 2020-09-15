@@ -340,7 +340,7 @@ Vue.component('add-apartment-modal',{
 			for(i = 0; i < imagesToDelete.length; ++i){
 				for(j = 0; j < this.apartment.images.length; ++j){
 					if(imagesToDelete[i] === this.apartment.images[j]){
-						this.apartment.images.splice(i, 1)
+						this.apartment.images.splice(j, 1)
 					}
 				}
 			}
