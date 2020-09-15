@@ -34,7 +34,7 @@ Vue.component('apartments',{
 							<option>INACTIVE</option>
 						</select>
 					</li>
-					<li><vue-ctk-date-time-picker class="search-field" :no-shortcuts="true" v-model="filter.date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" ></vue-ctk-date-time-picker></li>
+					<li><vue-ctk-date-time-picker class="search-field" :no-shortcuts="noShortcut" v-model="filter.date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" ></vue-ctk-date-time-picker></li>
 					<li>
 						<input type="number" class="minMaxField" v-model="filter.minPrice" min="0"  placeholder="min price"><span>&nbsp;-</span>
 						<input type="number" class="minMaxField"  v-model="filter.maxPrice" min="0"  placeholder="max price">
