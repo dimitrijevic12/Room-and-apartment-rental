@@ -462,14 +462,13 @@ Vue.component('reservate-apartment-modal',{
 				<h1 class="naslov">{{apartment.name}}</h1>
 				<div class="row">
 				<label>Pocetni datum:</label>
-				<input v-model="reservation.checkInDate" type="date" name="" placeholder="">
+				<vue-ctk-date-time-picker class="search-field" v-model="date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:min-date="dateRange.min" v-bind:max-date="dateRange.max" v-bind:disabledDates="['2020-09-11','2020-09-12','2020-09-13']"></vue-ctk-date-time-picker>
 				</div>
 				<div class="row">
-				<label>Broj nocenja:</label>
-				<input v-model="reservation.nightCount" type="number" min="1" max="99" name="" size="4" placeholder="1">
+					<label>Broj nocenja: {{getNightCount()}}</label>
 				</div>
 				<div class="row">
-					<label>Cena:{{reservation.nightCount*apartment.price}}</label>
+					<label>Cena:{{getNightCount()*apartment.price}}</label>
 					
 				</div>
 				<div class="row">
@@ -479,7 +478,7 @@ Vue.component('reservate-apartment-modal',{
 	
 				<div class="row">				
 					<div class="buttons">
-						<button type="submit">Reserve</button>
+						<button type="button" @click="reserve()">Reserve</button>
 						<button type="button" @click="closeDialog()">Cancel</button>
 					</div>
 				</div>
@@ -490,7 +489,17 @@ Vue.component('reservate-apartment-modal',{
 	data: function(){
 		return{
 			apartment: {},
-			reservation: {},
+			reservation: {
+				message:'',
+			},
+			dateRange:{
+				min: '',
+				max: '',
+			},
+			date:{
+				start: '',
+				end: ''
+			}
 		}
 	},
 	
@@ -501,13 +510,75 @@ Vue.component('reservate-apartment-modal',{
 			this.$refs.reservateApartmentModal.classList.add("modal-show");
 			this.$refs.reservateApartmentModal.style.display="block";
 			this.reservation.nightCount=1;
-		});
+			
+			this.apartment.availableDates = this.apartment.availableDates.sort((a,b)=> a >= b ? 1: -1);
+			this.dateRange.min = this.formatDate(new Date(this.apartment.availableDates[0])).join('-');
+			this.dateRange.max = this.formatDate(new Date(this.apartment.availableDates[this.apartment.availableDates.length-1])).join('-');
+		});		
+		
 	},
 	
 	methods: {
 		closeDialog(){
 			this.$refs.reservateApartmentModal.style.display = "none";
 			this.$refs.reservateApartmentModal.classList.remove("modal-show");
+		},
+		
+		reserve(){
+			let reservation= {};
+			if(this.date){
+			reservation = {
+					id: -1,
+					apartmentId : this.apartment.id,
+					checkInDate: this.getDateFromVueDatePicker(this.date.start).getTime(),
+					nightCount: this.getNightCount(),
+					total: this.getNightCount()*this.apartment.price,
+					message: this.reservation.message,
+					guestUsername: this.$cookies.get('user').username,
+				}
+			}
+			if(this.getNightCount() == 0) {
+				alert("Morate selektovati datum!");
+				return;
+			}
+			
+			
+			axios.post('rest/reservations',reservation)
+				.then(response=>{
+					if(response.data) alert('Uspesno kreirana rezervacija!');
+					else alert('Neuspesno kreirana rezervacija!');
+				})	
+		},
+		
+		formatDate(date){
+			 let d = new Date(date),
+		        month = '' + (d.getMonth() + 1),
+		        day = '' + d.getDate(),
+		        year = d.getFullYear();
+
+		    if (month.length < 2) 
+		        month = '0' + month;
+		    if (day.length < 2) 
+		        day = '0' + day;
+
+		    return [year, month, day];
+		},
+		
+		getDateFromVueDatePicker(formattedDate){
+			let splitedDate = formattedDate.split('/');
+			let result = new Date(splitedDate[2],parseInt(splitedDate[1],10)-1,parseInt(splitedDate[0],10),0,0,0);
+			return result;
+		},
+		
+		getNightCount(){
+			if(!this.date || !this.date.start) return 0;
+			if(this.date.start!=='' && !this.date.end) return 1;
+			let date1 = this.getDateFromVueDatePicker(this.date.start);
+			let date2 = this.getDateFromVueDatePicker(this.date.end);
+			let diffTime = Math.abs(date2-date1);
+			let result = Math.ceil(diffTime/ (1000*60*60*24));
+			console.log(result);
+			return result;
 		}
 	}
 })

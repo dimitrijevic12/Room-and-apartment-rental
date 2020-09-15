@@ -113,9 +113,10 @@ public class ReservationService {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public void writeAll(){
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Reservation newReservation(Reservation reservation){
 		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
-		dao.write();
+		return dao.save(reservation);
 	}
 	
 	@POST
