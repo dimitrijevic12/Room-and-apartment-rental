@@ -14,21 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.MimeHeader;
-
-import org.codehaus.jackson.JsonNode;
 //import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-
-import com.mysql.cj.xdevapi.JsonString;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeBodyPart;
-import com.sun.xml.internal.ws.encoding.MimeMultipartParser;
-import com.sun.xml.internal.ws.message.MimeAttachmentSet;
 
 import beans.Address;
 import beans.Amenity;
@@ -38,7 +31,6 @@ import beans.ApartmentType;
 import beans.Location;
 import beans.Reservation;
 import beans.User;
-import jdk.nashorn.internal.parser.JSONParser;
 
 
 public class ApartmentDAO{
@@ -121,13 +113,7 @@ public class ApartmentDAO{
 		}
 	}
 	
-	public Apartment save(Apartment apartment) {
-/*		if(apartments.containsKey(apartment.getId())) return null; //TODO odrediti sta ce se desiti ako postoji vec korisnik sa unetim username
-		
-		apartments.put(apartment.getId(),apartment);
-		write();
-		return apartment;
-*/		
+	public Apartment save(Apartment apartment) {	
 		long maxId = -1;
 		for(long id : apartments.keySet()) {
 			if(apartments.get(id).getId()==-1) break;
@@ -172,20 +158,6 @@ public class ApartmentDAO{
 	}
 	
 	public String saveImages(InputStream is) throws IOException {
-		/*		 BufferedImage bImage = null;
-		         try {
-//		        	 File initialImage = new File("C://Users/Nemanja/Desktop/1592816366616.jpg");
-//		        	 File image = (File)  request.getAttribute("image");
-		        	 
-//		            bImage = ImageIO.read(is);
-		             
-//		            ImageIO.write(bImage, "jpg", new File("C://Users/Nemanja/Desktop/image.png"));
-
-		        } catch (IOException e) {
-		              System.out.println("Exception occured :" + e.getMessage());
-		        }
-		        System.out.println("Images were written succesfully.");
-		*/	
 				String filePath = folderPath + "image" + getLastIndex() + ".jpg";
 				String url = "repositories/images/image" + getLastIndex() + ".jpg";
 				try {
@@ -193,7 +165,6 @@ public class ApartmentDAO{
 					InputStream in = (InputStream) bodyPart.getContent();
 					try
 				    {
-//						System.out.println(folderPath + "image" + getLastIndex() + ".jpg");
 				        OutputStream out = new FileOutputStream(new File(filePath));
 				        byte[] b = new byte[2048];
 				        int length;
@@ -242,6 +213,28 @@ public class ApartmentDAO{
 		++index;
 		System.out.println(index);
 		return index;
+	}
+	
+	public void deleteImages(List<String> imagesToDelete) {
+		File folder = new File(folderPath);
+		
+		for(String image : imagesToDelete) {
+			for(File file : folder.listFiles()) {
+				if(image.replace("repositories/images/", "").equals(file.getName())) {
+					System.out.println(file.getName());
+					file.delete();
+				}
+			}
+		}
+	}
+	
+	public Apartment editApartment(Apartment apartment) {
+		Apartment apartmentToEdit = findApartment(apartment.getId());
+		apartmentToEdit = apartment;
+		apartments.put(apartmentToEdit.getId(), apartmentToEdit);
+		write();
+		
+		return apartmentToEdit;
 	}
 	
 	public void initilazeFile(List<User> users,List<Amenity> amenities) {

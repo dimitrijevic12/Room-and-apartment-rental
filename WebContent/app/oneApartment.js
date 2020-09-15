@@ -3,7 +3,12 @@ Vue.component('one-apartment',{
 		<div class="page-background">
 			<div class="page">
 				<div class="name-header">
-					{{apartment.name}}
+					<div class="apartment-name-container">
+						<label class="apartment-name">{{apartment.name}}</label>
+					</div>
+					<div class="edit-apartment-button-container">
+						<button @click="openEditApartment" class="edit-apartment-button">Edit</button>
+					</div>
 				</div>
 				<div class="page-content">
 					<div class="image-slider" :key="index">
@@ -41,7 +46,7 @@ Vue.component('one-apartment',{
 									<li>Type: <b>{{apartment.type}}</b></li>
 									<li>Room count: <b>{{apartment.roomCount}}</b></li>
 									<li>Guests: <b>{{apartment.guestCount}}</b></li>
-									<li>Check in - Check out (TIME): <b>{{apartment.checkInTime | dateFormat('HH:MM')}} - {{apartment.checkOutTime | dateFormat('HH:MM')}}</b></li>
+									<li>Check in - Check out (TIME): <b>{{apartment.checkInTime | dateFormat('HH:mm')}} - {{apartment.checkOutTime | dateFormat('HH:mm')}}</b></li>
 									<li v-if="mode !== 'GUEST'">Status: <b>{{apartment.status}}</b></li>
 								</dl>
 							</div>
@@ -65,6 +70,7 @@ Vue.component('one-apartment',{
 					</div>
 				</div>
 			</div>
+			<add-apartment-modal @refresh-apartments="refreshApartments" ></add-apartment-modal>
 		</div>
 	`,
 	data(){
@@ -104,6 +110,10 @@ Vue.component('one-apartment',{
 									 
 	},
 	methods:{
+		openEditApartment(){
+			this.$root.$emit('open-edit-apartment-modal');
+		},
+		
 		prevImage(){
 			if((this.index-1) < 0){
 				this.index = this.images.length-1;

@@ -216,3 +216,8 @@
 	border : solid #e50000 !important;
 	border-width : 2px !important;
 }
+
+.image-preview{
+	height: 100px;
+	width: 100px;
+}
