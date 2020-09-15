@@ -1,3 +1,5 @@
+
+
 Vue.component('reservations',{
 	template: `
 <div class="reservations">
@@ -43,7 +45,9 @@ Vue.component('reservations',{
 				</template>
 				<div class="buttons">
 					<button @click="searchClick()">Submit</button>
+					<input type="reset" value="Reset">
 				</div>
+
 		</div>
 		<div class="reservations-list-label">
 		<div class="topMenu">
@@ -162,16 +166,28 @@ Vue.component('reservations',{
 				this.filteredReservations = this.filteredReservations.sort((a,b)=> a[propname] < b[propname] ? 1: -1);					
 			}
 		},
+		
+		getDateFromString(date,token){
+			let splitedDate = date.split(token);
+			let result = new Date(parseInt(splitedDate[0],10),parseInt(splitedDate[1],10)-1,parseInt(splitedDate[2],10),0,0,0);
+			return result;
+		},
+		
 		searchClick(){
+			let searchDate = this.getDateFromString(this.filter.date,'-');
 			if(this.filter.name === '' && this.filter.type === '' && this.filter.apStatus === '' && this.filter.username==='' && this.filter.date === '' && this.filter.resStatus==='' ) 
 				this.filteredReservations = this.reservations;
 			else{
 				this.filteredReservations = this.reservations.filter((item) => {
+					
+					let date = new Date(item.checkInDate);
+					let isEqual = (date.getFullYear() == searchDate.getFullYear() && date.getDate() == searchDate.getDate() && date.getMonth() == searchDate.getMonth());
 					return 	item.apartment.name.toLowerCase().includes(this.filter.name.toLowerCase()) &&
 							item.apartment.type.startsWith(this.filter.type) &&
 							item.apartment.status.startsWith(this.filter.apStatus) &&
 							item.status.startsWith(this.filter.resStatus) &&
-							item.guestUsername.toLowerCase().includes(this.filter.username.toLowerCase());
+							item.guestUsername.toLowerCase().includes(this.filter.username.toLowerCase())
+							&& isEqual;
 				});
 			}
 		}
