@@ -139,7 +139,20 @@ public class ReservationService {
 	public Reservation update(@PathParam("id") long id,@PathParam("status") ReservationStatus status) {
 		ReservationDAO dao = (ReservationDAO) ctx.getAttribute("reservationDAO");
 		Reservation result = findOne(id);
+		ReservationStatus oldStatus = result.getStatus();
 		result.setStatus(status);
+		if(status.equals(ReservationStatus.ACCEPTED) ) {
+			initApartmentDAO();
+			ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+			apartmentDAO.removeAvailableDates(result.getCheckInDate(), result.getNightCount(), result.getApartmentId());
+			apartmentDAO.write();
+		}else if(oldStatus.equals(ReservationStatus.ACCEPTED) && (status.equals(ReservationStatus.DENIED) || status.equals(ReservationStatus.CANCELED) || status.equals(ReservationStatus.COMPLETED))) {
+			initApartmentDAO();
+			ApartmentDAO apartmentDAO = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
+			apartmentDAO.addAvailableDates(result.getCheckInDate(), result.getNightCount(), result.getApartmentId());
+			
+			apartmentDAO.write();
+		}
 		dao.write();
 		return result;
 	}

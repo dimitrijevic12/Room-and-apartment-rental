@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -213,6 +214,35 @@ public class ApartmentDAO{
 		++index;
 		System.out.println(index);
 		return index;
+	}
+	
+	public void addAvailableDates(Date startDate,int nights, long apartmentId) {
+		Apartment apartment = apartments.get(apartmentId);
+		Date today = Calendar.getInstance().getTime();
+		Calendar day = Calendar.getInstance();
+		
+		for(int i=0;i<nights;i++) {
+			day.setTime(startDate);
+			day.add(Calendar.DAY_OF_MONTH, i);
+			if(day.getTime().getTime()>today.getTime()) {
+				apartment.addAvailableDate(day.getTime());
+			}
+			
+		}
+	}
+	
+	public void removeAvailableDates(Date startDate,int nights, long apartmentId) {
+		Apartment apartment = apartments.get(apartmentId);
+		Date today = Calendar.getInstance().getTime();
+		Calendar day = Calendar.getInstance();
+		for(int i=0;i<nights;i++) {
+			day.setTime(startDate);
+			day.add(Calendar.DAY_OF_MONTH, i);
+			if(day.getTime().getTime()>today.getTime()) {
+				apartment.removeAvailableDate(day.getTime());
+			}
+			
+		}
 	}
 	
 	public void deleteImages(List<String> imagesToDelete) {
