@@ -55,7 +55,7 @@ public class ApartmentDAO{
 	
 	public List<Apartment> getActiveApartments(){
 		List<Apartment> activeApartments = new ArrayList<Apartment>();
-		for(Apartment ap : getAll()) {
+		for(Apartment ap : getUndeletedApartments()) {
 			if(ap.getStatus() == ApartmentStatus.ACTIVE) {
 				activeApartments.add(ap);
 			}
@@ -64,9 +64,20 @@ public class ApartmentDAO{
 		return activeApartments;
 	}
 	
+	public List<Apartment> getUndeletedApartments(){
+		List<Apartment> undeletedApartments = new ArrayList<Apartment>();
+		for(Apartment ap : getAll()) {
+			if(ap.getId() != -1) {
+				undeletedApartments.add(ap);
+			}
+		}
+		
+		return undeletedApartments;
+	}
+	
 	public List<Apartment> getHostApartments(String username){
 		List<Apartment> hostApartments = new ArrayList<Apartment>();
-		for(Apartment ap : getAll()) {
+		for(Apartment ap : getUndeletedApartments()) {
 			if(ap.getHostUsername().equals(username)) {
 				hostApartments.add(ap);
 			}

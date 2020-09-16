@@ -114,7 +114,8 @@ Vue.component('apartments',{
 					<h4 class="gosti">guest count: {{a.guestCount}}</h4>
 					<button type="button" class="amenities" @click="showAmenities(a)">Sadrzaj</button> 
 					<h3 class="price">{{a.price}}e</h3>
-					<button type="button" v-if="role==='GUEST' " class="reserve" @click="openReserveDialog(a)">rezervisi</button>
+					<button type="button" v-if="role==='GUEST' " class="reserve" @click="openReserveDialog(a)">Reserve</button>
+					<button v-if="role==='ADMIN'" class="reserve" @click="openDeleteDialog(a)">Delete</button>
 				</li>
 			</ul>
 		</div>
@@ -122,6 +123,7 @@ Vue.component('apartments',{
 		<add-apartment-modal @refresh-apartments="refreshApartments" ></add-apartment-modal>
 		<reservate-apartment-modal></reservate-apartment-modal>
 		<show-apartment-amenities></show-apartment-amenities>
+		<delete-apartment-modal @refresh-apartments="refreshApartments"></delete-apartment-modal>
 	</div>
 	`,
 		
@@ -395,20 +397,50 @@ Vue.component('apartments',{
 		
 		refreshApartments(){
 			console.log('Promenjen je kljuc!')
-			axios
-			.get('rest/apartments/host/'+this.$cookies.get('user').username)
-			.then((response) => {
-				this.apartments = response.data;
-				let allCities = [];
-				for(let apartment of this.apartments){
-					allCities.push(apartment.location.address.city) ;
-				}
-				this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
-				this.filteredApartments = this.apartments;
-				this.apKey += 1;
-			})
+			if(this.role === 'ADMIN'){
+				axios
+				.get('rest/apartments/')
+				.then((response) => {
+					this.apartments = response.data;
+					let allCities = [];
+					for(let apartment of this.apartments){
+						allCities.push(apartment.location.address.city) ;
+					}
+					this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
+					this.filteredApartments = this.apartments;
+				});
+				
+			}
+			else if(this.role === 'HOST'){
+				axios
+					.get('rest/apartments/host/'+this.$cookies.get('user').username)
+					.then((response) => {
+						this.apartments = response.data;
+						let allCities = [];
+						for(let apartment of this.apartments){
+							allCities.push(apartment.location.address.city) ;
+						}
+						this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
+						this.filteredApartments = this.apartments;
+					})
+			}else{
+				axios
+					.get('rest/apartments/active')
+					.then((response) => {
+						this.apartments = response.data;
+						let allCities = [];
+						for(let apartment of this.apartments){
+							allCities.push(apartment.location.address.city) ;
+						}
+						this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
+						this.filteredApartments = this.apartments;
+					})
+			}
 			this.apKey += 1;
 		},
+		openDeleteDialog(a){
+			this.$root.$emit('open-delete-modal', a);
+		}
 	}
 
 })

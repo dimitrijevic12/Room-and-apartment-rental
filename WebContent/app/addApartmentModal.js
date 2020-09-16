@@ -367,9 +367,6 @@ Vue.component('add-apartment-modal',{
 			this.apartment.checkInTime = moment(this.checkInTime, 'HH:mm')
 			this.apartment.checkOutTime = moment(this.checkOutTime, 'HH:mm')
 			
-			this.apartment.hostUsername = this.$cookies.get('user').username;
-			console.log(this.apartment.hostUsername);
-			
 			for(i = 0; i < this.files.length; ++i){
 				if(this.apartment.images.includes(this.files[i]) === false){
 					this.imagesToUpload.push(this.files[i]);
