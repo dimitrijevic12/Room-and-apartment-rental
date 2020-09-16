@@ -36,7 +36,7 @@ Vue.component('one-apartment',{
 								<label class="city">{{host.name}} {{host.surname}}</label>
 							</div>
 						</div>
-						<button class="reserve-button">Reserve</button>
+						<button v-if="isGuest" class="reserve-button" @click="openReserveDialog(apartment)">Reserve</button>
 					</div>
 					<div class="description">
 						<div class="label-pair">
@@ -74,6 +74,7 @@ Vue.component('one-apartment',{
 				</div>
 			</div>
 			<add-apartment-modal @refresh-apartments="refreshApartments" ></add-apartment-modal>
+			<reservate-apartment-modal></reservate-apartment-modal>
 		</div>
 	`,
 	data(){
@@ -206,7 +207,11 @@ Vue.component('one-apartment',{
    									 						this.images = this.apartment.images;
    									 						console.log(this.images);})
    			}								 
-   		}
+   		},
+   		
+   		openReserveDialog(apartment){
+			this.$root.$emit('reserve-dialog',apartment);
+		},
 	},
 	filters: {
     	dateFormat: function (value, format) {
@@ -214,4 +219,9 @@ Vue.component('one-apartment',{
     		return parsed.format(format);
     	}
    	},
+   	computed:{
+   		isGuest(){
+   			return (this.$cookies.get('user') && this.$cookies.get('user').role === 'GUEST')
+   		}
+   	}
 })

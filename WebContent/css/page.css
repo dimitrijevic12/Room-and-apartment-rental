@@ -39,6 +39,28 @@
 	display: flex;
 }
 
+.home-div{
+	width: 300px;
+}
+
+.search-bar-home{
+	width: auto;
+	background-color: white;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	border-radius: 8px;
+	display: flex;
+	height: 45px;
+}
+
+.home-label-location{
+	width: auto !important;
+}
+
+.home-input-location{
+	width: 270px !important;
+}
+
 .filter-btn{
 	color: white;
 	background-color: #113E60;
@@ -91,6 +113,8 @@
 	font-family: 'Times New Roman', Georgia, serif;
 	margin-left: 15px;
 	margin-right: 15px;
+	border: solid 0.5px black;
+	border-radius: 7px;
 }
 
 .label-input label{

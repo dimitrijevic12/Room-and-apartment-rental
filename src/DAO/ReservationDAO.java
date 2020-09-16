@@ -143,6 +143,9 @@ public class ReservationDAO {
 		for(long resId : reservations.keySet()) {
 			Reservation reservation = reservations.get(resId);
 			Apartment apartment = dao.findApartment(reservation.getApartmentId());
+			if(apartment == null) {
+				continue;
+			}
 			if(apartment.getHostUsername().equals(hostUsername)) {
 				
 				reservation.setApartment(apartment);

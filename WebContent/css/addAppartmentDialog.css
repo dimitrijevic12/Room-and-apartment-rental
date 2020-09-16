@@ -160,6 +160,17 @@
 .autocomplete-result:hover {
   background-color: #E5F4FF;
 }
+
+.autocomplete-results-home {
+    width: 100%;
+    border: 1px solid #eeeeee;
+    height: 120px;
+    overflow: visible;
+    z-index:99;
+    position:relative;
+    background-color: white;
+    display: none;
+ }
   
 .map{
 	height: 300px;
