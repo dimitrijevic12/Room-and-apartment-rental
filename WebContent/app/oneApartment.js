@@ -1,6 +1,6 @@
 Vue.component('one-apartment',{
 	template: `
-		<div class="page-background">
+		<div class="page-background" :key="apKey">
 			<div class="page">
 				<div class="name-header">
 					<div class="apartment-name-container">
@@ -85,6 +85,7 @@ Vue.component('one-apartment',{
 			mode: '',
 			images: {},
 			index : 0,
+			apKey : 0,
 		}
 	},
 	mounted(){
@@ -167,6 +168,44 @@ Vue.component('one-apartment',{
 				.then(() => {axios
 								.get('rest/apartments/comments/' + this.$route.params.id)
 								.then((response) => {this.comments = response.data})})
+   		},
+   		
+   		refreshApartments(){
+   			if(!this.$cookies.get('user') || this.$cookies.get('user').role === 'GUEST'){
+   				this.mode = 'GUEST';
+   				axios
+   				.get('rest/apartments/' + this.$route.params.id)
+   				.then((response) => {this.apartment = response.data;
+   									 axios
+   										 .get('rest/users/' + this.apartment.hostUsername)
+   										 .then((response) => this.host = response.data);
+   									 axios
+   										 .get('rest/amenities/byApartment/' + this.$route.params.id)
+   										 .then((response) => {this.amenities = response.data;});
+   									 axios
+   										 .get('rest/apartments/shown/' + this.$route.params.id)
+   										 .then((response) => this.comments = response.data);
+   									 						console.log(this.apartment);
+   									 						this.images = this.apartment.images;
+   									 						console.log(this.images);})
+   			}else{
+   				this.mode = this.$cookies.get('user').role;
+   				axios
+   				.get('rest/apartments/' + this.$route.params.id)
+   				.then((response) => {this.apartment = response.data;
+   									 axios
+   										 .get('rest/users/' + this.apartment.hostUsername)
+   										 .then((response) => this.host = response.data);
+   									 axios
+   										 .get('rest/amenities/byApartment/' + this.$route.params.id)
+   										 .then((response) => {this.amenities = response.data;});
+   									 axios
+   										 .get('rest/apartments/comments/' + this.$route.params.id)
+   										 .then((response) => this.comments = response.data);
+   									 						console.log(this.apartment);
+   									 						this.images = this.apartment.images;
+   									 						console.log(this.images);})
+   			}								 
    		}
 	},
 	filters: {
