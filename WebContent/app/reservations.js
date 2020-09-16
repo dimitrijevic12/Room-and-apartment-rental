@@ -45,7 +45,7 @@ Vue.component('reservations',{
 				</template>
 				<div class="buttons">
 					<button @click="searchClick()">Submit</button>
-					<input type="reset" value="Reset">
+					<button @click="reset()">Reset</button>
 				</div>
 
 		</div>
@@ -152,6 +152,17 @@ Vue.component('reservations',{
 	},
 	
 	methods: {
+		
+		reset(){
+			this.filter={
+				type: '',
+				apStatus: '',
+				name: '',
+				date: '',
+				username: '',
+				resStatus: '',
+			}
+		},
 		show_reservation(reservation){
 			console.log(reservation);
 			this.$root.$emit('show-reservation', reservation);
@@ -174,14 +185,18 @@ Vue.component('reservations',{
 		},
 		
 		searchClick(){
-			let searchDate = this.getDateFromString(this.filter.date,'-');
 			if(this.filter.name === '' && this.filter.type === '' && this.filter.apStatus === '' && this.filter.username==='' && this.filter.date === '' && this.filter.resStatus==='' ) 
 				this.filteredReservations = this.reservations;
 			else{
 				this.filteredReservations = this.reservations.filter((item) => {
+					let isEqual = false;
+					if(!this.filter.date || this.filter.date == '') isEqual = true;
+					else{
+						let searchDate = this.getDateFromString(this.filter.date,'-');
+						let date = new Date(item.checkInDate);
+						isEqual = (date.getFullYear() == searchDate.getFullYear() && date.getDate() == searchDate.getDate() && date.getMonth() == searchDate.getMonth());
+					}
 					
-					let date = new Date(item.checkInDate);
-					let isEqual = (date.getFullYear() == searchDate.getFullYear() && date.getDate() == searchDate.getDate() && date.getMonth() == searchDate.getMonth());
 					return 	item.apartment.name.toLowerCase().includes(this.filter.name.toLowerCase()) &&
 							item.apartment.type.startsWith(this.filter.type) &&
 							item.apartment.status.startsWith(this.filter.apStatus) &&

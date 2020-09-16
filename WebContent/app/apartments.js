@@ -4,6 +4,12 @@ function getDateFromVueDatePicker(formattedDate){
 	return result;
 }
 
+function convertDateFromStringYYYYMMDD(date,token){
+	let splitedDate = date.split(token);
+	let result = new Date(parseInt(splitedDate[0]),parseInt(splitedDate[1],10)-1,parseInt(splitedDate[2],10),0,0,0);
+	return result;
+}
+
 Vue.component('vue-ctk-date-time-picker', window['vue-ctk-date-time-picker']);
 
 Vue.component('apartments',{
@@ -366,11 +372,6 @@ Vue.component('apartments',{
 		},
 		
 		searchClick(){
-			if(this.dialogOpened){
-				this.$root.$on('selected-amenities',(response)=>{
-					this.filter.amenitiesIds = response;
-				})
-			}
 			if(this.filter.city === '' && this.filter.guestNum === '' && this.filter.minPrice === '' && 
 					this.filter.maxPrice === '' && this.filter.minRoom === '' && this.filter.maxRoom === '' && 
 					(this.filter.date == null || this.filter.date.start === '' )&& (this.filter.date == null || this.filter.date.end === '') && this.filter.type === '' && this.filter.status === '' && this.filter.amenitiesIds.length === 0)
@@ -529,6 +530,20 @@ Vue.component('reservate-apartment-modal',{
 	
 	methods: {
 		
+		HasDisabledDate(){
+			let start = new Date(getDateFromVueDatePicker(this.date.start).getTime());
+
+			
+			for(let i=0;i<this.getNightCount();i++){
+				let result = this.disabledDates.filter((item)=>{
+					let day = convertDateFromStringYYYYMMDD(item,'-');
+					return start.getTime() === day.getTime();
+				});
+				if(result.length>0) return true;
+				start.setDate(start.getDate()+1);
+			}
+			return false;
+		},
 		getDisabledDates(){
 			let day = new Date(this.apartment.availableDates[0]);
 			let lastDay = new Date(this.apartment.availableDates[this.apartment.availableDates.length-1]);
@@ -539,7 +554,7 @@ Vue.component('reservate-apartment-modal',{
 				availableDay.setHours(0,0,0);
 				day.setHours(0,0,0);
 				if(day.getTime()<availableDay.getTime()){
-					result.push(this.formatDate(day));
+					result.push(this.formatDate(day).join('-'));
 				}else{
 					index= index+1;
 				}
@@ -568,6 +583,11 @@ Vue.component('reservate-apartment-modal',{
 			}
 			if(this.getNightCount() == 0) {
 				alert("Morate selektovati datum!");
+				return;
+			}
+			
+			if(this.HasDisabledDate()){
+				alert("Ne smete obuhvatiti nedostupan datum!");
 				return;
 			}
 			
@@ -602,7 +622,7 @@ Vue.component('reservate-apartment-modal',{
 			let date2 = getDateFromVueDatePicker(this.date.end);
 			let diffTime = Math.abs(date2-date1);
 			let result = Math.ceil(diffTime/ (1000*60*60*24));
-			return result;
+			return result+1;
 		}
 	}
 })

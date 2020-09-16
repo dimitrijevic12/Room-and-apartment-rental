@@ -2,6 +2,7 @@ package beans;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -241,6 +242,23 @@ public class Apartment {
 	
 	public boolean IsDeleted() {
 		return id==-1;
+	}
+	
+	public void addAvailableDate(Date date) {
+		this.availableDates.add(date);
+	}
+	
+	public void removeAvailableDate(Date date) {
+		 List<Date> newAvailableDates=new ArrayList<Date>();
+		Calendar day1 = Calendar.getInstance();
+		day1.setTime(date);
+		Calendar day2 = Calendar.getInstance();
+		for(Date availableDay : availableDates) {
+			day2.setTime(availableDay);
+			if(day1.get(Calendar.DAY_OF_YEAR) == day2.get(Calendar.DAY_OF_YEAR) && day1.get(Calendar.YEAR) == day2.get(Calendar.YEAR)) continue;
+			newAvailableDates.add(availableDay);
+		}
+		this.availableDates=newAvailableDates;
 	}
 	
 	
