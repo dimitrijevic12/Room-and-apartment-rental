@@ -7,7 +7,7 @@ Vue.component('one-apartment',{
 						<label class="apartment-name">{{apartment.name}}</label>
 					</div>
 					<div class="edit-apartment-button-container">
-						<button @click="openEditApartment" class="edit-apartment-button">Edit</button>
+						<button v-if="mode !== 'GUEST'" @click="openEditApartment" class="edit-apartment-button">Edit</button>
 					</div>
 				</div>
 				<div class="page-content">
@@ -47,6 +47,7 @@ Vue.component('one-apartment',{
 									<li>Room count: <b>{{apartment.roomCount}}</b></li>
 									<li>Guests: <b>{{apartment.guestCount}}</b></li>
 									<li>Check in - Check out (TIME): <b>{{apartment.checkInTime | dateFormat('HH:mm')}} - {{apartment.checkOutTime | dateFormat('HH:mm')}}</b></li>
+									<li>Price: <b>{{apartment.price}}</b></li>
 									<li v-if="mode !== 'GUEST'">Status: <b>{{apartment.status}}</b></li>
 								</dl>
 							</div>
