@@ -170,7 +170,17 @@ Vue.component('apartments',{
 	},
 	
 	mounted : function(){
-		
+		console.log(this.$route.params);
+		if(this.$route.params.searchQuery === undefined){
+			console.log('nema nista u route params')
+		}else{
+			console.log('ima nesto u route params')
+			this.filter.city = this.$route.params.searchQuery.city;
+			this.filter.date = this.$route.params.searchQuery.date;
+			this.filter.guestNum = this.$route.params.searchQuery.guests;
+		}
+//		console.log(this.$route.params.searchQuery);
+//		this.filter.city = this.$route.params.searchQuery.city;
 		let user = this.$cookies.get('user');
 		if(user) this.role = user.role;
 		
@@ -199,6 +209,7 @@ Vue.component('apartments',{
 				}
 				this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
 				this.filteredApartments = this.apartments;
+				this.searchClick();
 			});
 			
 		}
@@ -213,6 +224,7 @@ Vue.component('apartments',{
 					}
 					this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
 					this.filteredApartments = this.apartments;
+					this.searchClick();
 				})
 		}else{
 			axios
@@ -225,6 +237,7 @@ Vue.component('apartments',{
 					}
 					this.cities = allCities.filter((value,index,self)=> self.indexOf(value) === index)
 					this.filteredApartments = this.apartments;
+					this.searchClick();
 				})
 		}
 		
@@ -626,7 +639,10 @@ Vue.component('reservate-apartment-modal',{
 			
 			axios.post('rest/reservations',reservation)
 				.then(response=>{
-					if(response.data) alert('Uspesno kreirana rezervacija!');
+					if(response.data){
+						alert('Uspesno kreirana rezervacija!');
+//						this.$refs.reservateApartmentModal.style.display="none";
+					}
 					else alert('Neuspesno kreirana rezervacija!');
 				})	
 		},
