@@ -52,6 +52,12 @@
 	outline: none;
 }
 
+.filter-btn:hover{
+	background-color: #009bdb;
+  	color: white;
+  	cursor: pointer;
+}
+
 .create-btn{
 	color: white;
 	background-color: #113E60;
@@ -68,8 +74,13 @@
 	outline: none;
 }
 
+.create-btn:hover{
+	background-color: #009bdb;
+  	color: white;
+  	cursor: pointer;
+}
+
 .search-bar img{
-	background-color: #113E60;
 	width: 40px;
 	height: 40px;
 }
@@ -124,6 +135,12 @@
 	text-decoration: none;
 	font-family: 'Times New Roman', Georgia, serif;
 	font-size: 20px;
+}
+
+.clickable-th:hover{
+	background-color: #009bdb;
+  	color: white;
+  	cursor: pointer;
 }
 
 tr:nth-child(even) {background-color: white;}

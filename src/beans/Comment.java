@@ -12,6 +12,7 @@ public class Comment {
 	private User guest;
 	@JsonIgnore
 	private Apartment apartment;
+	private Boolean show;
 
 	
 	
@@ -24,9 +25,10 @@ public class Comment {
 		this.grade = Grade.ONE;
 		this.apartmentId=-1;
 		this.guestUsername="";
+		this.show = true;
 	}
 	
-	public Comment(long id, User guest, Apartment apartment, String text, Grade grade) {
+	public Comment(long id, User guest, Apartment apartment, String text, Grade grade, Boolean show) {
 		super();
 		this.id = id;
 		this.guest = guest;
@@ -35,10 +37,19 @@ public class Comment {
 		this.grade = grade;
 		this.guestUsername = guest.getUsername();
 		this.apartmentId = apartment.getId();
+		this.show = show;
 	}
 	
 	public String getGuestUsername() {
 		return guestUsername;
+	}
+
+	public Boolean getShow() {
+		return show;
+	}
+
+	public void setShow(Boolean show) {
+		this.show = show;
 	}
 
 	public void setGuestUsername(String guestUsername) {
