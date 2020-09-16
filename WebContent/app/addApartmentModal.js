@@ -24,6 +24,17 @@ Vue.component('add-apartment-modal',{
 					      	<li @click="setLocation(result)" v-for="result in results" class="autocomplete-result">{{result.properties.formatted}}</li>
 					    </ul>
 					</div>
+					<div v-if="mode==='EDIT'" class="label-input-signup">
+						<div class='label-error'>
+							<label>Status:</label>
+						</div>
+						<div class="apartment-type-radio-container">
+							<input class="typeRadio" type="radio" id="statusActive" value="ACTIVE" v-model="apartment.status">
+							<label class="typeLabel" for="statusActive">Active</label>
+							<input class="typeRadio" type="radio" id="statusInactive" value="INACTIVE" v-model="apartment.status">
+							<label class="typeLabel" for="statusInactive">Inactive</label>
+						</div>
+					</div>
 					<div class="label-input-signup">
 						<div class='label-error'>
 							<label>Type:</label>
@@ -202,7 +213,7 @@ Vue.component('add-apartment-modal',{
 																										 console.log(checkOutTimeMoment)
 																										 this.checkInTime = checkInTimeMoment.format('HH:mm');
 																										 this.checkOutTime = checkOutTimeMoment.format('HH:mm');
-																										 this.approvedDates = this.apartment.approvedDates;
+																										 this.approvedDates = this.apartment.approvedDates.slice();
 																										 this.addDisabledDates();
 																										 this.files = this.apartment.images.slice();
 																										 this.filesOnLoad = this.apartment.images.slice();
@@ -305,6 +316,47 @@ Vue.component('add-apartment-modal',{
 		},
 		
 		editApartment(){
+			var validation = true;
+			if(this.apartment.name === ''){
+				this.$refs.nameError.classList.add('error-border');
+				this.nameError = true;
+				validation = false;
+			}else{
+				this.$refs.nameError.classList.remove('error-border')
+				this.nameError = false;
+			}
+			
+			if(this.files.length === 0){
+				this.$refs.imagesError.classList.add('error-border');
+				this.imagesError = true;
+				validation = false;
+			}else{
+				this.$refs.imagesError.classList.remove('error-border')
+				this.imagesError = false;
+			}
+			
+			if(this.checkInTime === null || this.checkOutTime === null){
+				this.$refs.checkInOutError.classList.add('error-border');
+				this.checkInOutError = true;
+				validation = false;
+			}else{
+				this.$refs.checkInOutError.classList.remove('error-border')
+				this.checkInOutError = false;
+			}
+			
+			if(this.apartment.approvedDates.length === 0){
+				this.$refs.approvedDatesError.classList.add('error-border');
+				this.approvedDatesError = true;
+				validation = false;
+			}else{
+				this.$refs.approvedDatesError.classList.remove('error-border')
+				this.approvedDatesError = false;
+			}
+			
+			if(validation === false){
+				return;
+			}
+			
 			var imagesToDelete = []
 			for(i = 0; i < this.apartment.images.length; ++i){
 				if(this.files.includes(this.apartment.images[i]) === false){
@@ -314,18 +366,6 @@ Vue.component('add-apartment-modal',{
 			
 			this.apartment.checkInTime = moment(this.checkInTime, 'HH:mm')
 			this.apartment.checkOutTime = moment(this.checkOutTime, 'HH:mm')
-			
-			//Pravljenje niza available dates
-			var startDate = moment(this.approvedDate.start, 'DD/MM/YYYY')
-			var endDate = moment(this.approvedDate.end, 'DD/MM/YYYY')
-			
-			while(startDate <= endDate){
-				var dateToAdd = startDate.clone();
-				this.apartment.availableDates.push(dateToAdd)
-				console.log(dateToAdd)
-				startDate = startDate.add(1,'d')
-			}
-			console.log(this.apartment.availableDates)
 			
 			this.apartment.hostUsername = this.$cookies.get('user').username;
 			console.log(this.apartment.hostUsername);
@@ -534,6 +574,13 @@ Vue.component('add-apartment-modal',{
 					startDate = startDate.add(1,'d')
 				}
 			}
+			
+			//Promena l i r u moment objekat
+			for(i = 0; i < this.approvedDates.length; ++i){
+				this.approvedDates[i].l = moment(this.approvedDates[i].l);
+				this.approvedDates[i].r = moment(this.approvedDates[i].r)
+			}
+
 		},
 		
 		refreshDates(){
@@ -611,8 +658,17 @@ Vue.component('add-apartment-modal',{
 		},
 		
 		removeApprovedDate(date){
-			var l = moment(date.l, 'DD/MM/YYYY');
-			var r = moment(date.r, 'DD/MM/YYYY');
+			console.log(this.apartment.approvedDates)
+			if(moment.isMoment(date.l)){
+				var l = moment(date.l, 'DD/MM/YYYY');
+				var r = moment(date.r, 'DD/MM/YYYY');
+				console.log(l);
+				console.log(r);
+			}else{
+				var l = date.l;
+				var r = date.r;
+			}
+			
 			console.log(date)
 			
 			console.log(this.apartment.approvedDates)
@@ -624,8 +680,8 @@ Vue.component('add-apartment-modal',{
 			this.approvedDates = this.apartment.approvedDates.slice();
 			console.log(this.apartment.approvedDates)
 			
-			var startDate = moment(date.l, 'DD/MM/YYYY')
-			var endDate = moment(date.r, 'DD/MM/YYYY')
+			var startDate = moment(l, 'DD/MM/YYYY')
+			var endDate = moment(r, 'DD/MM/YYYY')
 			
 			while(startDate <= endDate){
 				for(j = 0; j < this.disabledDates.length; ++j){
@@ -637,7 +693,9 @@ Vue.component('add-apartment-modal',{
 				}
 				startDate = startDate.add(1,'d')
 			}
+			console.log('Available i approved posle brisanja');
 			console.log(this.apartment.availableDates)
+			console.log(this.apartment.approvedDates)
 			this.refreshDates()
 			
 		},
