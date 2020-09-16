@@ -34,7 +34,14 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 					<label>Username (permanent) :</label>
 					<label class="username-placeholder">{{ user.username }}</label>
 				</div>
-				<div class="label-input-signup" ref="newPassword">
+				<div v-if="editMode === 'user'" class="label-input-signup" ref="password">
+					<div class='label-error'>
+						<label>Password:</label>
+						<label v-if="passwordError === 'true'"class="error-message" ref="passwordError">Please make sure you've entered password that is correct.</label>
+					</div>
+					<input type="password" v-model="password"/><br/>
+				</div>
+				<div v-if="editMode === 'user'" class="label-input-signup" ref="newPassword">
 					<div class='label-error'>
 						<label>New password:</label>
 						<label v-if="newPasswordError === 'true'"class="error-message" ref="newPasswordError">Please make sure you've entered password that is correct size.</label>
@@ -42,7 +49,7 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 					</div>
 					<input type="password" v-model="newPassword"/><br/>
 				</div>
-				<div class="label-input-signup" ref="confirmPassword">
+				<div v-if="editMode === 'user'" class="label-input-signup" ref="confirmPassword">
 					<div class='label-error'>
 						<label>Confirm Password:</label>
 						<label v-if="confirmPasswordError === 'true'"class="error-message" ref="confirmPasswordError">Please make sure your passwords match.</label>
@@ -89,6 +96,7 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 				gender : '',
 				role : 'GUEST'
 			},
+			password: '',
 			confirmPassword: '',
 			newPassword: '',
 			editMode: '',
@@ -114,26 +122,6 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 	},
 	methods : {
 		closeEditProfilePopupAdmin: function(){
-			this.usernameError = '';
-			this.$refs.username.style.border = "solid grey";
-			this.$refs.username.style.borderWidth = "0.5px";
-			this.$refs.username.style.borderBottom = "0";
-
-			this.newPassword = '';
-			this.newPasswordError = '';
-			this.newPasswordExists = '';
-			this.$refs.newPassword.style.border = "solid grey";
-			this.$refs.newPassword.style.marginTop = "0";
-			this.$refs.newPassword.style.borderWidth = "0.5px";
-			this.$refs.newPassword.style.borderBottom = "0";
-
-			this.confirmPassword = '';
-			this.confirmPasswordError = '';
-			this.$refs.confirmPassword.style.border = "solid grey";
-			this.$refs.confirmPassword.style.marginTop = "0";
-			this.$refs.confirmPassword.style.borderWidth = "0.5px";
-			this.$refs.confirmPassword.style.borderBottom = "0";
-
 			this.nameError = '';
 			this.$refs.name.style.border = "solid grey";
 			this.$refs.name.style.borderWidth = "0.5px";
@@ -147,11 +135,10 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 			this.$refs.editProfileModal.classList.remove("modal-show");
 		},
 		closeEditProfilePopup : function(){
-			this.user.username = '';
-			this.usernameError = '';
-			this.$refs.username.style.border = "solid grey";
-			this.$refs.username.style.borderWidth = "0.5px";
-			this.$refs.username.style.borderBottom = "0";
+			this.passwordError = '';
+			this.$refs.password.style.border = "solid grey";
+			this.$refs.password.style.borderWidth = "0.5px";
+			this.$refs.password.style.borderBottom = "0";
 
 			this.newPassword = '';
 			this.newPasswordError = '';
@@ -184,16 +171,16 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 		},
 		editUser : function(user){
 			let validation = true;
-			if(this.user.username === ''){
-				this.$refs.username.style.border = "solid #e50000";
-				this.$refs.username.style.borderWidth = "2px";
-				this.usernameError = 'true';
+			if(this.password === '' || this.password !== this.user.password){
+				this.$refs.password.style.border = "solid #e50000";
+				this.$refs.password.style.borderWidth = "2px";
+				this.passwordError = 'true';
 				validation = false;
 			}else{
-				this.usernameError = '';
-				this.$refs.username.style.border = "solid grey";
-				this.$refs.username.style.borderWidth = "0.5px";
-				this.$refs.username.style.borderBottom = "0";
+				this.passwordError = '';
+				this.$refs.password.style.border = "solid grey";
+				this.$refs.password.style.borderWidth = "0.5px";
+				this.$refs.password.style.borderBottom = "0";
 			}
 
 			if(this.newPassword === this.user.password){
@@ -278,47 +265,6 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 		},
 		editAdmin : function(user){
 			let validation = true;
-			if(this.user.username === ''){
-				this.$refs.username.style.border = "solid #e50000";
-				this.$refs.username.style.borderWidth = "2px";
-				this.usernameError = 'true';
-				validation = false;
-			}else{
-				this.usernameError = '';
-				this.$refs.username.style.border = "solid grey";
-				this.$refs.username.style.borderWidth = "0.5px";
-				this.$refs.username.style.borderBottom = "0";
-			}
-
-			if(this.newPassword === this.user.password){
-				this.$refs.newPassword.style.border = "solid #e50000";
-				this.$refs.newPassword.style.marginTop = "-2px";
-				this.$refs.newPassword.style.borderWidth = "2px";
-				this.newPasswordExists = 'true';
-				this.newPasswordError = '';
-				validation = false;
-			}else{
-				this.$refs.newPassword.style.border = "solid grey";
-				this.$refs.newPassword.style.marginTop = "0";
-				this.$refs.newPassword.style.borderWidth = "0.5px";
-				this.$refs.newPassword.style.borderBottom = "0";
-				this.newPasswordError = '';
-				this.newPasswordExists = '';
-			}
-
-			if(this.confirmPassword !== this.newPassword){
-				this.$refs.confirmPassword.style.border = "solid #e50000";
-				this.$refs.confirmPassword.style.marginTop = "-2px";
-				this.$refs.confirmPassword.style.borderWidth = "2px";
-				this.confirmPasswordError = 'true';
-				validation = false;
-			}else{
-				this.$refs.confirmPassword.style.border = "solid grey";
-				this.$refs.confirmPassword.style.marginTop = "0";
-				this.$refs.confirmPassword.style.borderWidth = "0.5px";
-				this.$refs.confirmPassword.style.borderBottom = "0";
-				this.confirmPasswordError = '';
-			}
 
 			if(this.user.name === ''){
 				this.$refs.name.style.border = "solid #e50000";
@@ -794,6 +740,8 @@ var signinComponent = Vue.component('signin-popup',{
 													this.App.$root.$emit('cookie-attached');
 													if(response.data.role === 'ADMIN'){
 														location.href="#/users";	
+													}else{
+														location.href="#/";
 													}
 													self.closeSignInPopup();
 	//												if(response.data !== '') this.App.$root.$emit('mode-changed', response.data.role);

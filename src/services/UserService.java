@@ -1,6 +1,7 @@
 package services;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -14,6 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import DAO.ApartmentDAO;
 import DAO.CommentDAO;
@@ -64,12 +66,34 @@ public class UserService {
 	}
 	
 	
-	@GET
+/*	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<User> getUsers(){
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
 		return dao.getAll();
+	}
+*/
+	
+	@GET
+	@Path("/allUsers/{role}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUsers(@PathParam("role") String role){
+		if(!role.equals("ADMIN")) {
+			return Response
+				      .status(Response.Status.FORBIDDEN)
+				      .entity(null)
+				      .build();
+		}
+		
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		
+		Collection<User> users = dao.getAll();
+		
+		return Response
+			      .status(Response.Status.OK)
+			      .entity(users)
+			      .build();
 	}
 	
 	@GET

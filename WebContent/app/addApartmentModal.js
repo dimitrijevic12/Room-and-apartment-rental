@@ -164,8 +164,8 @@ Vue.component('add-apartment-modal',{
 					amenitiesIds:[],
 					id:0,
 			},
-			checkInTime: null,
-			checkOutTime: null,
+			checkInTime: '14:00',
+			checkOutTime: '22:00',
 			approvedDate: {
 				start: '',
 				end: ''

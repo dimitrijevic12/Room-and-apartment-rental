@@ -93,7 +93,7 @@ Vue.component('users',{
 									 this.filteredUsers = response.data})
 		}else{
 			axios
-				.get('rest/users')
+				.get('rest/users/allUsers/' + this.$cookies.get('user').role)
 				.then((response) => {this.users = response.data;
 									 this.filteredUsers = response.data})
 		}
