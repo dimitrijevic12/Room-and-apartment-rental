@@ -214,7 +214,7 @@
 }
 
 .edit-apartment-button{
-text-decoration: none;
+	text-decoration: none;
 	font-family: 'Times New Roman', Georgia, serif;
 	font-size: 26px;
 	float: right;
@@ -253,4 +253,42 @@ text-decoration: none;
 	margin-top: 25%; 
 	margin-bottom: 25%;
 	font-size: 40px 
+}
+
+.hide-button{
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	font-size: 16px;
+	padding: 10px;
+	text-align: center;
+	margin-right: 10px;
+	border-radius: 10px;
+	background-color: #941c1c;
+	color: white;
+	border: none;
+}
+
+.hide-button:hover {
+  	background-color: #e81010;
+  	color: white;
+  	cursor: pointer;
+}
+
+.show-button{
+	text-decoration: none;
+	font-family: 'Times New Roman', Georgia, serif;
+	font-size: 16px;
+	padding: 10px;
+	text-align: center;
+	margin-right: 10px;
+	border-radius: 10px;
+	background-color: #1e9636;
+	color: white;
+	border: none;
+}
+
+.show-button:hover {
+  	background-color: #16db3d;
+  	color: white;
+  	cursor: pointer;
 }

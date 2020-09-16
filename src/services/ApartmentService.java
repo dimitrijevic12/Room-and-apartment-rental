@@ -115,6 +115,17 @@ public class ApartmentService {
 		return commentDao.findCommentsByApartment(id);
 	}
 	
+	
+	@GET
+	@Path("/shown/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection<Comment> getAllShown(@PathParam("id") Long id){
+		initCommentDAO();
+		CommentDAO commentDao = (CommentDAO) ctx.getAttribute("commentDAO");
+
+		return commentDao.getAllShown(id);
+	}
+	
 	@GET
 	@Path("/host/{username}")
 	@Produces(MediaType.APPLICATION_JSON)

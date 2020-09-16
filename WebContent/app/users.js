@@ -41,9 +41,12 @@ Vue.component('users',{
 				<br/>
 				<table class="users-table">
 					<tr>
-						<th>Username</th>
-						<th>Name</th>
-						<th>Surname</th>
+						<th class="clickable-th" v-if="toggleUsername === false" @click="sortUsernameAsc">Username</th>
+						<th class="clickable-th" v-if="toggleUsername === true" @click="sortUsernameDsc">Username</th>
+						<th class="clickable-th" v-if="toggleName === false" @click="sortNameAsc">Name</th>
+						<th class="clickable-th" v-if="toggleName === true" @click="sortNameDsc">Name</th>
+						<th class="clickable-th" v-if="toggleSurname === false" @click="sortSurnameAsc">Surname</th>
+						<th class="clickable-th" v-if="toggleSurname === true" @click="sortSurnameDsc">Surname</th>
 						<th>Gender</th>
 						<th v-if="mode === 'ADMIN'">Role</th>
 					</tr>
@@ -73,24 +76,29 @@ Vue.component('users',{
 			},
 			users: null,
 			filteredUsers: {},
-//			tableKey: 0
+			tableKey: 0,
+			toggleUsername: false,
+			toggleName: false,
+			toggleSurname: false,
 		}
+	},
+	created(){
+		this.mode = this.$cookies.get('user').role;
 	},
 	mounted : function(){
 		if(this.$cookies.get('user').role === 'HOST'){
-			this.mode = 'HOST';
 			axios
 				.get('rest/users/guests/' + this.$cookies.get('user').username)
 				.then((response) => {this.users = response.data;
 									 this.filteredUsers = response.data})
 		}else{
-			this.mode = 'ADMIN';
 			axios
 				.get('rest/users')
 				.then((response) => {this.users = response.data;
 									 this.filteredUsers = response.data})
 		}
 		console.log(this.mode);
+		console.log(this.mode === 'ADMIN')
 	},
 	methods: {
 		filter(){
@@ -124,6 +132,96 @@ Vue.component('users',{
 
 		createUser(){
 			this.$root.$emit('open-create-user');
-		}
-	}
+		},
+		
+		sortUsernameAsc(){
+			console.log(this.users)
+			function compare(a, b) {
+				if (a.username < b.username)
+					return -1;
+				if (a.username > b.username)
+					return 1;
+				return 0;
+		   }
+		
+			this.users =  this.users.sort(compare);
+			console.log(this.users)
+			this.toggleUsername = true;
+		},
+		
+		sortUsernameDsc(){
+			console.log(this.users)
+			function compare(a, b) {
+				if (a.username > b.username)
+					return -1;
+				if (a.username < b.username)
+					return 1;
+				return 0;
+		   }
+		
+			this.users =  this.users.sort(compare);
+			console.log(this.users)
+			this.toggleUsername = false;
+		},
+		
+		sortNameAsc(){
+			console.log(this.users)
+			function compare(a, b) {
+				if (a.name < b.name)
+					return -1;
+				if (a.name > b.name)
+					return 1;
+				return 0;
+		   }
+		
+			this.users =  this.users.sort(compare);
+			console.log(this.users)
+			this.toggleName = true;
+		},
+		
+		sortNameDsc(){
+			console.log(this.users)
+			function compare(a, b) {
+				if (a.name > b.name)
+					return -1;
+				if (a.name < b.name)
+					return 1;
+				return 0;
+		   }
+		
+			this.users =  this.users.sort(compare);
+			console.log(this.users)
+			this.toggleName = false;
+		},
+		
+		sortSurnameAsc(){
+			console.log(this.users)
+			function compare(a, b) {
+				if (a.surname < b.surname)
+					return -1;
+				if (a.surname > b.surname)
+					return 1;
+				return 0;
+		   }
+		
+			this.users =  this.users.sort(compare);
+			console.log(this.users)
+			this.toggleSurname = true;
+		},
+		
+		sortSurnameDsc(){
+			console.log(this.users)
+			function compare(a, b) {
+				if (a.surname > b.surname)
+					return -1;
+				if (a.surname < b.surname)
+					return 1;
+				return 0;
+		   }
+		
+			this.users =  this.users.sort(compare);
+			console.log(this.users)
+			this.toggleSurname = false;
+		},
+	},
 })

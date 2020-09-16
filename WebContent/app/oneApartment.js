@@ -62,7 +62,9 @@ Vue.component('one-apartment',{
 					</div>
 					<div class="comments-container">
 						<div class="grid-container comments">
-							<div v-for="comment in comments" class="comment">
+							<div v-for="comment in comments" class="comment" :key="comment.id">
+								<button class="hide-button" v-if="comment.show === true && mode === 'HOST'" @click="toggleComment(comment)">Hide</button>
+								<button class="show-button" v-if="comment.show === false && mode === 'HOST'" @click="toggleComment(comment)">Show</button>
 								<label class="guest-username">{{comment.guestUsername}} <span class="comment-grade" v-html="loadComment(comment.grade)"></span></label><br>
 								<label class="comment-text">{{comment.text}}</label>
 							</div>
@@ -85,7 +87,26 @@ Vue.component('one-apartment',{
 		}
 	},
 	mounted(){
-		axios
+		if(!this.$cookies.get('user') || this.$cookies.get('user').role === 'GUEST'){
+			this.mode = 'GUEST';
+			axios
+			.get('rest/apartments/' + this.$route.params.id)
+			.then((response) => {this.apartment = response.data;
+								 axios
+									 .get('rest/users/' + this.apartment.hostUsername)
+									 .then((response) => this.host = response.data);
+								 axios
+									 .get('rest/amenities/byApartment/' + this.$route.params.id)
+									 .then((response) => {this.amenities = response.data;});
+								 axios
+									 .get('rest/apartments/shown/' + this.$route.params.id)
+									 .then((response) => this.comments = response.data);
+								 						console.log(this.apartment);
+								 						this.images = this.apartment.images;
+								 						console.log(this.images[0]);})
+		}else{
+			this.mode = this.$cookies.get('user').role;
+			axios
 			.get('rest/apartments/' + this.$route.params.id)
 			.then((response) => {this.apartment = response.data;
 								 axios
@@ -100,14 +121,7 @@ Vue.component('one-apartment',{
 								 						console.log(this.apartment);
 								 						this.images = this.apartment.images;
 								 						console.log(this.images[0]);})
-		
-		console.log(this.amenities)							  
-		if(!this.$cookies.get('user') || this.$cookies.get('user').role === 'GUEST'){
-			this.mode = 'GUEST';
-		}else {
-			this.mode = this.$cookies.get('user').role;
-		}
-									 
+		}								 
 	},
 	methods:{
 		openEditApartment(){
@@ -144,6 +158,14 @@ Vue.component('one-apartment',{
    			}else{
    				return '&#11088;&#11088;&#11088;&#11088;&#11088;'
    			}
+   		},
+   		
+   		toggleComment(comment){
+			axios
+				.put('rest/comments/toggleComment', comment)
+				.then(() => {axios
+								.get('rest/apartments/comments/' + this.$route.params.id)
+								.then((response) => {this.comments = response.data})})
    		}
 	},
 	filters: {
