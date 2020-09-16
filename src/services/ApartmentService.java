@@ -85,7 +85,7 @@ public class ApartmentService {
 	public Collection<Apartment> getApartments(){
 		ApartmentDAO dao = (ApartmentDAO) ctx.getAttribute("apartmentDAO");
 		
-		return dao.getAll();
+		return dao.getUndeletedApartments();
 	}
 	
 	@GET
@@ -166,7 +166,7 @@ public class ApartmentService {
 	
 	
 	@DELETE
-	@Path("/{id}")
+	@Path("/deleteApartment/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Apartment delete(@PathParam("id") Long id) {
 		initCommentDAO();
