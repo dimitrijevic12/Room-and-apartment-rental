@@ -1,7 +1,7 @@
 Vue.component('users',{
 	template:`
-		<div class="page-background">
-			<div class="page">
+		<div class="page-background users">
+			<div class="page users">
 				<div class="page-content">
 					<div class="search-bar">
 						<div class="label-input">
