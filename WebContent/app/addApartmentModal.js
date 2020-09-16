@@ -217,6 +217,7 @@ Vue.component('add-apartment-modal',{
 																										 this.addDisabledDates();
 																										 this.files = this.apartment.images.slice();
 																										 this.filesOnLoad = this.apartment.images.slice();
+																										 this.imagesToUpload = [];
 																										 console.log(this.files);
 																										 axios
 																											 .get('rest/amenities/byApartment/' + this.apartment.id)
