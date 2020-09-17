@@ -470,7 +470,7 @@ Vue.component('show-apartment-amenities',{
 							<li v-for="a in amenities">{{a.name}}</li>
 						</ul>
 		            </div>
-					<button type="button" @click="closeDialog">Izadji</button>
+					<button type="button" @click="closeDialog">Close</button>
 	            </div>
 			</div>
 		</div>
@@ -492,7 +492,7 @@ Vue.component('show-apartment-amenities',{
 						}
 						return false;
 					})
-					this.$refs.showAmenitiesModal.classList.add("modal-show");
+//					this.$refs.showAmenitiesModal.classList.add("modal-show");
 					this.$refs.showAmenitiesModal.style.display = "block";
 				})
 		});	
