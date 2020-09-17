@@ -359,7 +359,10 @@ Vue.component('apartments',{
 			axios.put('rest/amenities',amenityToEdit)
 				.then(response => {
 					if(response) {
-						toast('Uspesno izmenjen sadrzaj!');
+						new Toast({
+							  message: 'You have edited amenities succesfully!',
+							  type: 'success'
+							});
 					}else alert('Neuspesno izmenjen sadrzaj!');
 				})
 		},
