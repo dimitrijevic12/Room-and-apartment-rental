@@ -4,7 +4,8 @@
 }
 
 #amenities-modal {
-	background-color: gray;
+	background-color: #78909c;
+	border: 3px solid black;
 	width: 300px;
 	margin: auto;
 	padding: 6px 20px 20px 20px;
