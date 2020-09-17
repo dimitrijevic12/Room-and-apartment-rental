@@ -442,7 +442,7 @@ Vue.component('comment-modal',{
 							<option>4</option>
 							<option>5</option>
 						</select>
-						<label>stars</label>
+						<label>&#127775;</label>
 					</div>
 					<div class="row">
 						<label>Comment:</label><br/>
