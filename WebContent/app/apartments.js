@@ -50,7 +50,7 @@ Vue.component('apartments',{
 						<input type="number" class="minMaxField"  v-model="filter.maxRoom" min="1"placeholder="max room">
 					</li>
 					<li>
-						<input type="number" class="minMaxField" v-model="filter.guestNum" min="1" name="guestNum" placeholder="number of guests">
+						<input type="number" class="minMaxField" v-model="filter.guestNum" min="1" name="guestNum" placeholder="guests">
 						<button type="button" class="minMaxField" @click="filterAmenities()">Amenities</button>
 					</li>
 					<li><button type="button" @click="searchClick()">Search</button></li>
@@ -81,7 +81,7 @@ Vue.component('apartments',{
 							<input type="checkbox" :value="a.id" name="cb"><label>{{a.name}}</label>
 						</div>
 		            </div>
-					<button type="button" @click="closeSelectAmenitieDialog()">Potvrdi</button>
+					<button type="button" @click="closeSelectAmenitieDialog()">Confirm</button>
 					<button type="button" v-if="role === 'ADMIN'" @click="deleteSelectedAmenities()">Delete</button>
 	            </div>
 			</div>
@@ -112,7 +112,7 @@ Vue.component('apartments',{
 					</div>
 					<label class="sobe">Room count:<b> {{a.roomCount}}</b></label>
 					<label class="gosti">Guest count: <b>{{a.guestCount}}</b></label>
-					<button type="button" class="amenities" @click="showAmenities(a)">Sadrzaj</button> 
+					<button type="button" class="amenities" @click="showAmenities(a)">Amenities</button> 
 					<label class="price"><b>{{a.price}}</b>$</label>
 					<button type="button" v-if="role==='GUEST' " class="reserve" @click="openReserveDialog(a)">Reserve</button>
 					<button v-if="role==='ADMIN'" class="reserve" @click="openDeleteDialog(a)">Delete</button>
@@ -462,7 +462,7 @@ Vue.component('show-apartment-amenities',{
 	template: 
 		`
 		<div class="modal" ref="showAmenitiesModal">
-			<div class="reservation-modal">
+			<div>
 				<div id="amenities-modal">
 					<h1>Amenities</h1>
 					<div id="amenities-list">
@@ -514,18 +514,18 @@ Vue.component('reservate-apartment-modal',{
 			<div class="reservation-modal">
 				<h1 class="naslov">{{apartment.name}}</h1>
 				<div class="row">
-				<label>Datum:</label>
+				<label>Date:</label>
 				<vue-ctk-date-time-picker class="search-field" v-model="date" :label="'Choose dates'" :format="'DD/MM/YYYY'" :formatted="'DD/MM/YYYY'" :range="true" v-bind:min-date="dateRange.min" v-bind:max-date="dateRange.max" v-bind:disabledDates="disabledDates"></vue-ctk-date-time-picker>
 				</div>
 				<div class="row">
-					<label>Broj nocenja: {{getNightCount()}}</label>
+					<label>Nights: {{getNightCount()}}</label>
 				</div>
 				<div class="row">
-					<label>Cena:{{getNightCount()*apartment.price}}</label>
+					<label>Total price:{{getNightCount()*apartment.price}}</label>
 					
 				</div>
 				<div class="row">
-					<label>Komentar:</label><br/>
+					<label>Comment:</label><br/>
 					<textarea v-model="reservation.message" name="komentar" maxlength="255"></textarea>
 				</div>
 	
