@@ -469,6 +469,11 @@ Vue.component('add-apartment-modal',{
 																		.put('rest/apartments/editApartment', this.apartment)
 																		.then((response) => {console.log(response.data)
 																		this.$refs.addApartmentModal.style.display="none";
+//																		toast('Uspesan Edit')
+																		new Toast({
+																			  message: 'You have edited apartment succesfully!',
+																			  type: 'success'
+																			});
 																		this.$emit('refresh-apartments')})
 																	} })
 									}else{
@@ -476,6 +481,10 @@ Vue.component('add-apartment-modal',{
 										.put('rest/apartments/editApartment', this.apartment)
 										.then((response) => {console.log(response.data)
 										this.$refs.addApartmentModal.style.display="none";
+										new Toast({
+											  message: 'You have edited apartment succesfully!',
+											  type: 'success'
+											});
 										this.$emit('refresh-apartments')})
 									}
 														})
@@ -577,6 +586,10 @@ Vue.component('add-apartment-modal',{
 										.post('rest/apartments', this.apartment)
 										.then((response) => {console.log(response.data)
 										this.$refs.addApartmentModal.style.display="none";
+										new Toast({
+											  message: 'You have added apartment succesfully!',
+											  type: 'success'
+											});
 										this.$emit('refresh-apartments')})
 									} })
 		},
@@ -600,6 +613,10 @@ Vue.component('add-apartment-modal',{
 												.post('rest/apartments', this.apartment)
 												.then((response) => {console.log(response.data);
 												this.$refs.addApartmentModal.style.display="none";
+												new Toast({
+													  message: 'You have added apartment succesfully!',
+													  type: 'success'
+													});
 												this.$emit('refresh-apartments')})
 										 }
 										 })
@@ -619,6 +636,10 @@ Vue.component('add-apartment-modal',{
 											.put('rest/apartments/editApartment', this.apartment)
 											.then((response) => {console.log(response.data);
 											this.$refs.addApartmentModal.style.display="none";
+											new Toast({
+												  message: 'You have edited apartment succesfully!',
+												  type: 'success'
+												});
 											this.$emit('refresh-apartments')})
 									 }
 									 })
