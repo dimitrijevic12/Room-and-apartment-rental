@@ -258,6 +258,10 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 				.then(function(response) 	{	if(response.data !== ''){
 													this.$cookies.set('user', response.data, 30);
 													this.App.$root.$emit('cookie-attached');
+													new Toast({
+														  message: 'You have successfully edited personal information!',
+														  type: 'success'
+														});
 													self.closeEditProfilePopup();
 												}
 											});
