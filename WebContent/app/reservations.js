@@ -273,19 +273,19 @@ Vue.component('reservation-modal',{
 				<div class="reservation-modal">
 					<h1 class="naslov">{{apartment.name}}</h1>
 					<div class="row">
-						<label>username: {{oneReservation.guestUsername}}</label>
+						<label>Guest username: {{oneReservation.guestUsername}}</label>
 					</div>
 					<div>
-						<label>Gost: {{user.name}} {{user.surname}}</label>
+						<label>Guest: {{user.name}} {{user.surname}}</label>
 					</div>
 					<div class="row">
-					<label>Pocetni datum: {{oneReservation.checkInDate | dateFormat('DD/MM/YYYY')}}</label>
+					<label>Check in date: {{oneReservation.checkInDate | dateFormat('DD/MM/YYYY')}}</label>
 					</div>
 					<div class="row">
-					<label>Broj nocenja: {{oneReservation.nightCount}}</label>
+					<label>Nights: {{oneReservation.nightCount}}</label>
 					</div>
 					<div class="row">
-						<label>Cena: {{oneReservation.total}} </label>
+						<label>Total price: {{oneReservation.total}} </label>
 					</div>
 					<div class="row">
 						<label>Comment for reservation :</label><br/>
@@ -295,14 +295,14 @@ Vue.component('reservation-modal',{
 					<div class="row">				
 						<div class="buttons">
 							<template v-if="role==='GUEST' && (status==='CREATED' || status==='ACCEPTED')">
-								<button type="button" @click="cancel_reservation()">Odustani</button>
+								<button type="button" @click="cancel_reservation()">Cancel</button>
 							</template>
 							<template v-if="role==='HOST'">
-								<button type="button" @click="accept_reservation()" v-if="status==='CREATED'">Prihvati</button>
-								<button type="button" v-if="expired === true && status === 'ACCEPTED'" @click="complete_reservation()" >Zavrsi</button>
-								<button type="button" @click="decline_reservation()" v-if="status==='CREATED' || status ==='ACCEPTED'">Odbij</button>
+								<button type="button" @click="accept_reservation()" v-if="status==='CREATED'">Accept</button>
+								<button type="button" v-if="expired === true && status === 'ACCEPTED'" @click="complete_reservation()" >Complete</button>
+								<button type="button" @click="decline_reservation()" v-if="status==='CREATED' || status ==='ACCEPTED'">Deny</button>
 							</template>
-							<button type="button" @click="close_modal_dialog()">Izadji</button>
+							<button type="button" @click="close_modal_dialog()">Close</button>
 						</div>
 					</div>
 					</div>
@@ -424,13 +424,13 @@ Vue.component('comment-modal',{
 						<label>Host: {{host.name}} {{host.surname}}</label>
 					</div>
 					<div class="row">
-					<label>Pocetni datum: {{oneReservation.checkInDate | dateFormat('DD/MM/YYYY')}}</label>
+					<label>Check in date: {{oneReservation.checkInDate | dateFormat('DD/MM/YYYY')}}</label>
 					</div>
 					<div class="row">
-					<label>Broj nocenja: {{oneReservation.nightCount}}</label>
+					<label>Nights: {{oneReservation.nightCount}}</label>
 					</div>
 					<div class="row">
-						<label>Cena: {{oneReservation.total}} </label>
+						<label>Total price: {{oneReservation.total}} </label>
 					</div>
 					<div class="row">
 						<label>Grade:</label>
@@ -452,7 +452,7 @@ Vue.component('comment-modal',{
 					<div class="row">				
 						<div class="buttons">
 							<button @click="submitComment()">Submit</button>
-							<button @click="close_modal_dialog()">Cancel</button>
+							<button @click="close_modal_dialog()">Close</button>
 						</div>
 					</div>
 					</div>
