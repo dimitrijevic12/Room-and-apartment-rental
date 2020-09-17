@@ -55,6 +55,12 @@
   border-radius: 8px;
 }
 
+.signUpModal-content button:hover{
+	background-color: #009bdb;
+  	color: white;
+  	cursor: pointer;
+}
+
 .signup-button-containter{
   text-decoration: none;
 	font-family: 'Times New Roman', Georgia, serif;
