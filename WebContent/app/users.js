@@ -50,7 +50,7 @@ Vue.component('users',{
 						<th>Gender</th>
 						<th v-if="mode === 'ADMIN'">Role</th>
 					</tr>
-					<tr v-for="u in filteredUsers" v-on:dblclick="editProfile(u)" v-bind:key="u.username">
+					<tr v-for="u in filteredUsers" v-on:dblclick="editProfile(u)" v-bind:key="u">
 						<td>{{u.username}}</td>
 						<td>{{u.name}}</td>
 						<td>{{u.surname}}</td>
@@ -95,6 +95,12 @@ Vue.component('users',{
 			axios
 				.get('rest/users/allUsers/' + this.$cookies.get('user').role)
 				.then((response) => {this.users = response.data;
+									 for(i = 0; i < this.users.length; ++i){
+										 if(this.users[i].username === this.$cookies.get('user').username){
+											 this.users.splice(i, 1);
+											 break;
+										 }
+									 }
 									 this.filteredUsers = response.data})
 		}
 		console.log(this.mode);

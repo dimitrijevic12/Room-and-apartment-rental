@@ -77,6 +77,10 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 					<input type="radio" id="genderFemale" value="FEMALE" v-model="user.gender">
 					<label for="genderFemale">Female</label><br/>
 				</div>
+				<div class="radio-input-signup" v-if="editMode==='admin' && user.role!='ADMIN'">
+					<label class="radioLabel">Ban:</label>
+					<input type="checkbox" v-model="user.banned"></input>
+				</div>
 				<div class="signup-button-containter">
 					<button v-if="editMode==='user'" @click="editUser(user)">Submit</button>
 					<button v-if="editMode==='admin'" @click="editAdmin(user)">Submit</button>
@@ -94,7 +98,8 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 				name : '',
 				surname : '',
 				gender : '',
-				role : 'GUEST'
+				role : 'GUEST',
+				banned : false,
 			},
 			password: '',
 			confirmPassword: '',
@@ -166,6 +171,8 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 			this.$refs.surname.style.border = "solid grey";
 			this.$refs.surname.style.marginTop = "0";
 			this.$refs.surname.style.borderWidth = "0.5px";
+			
+			this.user.banned = false;
 
 			this.$refs.editProfileModal.classList.remove("modal-show");
 		},
@@ -256,7 +263,7 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 			axios
 				.put("rest/users", user)
 				.then(function(response) 	{	if(response.data !== ''){
-													this.$cookies.set('user', response.data, 30);
+													this.$cookies.set('user', response.data, "1h");
 													this.App.$root.$emit('cookie-attached');
 													new Toast({
 														  message: 'You have successfully edited personal information!',
@@ -531,7 +538,7 @@ var signupComponent = Vue.component('signup-popup',{
 			axios
 				.post("rest/users", user)
 				.then(function(response) 	{	if(response.data !== ''){
-													this.$cookies.set('user', response.data, 30);
+													this.$cookies.set('user', response.data, "1h");
 													this.App.$root.$emit('cookie-attached');
 													self.$refs.signupModal.classList.remove("modal-show");
 													self.closeSignUpPopup();

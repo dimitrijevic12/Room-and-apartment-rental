@@ -18,8 +18,8 @@ public class User {
 	private List<Apartment> rentedApartments;
 	@JsonIgnore
 	private List<Reservation> reservations;
-	//Odvojiti klase za admina, gosta, domacina umesto atributa role?
-	
+	private boolean banned;
+
 	public User() {
 		super();
 		this.username = "";
@@ -31,9 +31,10 @@ public class User {
 		this.apartmentsToRent = new ArrayList<Apartment>();
 		this.rentedApartments = new ArrayList<Apartment>();
 		this.reservations = new ArrayList<Reservation>();
+		this.banned = false;
 	}
 	public User(String username, String password, String name, String surname, Gender gender, Role role,
-			List<Apartment> apartmentsToRent, List<Apartment> rentedApartments, List<Reservation> reservations) {
+			List<Apartment> apartmentsToRent, List<Apartment> rentedApartments, List<Reservation> reservations, boolean banned) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -44,6 +45,7 @@ public class User {
 		this.apartmentsToRent = apartmentsToRent;
 		this.rentedApartments = rentedApartments;
 		this.reservations = reservations;
+		this.banned = banned;
 	}
 	public User(String username, String password, String name, String surname, Gender gender, Role role) {
 		super();
@@ -111,7 +113,14 @@ public class User {
 	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
 	}
+	public boolean isBanned() {
+		return banned;
+	}
+	public void setBanned(boolean banned) {
+		this.banned = banned;
+	}
 	public boolean IsDeleted() {
 		return username.equals("");
 	}
+
 }

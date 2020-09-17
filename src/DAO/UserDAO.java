@@ -128,6 +128,9 @@ public class UserDAO {
 	public User loginUser(UsernameAndPassword usernameAndPassword) {
 		User user = getUserByUsername(usernameAndPassword.getUsername());
 		if(user == null) return null;
+		
+		if(user.isBanned() == true) return null;
+		
 		if(!user.getPassword().equals(usernameAndPassword.getPassword())) {
 			return null;
 		}
