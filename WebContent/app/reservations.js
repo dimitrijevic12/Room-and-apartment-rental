@@ -5,7 +5,6 @@ Vue.component('reservations',{
 <div class="reservations">
 	<div class="wrapper">
 		<div class="search-reservation">
-			
 				<h1>Search</h1>
 				<label>Apartment type</label><br>
 				<select v-model="filter.type" class="input" name="type">
