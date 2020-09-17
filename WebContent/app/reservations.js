@@ -68,7 +68,7 @@ Vue.component('reservations',{
 			</ul>
 		</div>
 	</div>
-	<reservation-modal ></reservation-modal>
+	<reservation-modal @refresh-reservations="refreshReservations"></reservation-modal>
 	<comment-modal></comment-modal>
 </div>
 	`,
@@ -189,6 +189,58 @@ Vue.component('reservations',{
 			return result;
 		},
 		
+		refreshReservations(){
+			if(this.$cookies.get('user').role === 'HOST'){
+				this.mode = 'HOST';
+				axios
+					.get('rest/reservations/host/'+this.$cookies.get('user').username)
+					.then((response) => {
+						this.reservations = response.data;
+						this.filteredReservations = response.data;
+					});
+				
+				axios
+				.get('rest/apartments/host/'+this.$cookies.get('user').username)
+				.then((response) => {
+					this.apartments = response.data;
+				});
+				
+			}else if(this.$cookies.get('user').role === 'ADMIN'){
+				this.mode = 'ADMIN';
+				
+				axios
+					.get('rest/reservations/withApartment')
+					.then((response) => {
+						this.reservations = response.data;
+						this.filteredReservations = response.data;
+					})
+					
+					axios
+					.get('rest/apartments/')
+					.then((response) => {
+						this.apartments = response.data;
+					});
+			}else{
+				this.mode = 'GUEST';
+				
+				axios
+				.get('rest/reservations/guest/'+this.$cookies.get('user').username)
+				.then((response) => {
+					this.reservations = response.data;
+					this.filteredReservations = response.data;
+				})
+				
+				axios
+				.get('rest/apartments/')
+				.then((response) => {
+					this.apartments = response.data;
+				});
+			}
+			
+			console.log("zavrsio");
+			
+		},
+		
 		searchClick(){
 			if(this.filter.name === '' && this.filter.type === '' && this.filter.apStatus === '' && this.filter.username==='' && this.filter.date === '' && this.filter.resStatus==='' ) 
 				this.filteredReservations = this.reservations;
@@ -305,27 +357,51 @@ Vue.component('reservation-modal',{
 				console.log(this.oneReservation.id);
 				axios.put('rest/reservations/'+this.oneReservation.id+"/ACCEPTED")
 					.then((response) => {
-						alert(response.data.status);
+						if(response.data){
+						toast("Uspesno promenjen status na "+response.data.status);
+						this.$refs.showReservationModal.style.display="none";
+						this.$emit('refresh-reservations');
+						}else{
+							alert("Neuspesna promena stautsa!")
+						}
 					});
 			},
 			decline_reservation(){
 				axios.put('rest/reservations/'+this.oneReservation.id+"/DENIED")
 				.then((response) => {
-					console.log(response.data);
+					if(response.data){
+					toast("Uspesno promenjen status na "+response.data.status);
+					this.$refs.showReservationModal.style.display="none";
+					this.$emit('refresh-reservations');
+					}else{
+						alert("Neuspesna promena stautsa!")
+					}
 				});
 			},
 			
 			complete_reservation(){
 				axios.put('rest/reservations/'+this.oneReservation.id+"/COMPLETED")
 				.then((response) => {
-					console.log(response.data);
+					if(response.data){
+						toast("Uspesno promenjen status na "+response.data.status);
+						this.$refs.showReservationModal.style.display="none";
+						this.$emit('refresh-reservations');
+						}else{
+							alert("Neuspesna promena stautsa!")
+						}
 				});
 			},
 			
 			cancel_reservation(){
 				axios.put('rest/reservations/'+this.oneReservation.id+"/CANCELED")
 				.then((response) => {
-					console.log(response.data);
+					if(response.data){
+						toast("Uspesno promenjen status na "+response.data.status);
+						this.$refs.showReservationModal.style.display="none";
+						this.$emit('refresh-reservations');
+						}else{
+							alert("Neuspesna promena stautsa!")
+						}
 				});
 			}
 			

@@ -335,7 +335,7 @@ Vue.component('apartments',{
 						if(response) {
 							let index = this.findIndex(amenityId);
 							this.amenities.splice(index,1);
-							alert('Uspesno uklonjen '+response.data.name);
+							toast('Uspesno uklonjen '+response.data.name);
 						}
 						else alert('Neuspesno uklonjen '+response.data.name);
 					});
@@ -359,7 +359,7 @@ Vue.component('apartments',{
 			axios.put('rest/amenities',amenityToEdit)
 				.then(response => {
 					if(response) {
-						alert('Uspesno izmenjen sadrzaj!');
+						toast('Uspesno izmenjen sadrzaj!');
 					}else alert('Neuspesno izmenjen sadrzaj!');
 				})
 		},
@@ -640,7 +640,9 @@ Vue.component('reservate-apartment-modal',{
 			axios.post('rest/reservations',reservation)
 				.then(response=>{
 					if(response.data){
-						alert('Uspesno kreirana rezervacija!');
+						toast('Uspesno kreirana rezervacija!');
+						this.$refs.reservateApartmentModal.classList.remove("modal-show");
+						this.$refs.reservateApartmentModal.style.display = "none";
 //						this.$refs.reservateApartmentModal.style.display="none";
 					}
 					else alert('Neuspesno kreirana rezervacija!');
