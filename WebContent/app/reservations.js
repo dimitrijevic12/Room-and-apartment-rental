@@ -5,7 +5,6 @@ Vue.component('reservations',{
 <div class="reservations">
 	<div class="wrapper">
 		<div class="search-reservation">
-			
 				<h1>Search</h1>
 				<label>Apartment type</label><br>
 				<select v-model="filter.type" class="input" name="type">
@@ -63,12 +62,14 @@ Vue.component('reservations',{
 					<label>total: {{res.total}} </label>
 					<div class="display-button">
 						<button @click="show_reservation(res)">Display</button>
+						<button @click="show_comment(res)" :disabled="!(mode==='GUEST' && (res.status==='DENIED' || res.status === 'COMPLETED'))">Comment</button>
 					</div>	
 				</li>
 			</ul>
 		</div>
 	</div>
-	<reservation-modal ></reservation-modal>
+	<reservation-modal @refresh-reservations="refreshReservations"></reservation-modal>
+	<comment-modal></comment-modal>
 </div>
 	`,
 
@@ -168,6 +169,10 @@ Vue.component('reservations',{
 			this.$root.$emit('show-reservation', reservation);
 		},
 		
+		show_comment(reservation){
+			this.$root.$emit('comment_modal',reservation);
+		},
+		
 		sortByValue(propname){
 			if(this.sort[propname] == 'desc'){
 				this.sort[propname] = 'asc'
@@ -182,6 +187,58 @@ Vue.component('reservations',{
 			let splitedDate = date.split(token);
 			let result = new Date(parseInt(splitedDate[0],10),parseInt(splitedDate[1],10)-1,parseInt(splitedDate[2],10),0,0,0);
 			return result;
+		},
+		
+		refreshReservations(){
+			if(this.$cookies.get('user').role === 'HOST'){
+				this.mode = 'HOST';
+				axios
+					.get('rest/reservations/host/'+this.$cookies.get('user').username)
+					.then((response) => {
+						this.reservations = response.data;
+						this.filteredReservations = response.data;
+					});
+				
+				axios
+				.get('rest/apartments/host/'+this.$cookies.get('user').username)
+				.then((response) => {
+					this.apartments = response.data;
+				});
+				
+			}else if(this.$cookies.get('user').role === 'ADMIN'){
+				this.mode = 'ADMIN';
+				
+				axios
+					.get('rest/reservations/withApartment')
+					.then((response) => {
+						this.reservations = response.data;
+						this.filteredReservations = response.data;
+					})
+					
+					axios
+					.get('rest/apartments/')
+					.then((response) => {
+						this.apartments = response.data;
+					});
+			}else{
+				this.mode = 'GUEST';
+				
+				axios
+				.get('rest/reservations/guest/'+this.$cookies.get('user').username)
+				.then((response) => {
+					this.reservations = response.data;
+					this.filteredReservations = response.data;
+				})
+				
+				axios
+				.get('rest/apartments/')
+				.then((response) => {
+					this.apartments = response.data;
+				});
+			}
+			
+			console.log("zavrsio");
+			
 		},
 		
 		searchClick(){
@@ -212,8 +269,8 @@ Vue.component('reservations',{
 Vue.component('reservation-modal',{
 	template:
 		`
-			<div id="reservation-modal" class="modal reservation-modal" ref="showReservationModal">
-				<form>
+			<div id="reservation-modal" class="modal" ref="showReservationModal">
+				<div class="reservation-modal">
 					<h1 class="naslov">{{apartment.name}}</h1>
 					<div class="row">
 						<label>username: {{oneReservation.guestUsername}}</label>
@@ -231,7 +288,7 @@ Vue.component('reservation-modal',{
 						<label>Cena: {{oneReservation.total}} </label>
 					</div>
 					<div class="row">
-						<label>Komentar:</label><br/>
+						<label>Comment for reservation :</label><br/>
 						<textarea name="komentar" readonly maxlength="255">{{oneReservation.message}}</textarea>
 					</div>
 		
@@ -248,7 +305,7 @@ Vue.component('reservation-modal',{
 							<button type="button" @click="close_modal_dialog()">Izadji</button>
 						</div>
 					</div>
-				</form>
+					</div>
 			</div>
 		`,
 		data: function(){
@@ -300,27 +357,51 @@ Vue.component('reservation-modal',{
 				console.log(this.oneReservation.id);
 				axios.put('rest/reservations/'+this.oneReservation.id+"/ACCEPTED")
 					.then((response) => {
-						alert(response.data.status);
+						if(response.data){
+						toast("Uspesno promenjen status na "+response.data.status);
+						this.$refs.showReservationModal.style.display="none";
+						this.$emit('refresh-reservations');
+						}else{
+							alert("Neuspesna promena stautsa!")
+						}
 					});
 			},
 			decline_reservation(){
 				axios.put('rest/reservations/'+this.oneReservation.id+"/DENIED")
 				.then((response) => {
-					console.log(response.data);
+					if(response.data){
+					toast("Uspesno promenjen status na "+response.data.status);
+					this.$refs.showReservationModal.style.display="none";
+					this.$emit('refresh-reservations');
+					}else{
+						alert("Neuspesna promena stautsa!")
+					}
 				});
 			},
 			
 			complete_reservation(){
 				axios.put('rest/reservations/'+this.oneReservation.id+"/COMPLETED")
 				.then((response) => {
-					console.log(response.data);
+					if(response.data){
+						toast("Uspesno promenjen status na "+response.data.status);
+						this.$refs.showReservationModal.style.display="none";
+						this.$emit('refresh-reservations');
+						}else{
+							alert("Neuspesna promena stautsa!")
+						}
 				});
 			},
 			
 			cancel_reservation(){
 				axios.put('rest/reservations/'+this.oneReservation.id+"/CANCELED")
 				.then((response) => {
-					console.log(response.data);
+					if(response.data){
+						toast("Uspesno promenjen status na "+response.data.status);
+						this.$refs.showReservationModal.style.display="none";
+						this.$emit('refresh-reservations');
+						}else{
+							alert("Neuspesna promena stautsa!")
+						}
 				});
 			}
 			
@@ -329,4 +410,125 @@ Vue.component('reservation-modal',{
 		
 	
 });
+
+Vue.component('comment-modal',{
+	template:
+		`
+			<div id="reservation-modal" class="modal " ref="showCommentModal">
+				<div class="reservation-modal">
+					<h1 class="naslov">{{apartment.name}}</h1>
+					<div class="row">
+						<label>Host username: {{host.username}}</label>
+					</div>
+					<div>
+						<label>Host: {{host.name}} {{host.surname}}</label>
+					</div>
+					<div class="row">
+					<label>Pocetni datum: {{oneReservation.checkInDate | dateFormat('DD/MM/YYYY')}}</label>
+					</div>
+					<div class="row">
+					<label>Broj nocenja: {{oneReservation.nightCount}}</label>
+					</div>
+					<div class="row">
+						<label>Cena: {{oneReservation.total}} </label>
+					</div>
+					<div class="row">
+						<label>Grade:</label>
+						<select v-model="comment.grade">
+							<option selected value=""></option>
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
+							<option>4</option>
+							<option>5</option>
+						</select>
+						<label>stars</label>
+					</div>
+					<div class="row">
+						<label>Comment:</label><br/>
+						<textarea name="komentar" maxlength="255" v-model="comment.text"></textarea>
+					</div>
+		
+					<div class="row">				
+						<div class="buttons">
+							<button @click="submitComment()">Submit</button>
+							<button @click="close_modal_dialog()">Cancel</button>
+						</div>
+					</div>
+					</div>
+			</div>
+		`,
+	
+		data: function(){
+			return{
+				oneReservation: {},
+				host: {},
+				apartment: {},
+				status: '',
+				comment:{
+					text: '',
+					grade: '',
+				}
+			}
+		},
+		
+		filters:{
+			dateFormat: function(value,format){
+				var parsed = moment(value);
+				return parsed.format(format);
+			}
+		},
+		
+		
+		mounted: function(){
+			this.$root.$on('comment_modal',(reservation) => {
+				this.oneReservation = reservation;
+				this.status = reservation.status;
+				
+				axios.get('rest/apartments/'+this.oneReservation.apartmentId)
+					.then((response)=>{
+					this.apartment = response.data;
+					axios.get('rest/users/'+this.apartment.hostUsername)
+					.then((response)=>{
+					this.host = response.data;
+					
+					});
+					this.$refs.showCommentModal.classList.add("modal-show");
+					this.$refs.showCommentModal.style.display = "block";		
+					
+					});
+					
+			});
+		},
+		
+		methods: {
+			close_modal_dialog(){
+				this.$refs.showCommentModal.style.display = "none";
+				this.$refs.showCommentModal.classList.remove("modal-show");
+			},
+			submitComment(){
+				if(this.comment.grade===''){
+					alert("Morate uneti ocenu apartmanu!");
+					return;
+				}
+				let com={
+					guestUsername: this.oneReservation.guestUsername,
+					apartmentId: this.oneReservation.apartmentId,
+					text: this.comment.text,
+					grade: parseInt(this.comment.grade,10),
+				}
+				
+				axios.post('rest/comments',com).then(response=>{
+					if(response.data) {
+						toast("Komentar je poslat!");
+						console.log(response.data);
+					}else{
+						alert("Neuspesno slanje komentara!");
+					}
+				})
+			}
+		}
+	
+	
+})
 

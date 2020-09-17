@@ -17,7 +17,7 @@ Vue.component('apartments',{
 	<div class="apartments">
 		<div class="wrapper">
 		<div class="search-form">
-			<form class="f">
+			<div class="f">
 				<h1 class="search">Search</h1>
 				<ul class="form-ul">
 					<li><input list="cities" id="searchLocation" class="search-field" v-model="filter.city"  placeholder="Where would you like to go..."><br></li>
@@ -55,11 +55,11 @@ Vue.component('apartments',{
 					</li>
 					<li><button type="button" @click="searchClick()">Search</button></li>
 				</ul>
-			</form>
+			</div>
 		</div>
 		
 		<div class="modal" ref="showAmenitiesForSelectModal">
-			<form>
+			<div>
 				<div id="amenities-modal">
 					<h1>Amenities</h1>
 					<div v-if="role === 'ADMIN'">
@@ -84,7 +84,7 @@ Vue.component('apartments',{
 					<button type="button" @click="closeSelectAmenitieDialog()">Potvrdi</button>
 					<button type="button" v-if="role === 'ADMIN'" @click="deleteSelectedAmenities()">Delete</button>
 	            </div>
-			</form>
+			</div>
 		</div>
 
 		<div class="apartments-label">
@@ -335,7 +335,7 @@ Vue.component('apartments',{
 						if(response) {
 							let index = this.findIndex(amenityId);
 							this.amenities.splice(index,1);
-							alert('Uspesno uklonjen '+response.data.name);
+							toast('Uspesno uklonjen '+response.data.name);
 						}
 						else alert('Neuspesno uklonjen '+response.data.name);
 					});
@@ -359,7 +359,7 @@ Vue.component('apartments',{
 			axios.put('rest/amenities',amenityToEdit)
 				.then(response => {
 					if(response) {
-						alert('Uspesno izmenjen sadrzaj!');
+						toast('Uspesno izmenjen sadrzaj!');
 					}else alert('Neuspesno izmenjen sadrzaj!');
 				})
 		},
@@ -462,7 +462,7 @@ Vue.component('show-apartment-amenities',{
 	template: 
 		`
 		<div class="modal" ref="showAmenitiesModal">
-			<form>
+			<div>
 				<div id="amenities-modal">
 					<h1>Amenities</h1>
 					<div id="amenities-list">
@@ -472,7 +472,7 @@ Vue.component('show-apartment-amenities',{
 		            </div>
 					<button type="button" @click="closeDialog">Izadji</button>
 	            </div>
-			</form>
+			</div>
 		</div>
 		`,
 	data: function() {
@@ -511,7 +511,7 @@ Vue.component('reservate-apartment-modal',{
 	template: 
 		`
 		<div id="reserve-modal" class="modal reservation-modal"  ref="reservateApartmentModal">
-			<form>
+			<div>
 				<h1 class="naslov">{{apartment.name}}</h1>
 				<div class="row">
 				<label>Datum:</label>
@@ -535,7 +535,7 @@ Vue.component('reservate-apartment-modal',{
 						<button type="button" @click="closeDialog()">Cancel</button>
 					</div>
 				</div>
-			</form>
+			</div>
 	</div>
 	`,
 	
@@ -640,7 +640,9 @@ Vue.component('reservate-apartment-modal',{
 			axios.post('rest/reservations',reservation)
 				.then(response=>{
 					if(response.data){
-						alert('Uspesno kreirana rezervacija!');
+						toast('Uspesno kreirana rezervacija!');
+						this.$refs.reservateApartmentModal.classList.remove("modal-show");
+						this.$refs.reservateApartmentModal.style.display = "none";
 //						this.$refs.reservateApartmentModal.style.display="none";
 					}
 					else alert('Neuspesno kreirana rezervacija!');
