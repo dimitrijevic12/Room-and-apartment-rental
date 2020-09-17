@@ -10,6 +10,7 @@
   background-color: #fbfafa;
   outline: none;
   display: block;
+  height: 100%;
 }
 
 .dropdown img{
@@ -24,10 +25,11 @@
 }
 
 .dropdown {
-  position: absolute;
+  position: relative;
   right: 10px;
   display: block;
   float: right;
+  height: 100%;
 }
 
 

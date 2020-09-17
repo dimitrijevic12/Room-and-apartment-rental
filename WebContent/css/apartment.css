@@ -8,13 +8,16 @@
 	display: grid;
 	grid-template-columns: 4fr 10fr ;
 	grid-template-rows: auto;
+	font-family: 'Times New Roman', Georgia, serif;
 }
 
 .f {
 	/*width: 200px;*/
-	border: 1px solid green;
-	max-width: 300px;
+	border: 1px solid black;
+	width: 350px;
 	padding: 20px;
+	border-radius: 8px;
+	position: fixed;
 }
 
 .f input {
@@ -29,8 +32,9 @@
 
 .apartments-label {
 	margin-right: 30px;
-	border: 1px solid red;
+	border: 1px solid black;
 	margin-left: 30px;
+	border-radius: 8px;
 }
 
 
@@ -83,9 +87,10 @@ li label{
 }
 
 .ap-ul li {
-	border: 1px solid blue;
+	border: 1px solid black;
 	height: 200px;
 	margin: 10px;
+	margin-bottom: 20px;
 }
 
 
@@ -117,6 +122,8 @@ li label{
 	grid-template-columns: 1fr 1fr 1fr 1fr;
 	grid-template-rows: auto auto auto auto;
 	align-items: center;
+	border-radius: 8px;
+	background: #fbfafa;
 }
 
 .image-holder {
@@ -125,12 +132,16 @@ li label{
 	width: 300px;
 	height: 200px;
 	grid-row: 1 / 5; 
+	border-radius: 8px;
 }
 
 .hotel-name {
-	height: 20px;
+	height: auto;
 	grid-row: 1;
 	grid-column: 2;
+	margin-left:15px;
+	font-size: 20px;
+	text-decoration: none;
 }
 
 .rating-box{
@@ -148,16 +159,22 @@ li label{
 .host-data{
 	grid-row: 2;
 	grid-column: 2/5;
+	margin-left: 15px;
+	font-size: 20px;
+	height: auto;
 }
 
 .sobe {
 	grid-row: 3;
 	grid-column: 2;
+	margin-left: 15px;
+	font-size: 20px;
 }
 
 .gosti{
 	grid-row: 3;
 	grid-column: 3;
+	font-size: 20px;
 }
 
 .amenities{
@@ -168,6 +185,7 @@ li label{
 .price {
 	grid-row: 4;
 	grid-column: 2;
+	margin-left: 15px;
 }
 
 .reserve {

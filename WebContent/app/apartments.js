@@ -105,15 +105,15 @@ Vue.component('apartments',{
 					<div class="image-holder">
 						<img v-bind:src="a.images[0]" class="">
 					</div>
-					<router-link class="hotel-name" :to="{ name: 'one-apartment', params: { id: a.id }}"><h3 class="hotel-name">{{a.name}}</h3></router-link>
-					<label class="activity">status: {{a.status}}</label>
+					<router-link class="hotel-name" :to="{ name: 'one-apartment', params: { id: a.id }}"><h3>{{a.name}}</h3></router-link>
+					<label v-if="$cookies.get('user') === null || $cookies.get('user').role !== 'GUEST'" class="activity">status: {{a.status}}</label>
 					<div class="host-data">
-						<h4 class="host-username">username: {{a.hostUsername}}</h4>
+						<label>Username: <b>{{a.hostUsername}}</b></label>
 					</div>
-					<h4 class="sobe">room count:{{a.roomCount}}</h4>
-					<h4 class="gosti">guest count: {{a.guestCount}}</h4>
+					<label class="sobe">Room count:<b> {{a.roomCount}}</b></label>
+					<label class="gosti">Guest count: <b>{{a.guestCount}}</b></label>
 					<button type="button" class="amenities" @click="showAmenities(a)">Sadrzaj</button> 
-					<h3 class="price">{{a.price}}e</h3>
+					<label class="price"><b>{{a.price}}</b>$</label>
 					<button type="button" v-if="role==='GUEST' " class="reserve" @click="openReserveDialog(a)">Reserve</button>
 					<button v-if="role==='ADMIN'" class="reserve" @click="openDeleteDialog(a)">Delete</button>
 				</li>
@@ -462,7 +462,7 @@ Vue.component('show-apartment-amenities',{
 	template: 
 		`
 		<div class="modal" ref="showAmenitiesModal">
-			<div>
+			<div class="reservation-modal">
 				<div id="amenities-modal">
 					<h1>Amenities</h1>
 					<div id="amenities-list">
@@ -510,8 +510,8 @@ Vue.component('show-apartment-amenities',{
 Vue.component('reservate-apartment-modal',{
 	template: 
 		`
-		<div id="reserve-modal" class="modal reservation-modal"  ref="reservateApartmentModal">
-			<div>
+		<div id="reserve-modal" class="modal"  ref="reservateApartmentModal">
+			<div class="reservation-modal">
 				<h1 class="naslov">{{apartment.name}}</h1>
 				<div class="row">
 				<label>Datum:</label>
