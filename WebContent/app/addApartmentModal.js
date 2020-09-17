@@ -46,21 +46,24 @@ Vue.component('add-apartment-modal',{
 							<label class="typeLabel" for="typeApartment">Apartment</label>
 						</div>
 					</div>
-					<div class="label-input-signup">
+					<div class="label-input-signup" ref="roomCountError">
 						<div class='label-error'>
 							<label>Room count:</label>
+							<label v-if="roomCountError == true" class="error-message">Value must be positive number!</label>
 						</div>
 						<input type="number" v-model="apartment.roomCount"/>
 					</div>
-					<div class="label-input-signup">
+					<div class="label-input-signup" ref="guestCountError">
 						<div class='label-error'>
 							<label>Guest count:</label>
+							<label v-if="guestCountError == true" class="error-message">Value must be positive number!</label>
 						</div>
 						<input type="number" v-model="apartment.guestCount"/>
 					</div>
-					<div class="label-input-signup last bigger">
+					<div class="label-input-signup last bigger" ref="priceError">
 						<div class='label-error'>
 							<label>Price per night:</label>
+							<label v-if="priceError == true" class="error-message">Value must be positive number!</label>
 						</div>
 						<div class="price-container">
 							<input type="number" v-model="apartment.price"/>
@@ -188,6 +191,9 @@ Vue.component('add-apartment-modal',{
 			approvedDatesError: false,
 			filesOnLoad: [],
 			imagesToUpload: [],
+			guestCountError: false,
+			roomCountError: false,
+			priceError: false,
 		}
 	},
 	mounted(){
@@ -195,7 +201,33 @@ Vue.component('add-apartment-modal',{
 															axios	
 																.get('rest/amenities')
 																.then((response) =>{this.amenities = response.data;
-																				this.mode = "CREATE"})});
+																				this.mode = "CREATE";
+																				this.apartment = {
+																					type:"ROOM",
+																					name:"",
+																					roomCount:0,
+																					guestCount:0,
+																					location:{
+																						latitude:0.0,
+																						longitude:0.0,
+																						address:{
+																							street:"",
+																							city:"",
+																							postalCode:0
+																						}
+																					},
+																					approvedDates:[],
+																					availableDates:[],
+																					hostUsername:"",
+																					images: [],
+																					price:0.0,
+																					checkInTime: 0,
+																					checkOutTime: 0,
+																					status:"INACTIVE",
+																					amenitiesIds:[],
+																					id:0,
+																			};
+																			this.location = "";	})});
 		
 			
 			
@@ -285,6 +317,15 @@ Vue.component('add-apartment-modal',{
 			this.$refs.approvedDatesError.classList.remove('error-border')
 			this.approvedDatesError = false;
 			
+			this.$refs.roomCountError.classList.remove('error-border')
+			this.roomCountError = false;
+			
+			this.$refs.guestCountError.classList.remove('error-border')
+			this.guestCountError = false;
+			
+			this.$refs.priceError.classList.remove('error-border')
+			this.priceError = false;
+			
 			this.apartment.amenitiesIds = [];
 			this.addedAmenities = [];
 			axios	
@@ -352,6 +393,33 @@ Vue.component('add-apartment-modal',{
 			}else{
 				this.$refs.approvedDatesError.classList.remove('error-border')
 				this.approvedDatesError = false;
+			}
+			
+			if(this.apartment.roomCount === '' || this.apartment.roomCount <= 0){
+				this.$refs.roomCountError.classList.add('error-border');
+				this.roomCountError = true;
+				validation = false;
+			}else{
+				this.$refs.roomCountError.classList.remove('error-border');
+				this.roomCountError = false;
+			}
+			
+			if(this.apartment.guestCount === '' || this.apartment.guestCount <= 0){
+				this.$refs.guestCountError.classList.add('error-border');
+				this.guestCountError = true;
+				validation = false;
+			}else{
+				this.$refs.guestCountError.classList.remove('error-border');
+				this.guestCountError = false;
+			}
+			
+			if(this.apartment.price === '' || this.apartment.price <= 0){
+				this.$refs.priceError.classList.add('error-border');
+				this.priceError = true;
+				validation = false;
+			}else{
+				this.$refs.priceError.classList.remove('error-border');
+				this.priceError = false;
 			}
 			
 			if(validation === false){
@@ -458,6 +526,33 @@ Vue.component('add-apartment-modal',{
 			}else{
 				this.$refs.approvedDatesError.classList.remove('error-border')
 				this.approvedDatesError = false;
+			}
+			
+			if(this.apartment.roomCount === '' || this.apartment.roomCount <= 0){
+				this.$refs.roomCountError.classList.add('error-border');
+				this.roomCountError = true;
+				validation = false;
+			}else{
+				this.$refs.roomCountError.classList.remove('error-border');
+				this.roomCountError = false;
+			}
+			
+			if(this.apartment.guestCount === '' || this.apartment.guestCount <= 0){
+				this.$refs.guestCountError.classList.add('error-border');
+				this.guestCountError = true;
+				validation = false;
+			}else{
+				this.$refs.guestCountError.classList.remove('error-border');
+				this.guestCountError = false;
+			}
+			
+			if(this.apartment.price === '' || this.apartment.price <= 0){
+				this.$refs.priceError.classList.add('error-border');
+				this.priceError = true;
+				validation = false;
+			}else{
+				this.$refs.priceError.classList.remove('error-border');
+				this.priceError = false;
 			}
 			
 			if(validation === false){
