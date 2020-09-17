@@ -47,6 +47,8 @@ public class ReservationDAO {
 		List<Reservation> result = new ArrayList<Reservation>();
 		for(long resId : reservations.keySet()) {
 			Reservation reservation = reservations.get(resId);
+			Apartment apartment = apartmentDAO.findApartment(reservation.getApartmentId());
+			if(apartment == null || apartment.getId() == -1) continue;
 			reservation.setApartment(apartmentDAO.findApartment(reservation.getApartmentId()));
 			result.add(reservation);
 		}
@@ -143,9 +145,7 @@ public class ReservationDAO {
 		for(long resId : reservations.keySet()) {
 			Reservation reservation = reservations.get(resId);
 			Apartment apartment = dao.findApartment(reservation.getApartmentId());
-			if(apartment == null) {
-				continue;
-			}
+			if(apartment == null || apartment.getId() == -1) continue;
 			if(apartment.getHostUsername().equals(hostUsername)) {
 				
 				reservation.setApartment(apartment);
@@ -174,6 +174,7 @@ public class ReservationDAO {
 		for(long resId : reservations.keySet()) {
 			Reservation reservation = reservations.get(resId);
 			Apartment apartment = dao.findApartment(reservation.getApartmentId());
+			if(apartment == null || apartment.getId() == -1) continue;
 			if(reservation.getGuestUsername().equals(guestUsername) && apartment.getStatus().equals(ApartmentStatus.ACTIVE)) {
 				reservation.setApartment(apartment);
 				result.add(reservation);
