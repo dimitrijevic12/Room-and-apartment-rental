@@ -64,7 +64,7 @@ Vue.component('apartments',{
 					<h1>Amenities</h1>
 					<div v-if="role === 'ADMIN'">
 						<input v-model="newAmenity.name" type="text">
-						<button type="button" @click="addAmenity()">Add</button>
+						<button :disabled="newAmenity.name==''" type="button" @click="addAmenity()">Add</button>
 					</div>
 					<div v-if="role === 'ADMIN'">
 						<select v-model="selectedAmenity">
@@ -74,7 +74,7 @@ Vue.component('apartments',{
 						</template>
 						</select>
 						<input v-model="newAmenityName" type="text">
-						<button type="button" @click="editAmenity()">Edit</button>
+						<button :disabled="newAmenityName==''" type="button" @click="editAmenity()">Edit</button>
 					</div>
 					<div id="amenities-list">
 						<div v-for="a in amenities" :key="a.name">
@@ -335,16 +335,30 @@ Vue.component('apartments',{
 						if(response) {
 							let index = this.findIndex(amenityId);
 							this.amenities.splice(index,1);
-							toast('Uspesno uklonjen '+response.data.name);
+							new Toast({
+								  message: 'successfully removed'+response.data.name,
+								  type: 'success'
+								});
 						}
-						else alert('Neuspesno uklonjen '+response.data.name);
+						else alert('unsuccessfully removed '+response.data.name);
 					});
 				
 				
 				
 			}
 		},
+		isAmenityAlreadyExist(name){
+			for(let amen of this.amenities){
+				if(amen.name.toLowerCase().trim() == name.toLowerCase().trim())
+					return true;
+			}
+			return false;
+		},
 		addAmenity(){
+			if(this.isAmenityAlreadyExist(this.newAmenity.name)){
+				alert("Amenity already exist!");
+				return;
+			}
 			axios.post('rest/amenities',this.newAmenity)
 				.then(response =>{
 					this.amenities.push(response.data);
@@ -353,7 +367,15 @@ Vue.component('apartments',{
 		},
 		
 		editAmenity(){
+			if(this.isAmenityAlreadyExist(this.newAmenityName)){
+				alert("Amenity already exist!");
+				return;
+			}
 			let index = this.findIndex(this.selectedAmenity);
+			if(index==0){
+				alert("You must select amenity");
+				return;
+			}
 			let amenityToEdit = this.amenities[index];
 			amenityToEdit.name = this.newAmenityName;
 			axios.put('rest/amenities',amenityToEdit)
@@ -363,7 +385,7 @@ Vue.component('apartments',{
 							  message: 'You have edited amenities succesfully!',
 							  type: 'success'
 							});
-					}else alert('Neuspesno izmenjen sadrzaj!');
+					}else alert('Unsuccessful change of amenity!');
 				})
 		},
 		
@@ -630,12 +652,12 @@ Vue.component('reservate-apartment-modal',{
 				}
 			}
 			if(this.getNightCount() == 0) {
-				alert("Morate selektovati datum!");
+				alert("you must select a date!");
 				return;
 			}
 			
 			if(this.HasDisabledDate()){
-				alert("Ne smete obuhvatiti nedostupan datum!");
+				alert("You must not include an unavailable date!");
 				return;
 			}
 			
@@ -643,12 +665,15 @@ Vue.component('reservate-apartment-modal',{
 			axios.post('rest/reservations',reservation)
 				.then(response=>{
 					if(response.data){
-						toast('Uspesno kreirana rezervacija!');
+						new Toast({
+							  message: 'successfully created reservation!',
+							  type: 'success'
+							});
 						this.$refs.reservateApartmentModal.classList.remove("modal-show");
 						this.$refs.reservateApartmentModal.style.display = "none";
 //						this.$refs.reservateApartmentModal.style.display="none";
 					}
-					else alert('Neuspesno kreirana rezervacija!');
+					else alert('Failed to create reservation!');
 				})	
 		},
 		

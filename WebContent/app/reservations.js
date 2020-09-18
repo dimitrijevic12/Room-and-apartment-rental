@@ -358,11 +358,14 @@ Vue.component('reservation-modal',{
 				axios.put('rest/reservations/'+this.oneReservation.id+"/ACCEPTED")
 					.then((response) => {
 						if(response.data){
-						toast("Uspesno promenjen status na "+response.data.status);
+							new Toast({
+								  message: 'you have successfully changed status!',
+								  type: 'success'
+								});
 						this.$refs.showReservationModal.style.display="none";
 						this.$emit('refresh-reservations');
 						}else{
-							alert("Neuspesna promena stautsa!")
+							alert("Unsuccessful change of status!")
 						}
 					});
 			},
@@ -370,11 +373,14 @@ Vue.component('reservation-modal',{
 				axios.put('rest/reservations/'+this.oneReservation.id+"/DENIED")
 				.then((response) => {
 					if(response.data){
-					toast("Uspesno promenjen status na "+response.data.status);
+						new Toast({
+							  message: 'you have successfully changed status!',
+							  type: 'success'
+							});
 					this.$refs.showReservationModal.style.display="none";
 					this.$emit('refresh-reservations');
 					}else{
-						alert("Neuspesna promena stautsa!")
+						alert("Unsuccessful change of status!")
 					}
 				});
 			},
@@ -383,11 +389,14 @@ Vue.component('reservation-modal',{
 				axios.put('rest/reservations/'+this.oneReservation.id+"/COMPLETED")
 				.then((response) => {
 					if(response.data){
-						toast("Uspesno promenjen status na "+response.data.status);
+						new Toast({
+							  message: 'you have successfully changed status!',
+							  type: 'success'
+							});
 						this.$refs.showReservationModal.style.display="none";
 						this.$emit('refresh-reservations');
 						}else{
-							alert("Neuspesna promena stautsa!")
+							alert("Unsuccessful change of status!")
 						}
 				});
 			},
@@ -396,11 +405,14 @@ Vue.component('reservation-modal',{
 				axios.put('rest/reservations/'+this.oneReservation.id+"/CANCELED")
 				.then((response) => {
 					if(response.data){
-						toast("Uspesno promenjen status na "+response.data.status);
+						new Toast({
+							  message: 'you have successfully changed status!',
+							  type: 'success'
+							});
 						this.$refs.showReservationModal.style.display="none";
 						this.$emit('refresh-reservations');
 						}else{
-							alert("Neuspesna promena stautsa!")
+							alert("Unsuccessful change of status!")
 						}
 				});
 			}
@@ -508,7 +520,7 @@ Vue.component('comment-modal',{
 			},
 			submitComment(){
 				if(this.comment.grade===''){
-					alert("Morate uneti ocenu apartmanu!");
+					alert("you must enter grade to the apartment!");
 					return;
 				}
 				let com={
@@ -520,10 +532,13 @@ Vue.component('comment-modal',{
 				
 				axios.post('rest/comments',com).then(response=>{
 					if(response.data) {
-						toast("Komentar je poslat!");
+						new Toast({
+							  message: 'comment sent!',
+							  type: 'success'
+							});
 						console.log(response.data);
 					}else{
-						alert("Neuspesno slanje komentara!");
+						alert("Sending comment is fail!");
 					}
 				})
 			}
