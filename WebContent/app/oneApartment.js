@@ -62,9 +62,8 @@ Vue.component('one-apartment',{
 						</div>
 					</div>
 					<div class="comments-container">
-						<div id="map" class="map">
-						</div>
-					<div>
+						<div id="map" class="map"></div>
+					</div>
 					<div class="comments-container">
 						<div class="grid-container comments">
 							<div v-for="comment in comments" class="comment" :key="comment.id">
@@ -91,7 +90,13 @@ Vue.component('one-apartment',{
 			images: {},
 			index : 0,
 			apKey : 0,
+			map : null,
 		}
+	},
+	created(){
+		axios
+		.get('rest/apartments/' + this.$route.params.id)
+		.then((response) => {this.apartment = response.data;})
 	},
 	mounted(){
 		if(!this.$cookies.get('user') || this.$cookies.get('user').role === 'GUEST'){
@@ -99,6 +104,30 @@ Vue.component('one-apartment',{
 			axios
 			.get('rest/apartments/' + this.$route.params.id)
 			.then((response) => {this.apartment = response.data;
+			var map = new ol.Map({
+		        target: 'map',
+		        layers: [
+		          new ol.layer.Tile({
+		            source: new ol.source.OSM()
+		          })
+		        ],
+		        view: new ol.View({
+		          center: ol.proj.fromLonLat([this.apartment.location.longitude, this.apartment.location.latitude]),
+		          zoom: 11
+		        })
+		      });
+			
+			var layer = new ol.layer.Vector({
+			     source: new ol.source.Vector({
+			         features: [
+			             new ol.Feature({
+			                 geometry: new ol.geom.Point(ol.proj.fromLonLat([this.apartment.location.longitude, this.apartment.location.latitude]))
+			             })
+			         ]
+			     })
+			 });
+			 map.addLayer(layer);
+								console.log(this.apartment.location)
 								 axios
 									 .get('rest/users/' + this.apartment.hostUsername)
 									 .then((response) => this.host = response.data);
@@ -116,6 +145,29 @@ Vue.component('one-apartment',{
 			axios
 			.get('rest/apartments/' + this.$route.params.id)
 			.then((response) => {this.apartment = response.data;
+			var map = new ol.Map({
+		        target: 'map',
+		        layers: [
+		          new ol.layer.Tile({
+		            source: new ol.source.OSM()
+		          })
+		        ],
+		        view: new ol.View({
+		          center: ol.proj.fromLonLat([this.apartment.location.longitude, this.apartment.location.latitude]),
+		          zoom: 4
+		        })
+		      });
+			
+			var layer = new ol.layer.Vector({
+			     source: new ol.source.Vector({
+			         features: [
+			             new ol.Feature({
+			                 geometry: new ol.geom.Point(ol.proj.fromLonLat([this.apartment.location.longitude, this.apartment.location.latitude]))
+			             })
+			         ]
+			     })
+			 });
+			 map.addLayer(layer);
 								 axios
 									 .get('rest/users/' + this.apartment.hostUsername)
 									 .then((response) => this.host = response.data);
@@ -129,18 +181,7 @@ Vue.component('one-apartment',{
 								 						this.images = this.apartment.images;
 								 						console.log(this.images[0]);})
 		}	
-		var map = new ol.Map({
-		    target: 'map',
-		    layers: [
-		      new ol.layer.Tile({
-		        source: new ol.source.OSM()
-		      })
-		    ],
-		    view: new ol.View({
-		      center: ol.proj.fromLonLat([37.41, 8.82]),
-		      zoom: 4
-		    })
-		  });
+		
 	},
 	methods:{
 		openEditApartment(){
@@ -238,6 +279,10 @@ Vue.component('one-apartment',{
    	computed:{
    		isGuest(){
    			return (this.$cookies.get('user') && this.$cookies.get('user').role === 'GUEST')
+   		},
+   		
+   		getLocationStreet(){
+   			return this.apartment.location.address.street;
    		}
    	}
 })

@@ -173,8 +173,8 @@
  }
   
 .map{
-	height: 300px;
-	width: 300px;
+    height: 400px;
+	width: 100%;
 }
 
 .apartment-type-radio-container{
