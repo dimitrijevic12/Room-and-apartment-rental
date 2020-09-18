@@ -1,2 +1,0 @@
-nemanja;nemanja;Nemanja;Dimitrijevic;MALE;ADMIN;0,1;0,1; ;
-jovana;jovana;Jovana;Jovanovic;FEMALE;GUEST; ; ;1;

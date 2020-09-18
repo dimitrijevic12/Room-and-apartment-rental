@@ -1,1 +1,1 @@
-[{"id":0,"name":"Amenity1"},{"id":1,"name":"Amenity2"}]
+{"0":{"id":0,"name":"WiFi"},"1":{"id":1,"name":"TV"},"2":{"id":2,"name":"Microwave"},"3":{"id":3,"name":"Ironing board"},"4":{"id":4,"name":"Radio FM"},"5":{"id":5,"name":"Toaster"},"6":{"id":-1,"name":"Balcony"}}
