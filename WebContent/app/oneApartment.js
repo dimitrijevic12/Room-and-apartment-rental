@@ -154,7 +154,7 @@ Vue.component('one-apartment',{
 		        ],
 		        view: new ol.View({
 		          center: ol.proj.fromLonLat([this.apartment.location.longitude, this.apartment.location.latitude]),
-		          zoom: 4
+		          zoom: 11
 		        })
 		      });
 			
