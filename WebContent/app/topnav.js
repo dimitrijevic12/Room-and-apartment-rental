@@ -172,6 +172,7 @@ var editProfileComponent = Vue.component('edit-profile-popup',{
 			this.$refs.surname.style.marginTop = "0";
 			this.$refs.surname.style.borderWidth = "0.5px";
 			
+			this.password = '';
 			this.user.banned = false;
 
 			this.$refs.editProfileModal.classList.remove("modal-show");

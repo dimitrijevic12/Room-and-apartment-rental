@@ -1,1 +1,0 @@
-1;1;1597622400328;5;10000.0;Poruka pri rezervaciji;jovana;ACCEPTED
