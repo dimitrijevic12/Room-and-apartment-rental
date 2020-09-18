@@ -62,7 +62,7 @@ Vue.component('reservations',{
 					<label>total: {{res.total}} </label>
 					<div class="display-button">
 						<button @click="show_reservation(res)">Display</button>
-						<button @click="show_comment(res)" :disabled="!(mode==='GUEST' && (res.status==='DENIED' || res.status === 'COMPLETED'))">Comment</button>
+						<button v-if="res.comment !== {}" @click="show_comment(res)" :disabled="!(mode==='GUEST' && (res.status==='DENIED' || res.status === 'COMPLETED'))">Comment</button>
 					</div>	
 				</li>
 			</ul>
@@ -527,7 +527,7 @@ Vue.component('comment-modal',{
 					guestUsername: this.oneReservation.guestUsername,
 					apartmentId: this.oneReservation.apartmentId,
 					text: this.comment.text,
-					grade: parseInt(this.comment.grade,10),
+					grade: parseInt(this.comment.grade,10)-1,
 				}
 				
 				axios.post('rest/comments',com).then(response=>{
