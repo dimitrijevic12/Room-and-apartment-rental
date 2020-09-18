@@ -62,6 +62,10 @@ Vue.component('one-apartment',{
 						</div>
 					</div>
 					<div class="comments-container">
+						<div id="map" class="map">
+						</div>
+					<div>
+					<div class="comments-container">
 						<div class="grid-container comments">
 							<div v-for="comment in comments" class="comment" :key="comment.id">
 								<button class="hide-button" v-if="comment.show === true && mode === 'HOST'" @click="toggleComment(comment)">Hide</button>
@@ -124,7 +128,19 @@ Vue.component('one-apartment',{
 								 						console.log(this.apartment);
 								 						this.images = this.apartment.images;
 								 						console.log(this.images[0]);})
-		}								 
+		}	
+		var map = new ol.Map({
+		    target: 'map',
+		    layers: [
+		      new ol.layer.Tile({
+		        source: new ol.source.OSM()
+		      })
+		    ],
+		    view: new ol.View({
+		      center: ol.proj.fromLonLat([37.41, 8.82]),
+		      zoom: 4
+		    })
+		  });
 	},
 	methods:{
 		openEditApartment(){
